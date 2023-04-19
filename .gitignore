@@ -1,0 +1,13 @@
+ll_web/ll_web/api/__pycache__/__init__.cpython-310.pyc
+ll_web/ll_web/api/__pycache__/admin.cpython-310.pyc
+ll_web/ll_web/api/__pycache__/apps.cpython-310.pyc
+ll_web/ll_web/api/__pycache__/models.cpython-310.pyc
+ll_web/ll_web/api/__pycache__/urls.cpython-310.pyc
+ll_web/ll_web/api/__pycache__/views.cpython-310.pyc
+ll_web/ll_web/api/migrations/__init__.py
+ll_web/ll_web/api/migrations/__pycache__/__init__.cpython-310.pyc
+ll_web/ll_web/ll_web/__pycache__/__init__.cpython-310.pyc
+ll_web/ll_web/ll_web/__pycache__/settings.cpython-310.pyc
+ll_web/ll_web/ll_web/__pycache__/urls.cpython-310.pyc
+ll_web/ll_web/ll_web/__pycache__/wsgi.cpython-310.pyc
+ll_web/ll_web/db.sqlite3
