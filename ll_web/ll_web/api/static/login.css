@@ -1,0 +1,44 @@
+body {
+    background-color: #333333;
+    font-family: 'Inter', sans-serif;
+    color: rgb(255, 255, 255);
+    font-size: 1.3em;
+    overflow: scroll;
+}
+
+h1 {
+    display: flex;
+    justify-content: center;
+    font-size: 2em;
+}
+
+button, input, select{
+    width: 10em;
+    height: 2em;
+    background-color: #1e1e1e;
+    color: #858382;
+    border: none;
+    border-radius: 25px;
+    margin: 0.5em;  
+}
+button:hover, input:hover{
+    color: white;
+    border: rgb(165, 165, 165);
+}
+
+.main_frame_login{
+    display: flex;
+    justify-content: center;
+    margin: auto;
+}
+
+.login_field {
+    margin-left: 25%;
+}
+
+@media only screen and (max-width: 610px) {
+    button, input {
+        margin: 0.5em;
+    }
+}
+

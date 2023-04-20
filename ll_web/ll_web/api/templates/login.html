@@ -1,0 +1,35 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'login.css' %}">
+    <title>Login</title>
+</head>
+<body>
+    {% block content %}
+    <h1>Login Required</h1>
+    <div class="main_frame_login">
+        <div>
+        <h3>Enter Token:</h3>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="account" placeholder="Account">
+            <input type="password" name="token" placeholder="Token"><br>
+            <button class='login_field' type="submit">Login</button>
+        </form>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        </div>
+    </div>
+    {% endblock content %}
+</body>
+</html>
