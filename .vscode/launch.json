@@ -8,10 +8,12 @@
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/ll_web/ll_web/manage.py",
+            "program": "${workspaceFolder}/ll_web/manage.py",
             "args": ["runserver"],
             "console": "integratedTerminal",
-            "justMyCode": true
+            "justMyCode": true,
+            
         }
     ]
+    //npm run dev in frontend   
 }

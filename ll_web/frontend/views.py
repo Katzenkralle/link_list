@@ -1,14 +1,14 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse    #Temp
+from django.contrib.auth.decorators import login_required
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
-
 # Create your views here.
+
+
 @login_required(login_url='login')
-def home(reqest):
-    return HttpResponse("Hello")
+def index(request, *args, **kwargs):
+    return render(request, 'index.html')
 
 
 def login_page(request):
@@ -19,7 +19,7 @@ def login_page(request):
         user = authenticate(request, username=account, password=token)
         if user is not None:
             login(request, user)
-            return redirect('home')
+            return redirect('index')
         else:
             messages.info(request, 'Token is incorrect!')
     return render(request, 'login.html')
