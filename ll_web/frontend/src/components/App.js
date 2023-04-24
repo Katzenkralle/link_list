@@ -1,14 +1,21 @@
-import React, { Component } from "react"
-import { render } from "react-dom"
+import React, { Component } from "react";
+import { render } from "react-dom";
 
-export default class App extends Component {
-    constructor(props) {
-        super(props);
-    }
+import HomePage from './HomePage';
+import { BrowserRouter as Router,  Route, Routes} from "react-router-dom";
+import ViewList from "./ViewList";
 
-    render() {
-        return <h1>Testing Reat1</h1>;
-    }
+function App() {
+    
+        return (
+            <Router>
+                <Routes>
+                    <Route exact path="/" element= {<HomePage />} />
+                    <Route path="view" element= {<ViewList />} />
+                </Routes>
+          </Router>
+        );
+    
 }
 
 const appDiv = document.getElementById('app');
