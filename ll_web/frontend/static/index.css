@@ -5,3 +5,31 @@ body {
     font-size: 1.3em;
     overflow: scroll;
 }
+
+h1 {
+    display: flex;
+    justify-content: center;
+    font-size: 2.5em;
+}
+
+.top_bar {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.alinge_left{
+    margin-right: auto;
+    margin-left: 0;
+}
+.alinge_right {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.main_contend{
+    justify-content: center;
+    display: flex;
+    margin: 0;
+    padding: 0.5em;
+}

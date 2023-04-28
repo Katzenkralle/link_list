@@ -1,0 +1,63 @@
+{
+    "content": [
+    {
+    "text": "Example Text",
+    "Style": "H1",
+    "metaType": "link",
+    "metaPath": "https://Google.com"
+    },
+    {
+    "text": "Immage",
+    "metaType": "img",
+    "metaPath": "C:\\sth.png"
+    },
+    {
+    "text": "normal Text",
+    "Style": "H1",
+    "metaType": "p"
+    }
+    ],
+
+    "content_alternative": [
+    [
+    "Contetnt First",
+    "style",
+    "metaType",
+    "metaPath"
+    ],
+    [
+    "Link",
+    "H3",
+    "link",
+    "https://google.com"
+    ],
+    [
+    "Normal Text",
+    "p"
+    ],
+    [
+    "",
+    "brake_line"
+    ],
+    [
+    "",
+    "Code",
+    "python",
+    [
+    "Every Line,",
+    "in new",
+    "element"
+    ]
+    ],
+    [
+    "First element",
+    "Orderd_list",
+    "0"
+    ],
+    [
+    "seccond element",
+    "Orderd_list",
+    "1"
+    ]
+    ]
+}

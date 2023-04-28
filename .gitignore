@@ -9,4 +9,3 @@ ll_web/frontend/node_modules/*
 ll_web/ll_web/__pycache__/*
 ll_web/ll_web/ll_web/__pycache__/*
 ll_web/db.sqlite3
-

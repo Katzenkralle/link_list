@@ -10,11 +10,11 @@ export default class HomePage extends Component {
     render(){
         return <div>
         <div class="top_bar">
-            <p>Username</p>
+            <p class="alinge_left">Username</p>
             <p>{ Date() }</p>
-            <button>Settings</button>
+            <button class="alinge_right">Settings</button>
         </div>
-        <p1 id="headline">Link Liste</p1>
+        <h1 id="headline">Link Liste</h1>
         <div class="main_contend">Contend div link liste</div>
     </div>
     }

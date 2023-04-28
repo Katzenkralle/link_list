@@ -5,14 +5,23 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
+            "name": "Django",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/ll_web/manage.py",
-            "args": ["runserver"],
+            "args": [
+                "runserver"
+            ],
             "console": "integratedTerminal",
             "justMyCode": true,
-            
+        },
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
         }
     ]
     //npm run dev in frontend   
