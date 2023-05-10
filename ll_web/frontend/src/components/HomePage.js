@@ -1,21 +1,47 @@
-import React, { Component } from "react";
+import React, { useEffect, useState, Component} from 'react';
+import CreateList from './CreateList';
 
+function HomePage() {
+//Fetching Data
+  const [metaTags, setMetaTags] = useState([]);
+  const [metaLists, setMetaLists] = useState([]);
 
+  const fetchData = async () => {
+    try {
+      const response = await fetch('your-api-url');
+      const data = await response.json();
+      const { metaTags, metaLists } = data;
 
-export default class HomePage extends Component {
-    constructor(props){
-        super(props);
+      setMetaTags(metaTags);
+      setMetaLists(metaLists);
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }
+  };
 
-    render(){
-        return <div>
-        <div class="top_bar">
-            <p class="alinge_left">Username</p>
-            <p>{ Date() }</p>
-            <button class="alinge_right">Settings</button>
-        </div>
-        <h1 id="headline">Link Liste</h1>
-        <div class="main_contend">Contend div link liste</div>
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const updateData = () => {
+    fetchData();
+  };
+  //
+
+  return (
+    <div>
+      <div className="top_bar">
+        <p className="alinge_left">Username</p>
+        <p>{Date()}</p>
+        <button className="alinge_right">Settings</button>
+      </div>
+      <h1 id="headline">Link Liste</h1>
+      <div className="main_contend">
+        <CreateList tag_names={["a","b"]}></CreateList>
+      </div>
     </div>
-    }
+  );
 }
+
+export default HomePage;
