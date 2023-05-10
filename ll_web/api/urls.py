@@ -1,5 +1,6 @@
-from django.contrib import admin
 from django.urls import path
+from .views import create_list
 
-
-urlpatterns = []
+urlpatterns = [
+    path("api/createList/", create_list, name="createList"),
+]
