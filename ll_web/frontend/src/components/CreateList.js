@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-
+import ManageTags from './ManageTags'
+import ReactDOM from 'react-dom/client';
 export default class CreateList extends Component {
     constructor(props) {
       super(props);
@@ -29,12 +30,12 @@ export default class CreateList extends Component {
   
     tagField = () => {
       return (
-        <select>
-          <option value="default">Default</option>
+        <select id='select_tag'>
+          <option value="default" >Default</option>
           {this.props.tag_names.map((option) => (
-            <option value={option}>{option}</option>
+            <option key={option} value={option}>{option}</option>
           ))}
-          <option onClick={() => {alert("NewTag")}}>Create New Tag</option>
+           <option onClick={() => {ReactDOM.createRoot(document.getElementById("tagContainer")).render(<ManageTags mode='create'/>)}}>Create New Tag</option>
         </select>
       );
     };

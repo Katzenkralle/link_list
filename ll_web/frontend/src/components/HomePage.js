@@ -40,6 +40,9 @@ function HomePage() {
       <div className="main_contend">
         <CreateList tag_names={["a","b"]}></CreateList>
       </div>
+
+      <div id='tagContainer'></div>
+
     </div>
   );
 }
