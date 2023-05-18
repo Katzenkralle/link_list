@@ -30,7 +30,7 @@ function HomePage() {
       <div className="top_bar">
         <p className="alinge_left">Username</p>
         <p>{Date()}</p>
-        <button className="alinge_right">Settings</button>
+        <button className="alinge_right" onClick={() => window.location.href = "settings"}>Settings</button>
       </div>
       <h1 id="headline">Link Liste</h1>
       <div className="main_contend">

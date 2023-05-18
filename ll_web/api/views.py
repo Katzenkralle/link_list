@@ -23,13 +23,19 @@ def manage_tags(request):
             new_tag = request.POST['tag_name']
             if new_tag in user_tags:
                 return HttpResponse("Already present", status=status.HTTP_304_NOT_MODIFIED)
-            else:
+            elif new_tag == 'default':
+                return HttpResponse("Forbidden value", status=status.HTTP_400_BAD_REQUEST)
+            else:    
                 user_tags.append(new_tag)
                 working_entry = Profile.objects.all().get(user = request.user)
                 working_entry.tags = to_json(user_tags)
                 working_entry.save()
+        case "del": 
+            user_tags.remove(request.POST['tag_name'])
+            working_entry = Profile.objects.all().get(user = request.user)
+            working_entry.tags = to_json(user_tags)
+            working_entry.save()
         case _: pass
-
     return HttpResponse("Success", status=status.HTTP_201_CREATED)
 
 @login_required(login_url='login')
