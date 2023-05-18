@@ -20,7 +20,7 @@ export default class CreateList extends Component {
       })
         .then((response) => {
           // Handle the response if needed
-          console.log('Form data submitted successfully');
+          //console.log('Form data submitted successfully');
         })
         .catch((error) => {
           // Handle any errors that occur during the submission
@@ -35,7 +35,7 @@ export default class CreateList extends Component {
           {this.props.tag_names.map((option) => (
             <option key={option} value={option}>{option}</option>
           ))}
-           <option onClick={() => {ReactDOM.createRoot(document.getElementById("tagContainer")).render(<ManageTags mode='create'/>)}}>Create New Tag</option>
+           <option onClick={() => {ReactDOM.createRoot(document.getElementById("tagContainer")).render(<ManageTags mode='create' update_data={this.props.update_data}/>)}}>Create New Tag</option>
         </select>
       );
     };

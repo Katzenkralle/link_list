@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 
 const styles = {
   overlay: {
@@ -36,6 +36,11 @@ export default class ManageTags extends Component {
       super(props);
     }
 
+    handleSelfDestruct = () => {
+      ReactDOM.createRoot(document.getElementById('tagContainer')).unmount()
+      document.getElementById('select_tag').value = 'default'
+    }
+
     handleSubmit = (event) => {
       event.preventDefault(); // Prevent the default form submission
       // Perform any additional logic or data manipulation here
@@ -43,6 +48,8 @@ export default class ManageTags extends Component {
       // Send the form data to a different URL using AJAX/fetch
       const formData = new FormData(event.target);
       formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
+      formData.append("tag_name", document.getElementById("input_tag_name").value)
+      formData.append("action", 'add')
       fetch("api/manageTags/", {
         method: 'POST',
         body: formData,
@@ -50,16 +57,14 @@ export default class ManageTags extends Component {
         .then((response) => {
           // Handle the response if needed
           console.log('Form data submitted successfully');
+          this.props.update_data()
+          this.handleSelfDestruct()
         })
         .catch((error) => {
           // Handle any errors that occur during the submission
           console.error('Form submission error:', error);
         });
     };
-    handleSelfDestruct = () => {
-      ReactDOM.createRoot(document.getElementById('tagContainer')).unmount()
-      document.getElementById('select_tag').value = 'default'
-    }
 
       render() {
       return (
@@ -70,8 +75,8 @@ export default class ManageTags extends Component {
                 <button onClick={this.handleSelfDestruct}>Close</button>
                 <h3>Input New Tag:</h3>
                 <form onSubmit={this.handleSubmit}>
-                  <input type="text" placeholder="Name..."></input>
-                  <button type='submit'>Submit</button>
+                  <input type="text" id="input_tag_name" placeholder="Name..."></input>
+                  <button type="submit">Submit</button>
                 </form>
               </div>
             )}

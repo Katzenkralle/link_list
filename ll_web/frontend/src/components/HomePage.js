@@ -1,22 +1,17 @@
 import React, { useEffect, useState, Component} from 'react';
 import CreateList from './CreateList';
+import ReactDOM from 'react-dom/client';
 
 function HomePage() {
 //Fetching Data
   const [metaTags, setMetaTags] = useState([]);
   const [metaLists, setMetaLists] = useState([]);
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch('your-api-url');
-      const data = await response.json();
-      const { metaTags, metaLists } = data;
-
-      setMetaTags(metaTags);
-      setMetaLists(metaLists);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
+  const fetchData = () => {
+    fetch('api/getMetaHome/')
+      .then(response => response.json())
+      .then(data => {setMetaTags(JSON.parse(data.metaTags));}) //console.log(data.metaTags)
+      .catch(error => console.error('Error:', error));
   };
 
   useEffect(() => {
@@ -25,6 +20,7 @@ function HomePage() {
   }, []);
 
   const updateData = () => {
+    console.log("Fetchin new Data")
     fetchData();
   };
   //
@@ -38,7 +34,7 @@ function HomePage() {
       </div>
       <h1 id="headline">Link Liste</h1>
       <div className="main_contend">
-        <CreateList tag_names={["a","b"]}></CreateList>
+        <CreateList tag_names={metaTags} update_data={updateData}></CreateList>
       </div>
 
       <div id='tagContainer'></div>
