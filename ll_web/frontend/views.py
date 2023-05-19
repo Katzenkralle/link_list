@@ -10,7 +10,7 @@ from django.contrib.auth import authenticate, login, logout
 def index(request, *args, **kwargs):
     return render(request, 'index.html')
 
-@login_required(login_url='login')
+
 def login_page(request):
     if request.method == 'POST':
         account = request.POST.get('account')

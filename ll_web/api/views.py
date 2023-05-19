@@ -3,15 +3,27 @@ from django.http import HttpResponse, JsonResponse
 from rest_framework.views import APIView
 from rest_framework import status
 
-from .models import Profile
+from .models import Profile, List
 
 from .json_handler import from_json, to_json
 # Create your views here.
 
 @login_required(login_url='login')
 def create_list(request):
-    print(request.data)
+    if request.method != 'POST':
+        return HttpResponse("Post domain", status=status.HTTP_204_NO_CONTENT)
+    new_list_name = request.POST['list_name']
+    new_list_color = request.POST['list_color']
+    new_list_tag = request.POST['list_tag']
 
+    if List.objects.all().filter(user=request.user, name=new_list_name).exists():
+        return HttpResponse("Already exists", status=status.HTTP_406_NOT_ACCEPTABLE)
+    else:
+        List.objects.create(user = request.user,
+                            name = new_list_name,
+                            tag = new_list_tag,
+                            color = new_list_color).save()
+        return HttpResponse("Saved", status=status.HTTP_202_ACCEPTED)
 
 @login_required(login_url='login')
 def manage_tags(request):
