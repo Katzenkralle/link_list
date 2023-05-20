@@ -53,6 +53,14 @@ def manage_tags(request):
 @login_required(login_url='login')
 def get_data_for_home(request):
     user = request.user
-
     user_tags = Profile.objects.all().get(user=user).tags
-    return JsonResponse({'metaTags': user_tags}, safe=False)
+
+    user_list = []
+    user_list_objects = List.objects.all().filter(user = user)
+    for object in user_list_objects:
+        user_list.append({'name': object.name, 
+                          'color': object.color,
+                          'tag': object.tag,
+                          'content': object.content})
+    
+    return JsonResponse({'metaTags': user_tags, 'metaLists': to_json(user_list)}, safe=False)

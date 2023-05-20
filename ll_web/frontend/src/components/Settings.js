@@ -59,6 +59,8 @@ const handleTagSubmit = (event) => {
     <div className='main_contend'>
       <div>
       <div id='tagContainer'></div>
+      <button className="alinge_right" onClick={() => window.location.href = "/"}>Home</button>
+
         <h1>Settings</h1>
         <h3>Tag management:</h3>
         <form onSubmit={(e) => handleTagSubmit(e)}>
