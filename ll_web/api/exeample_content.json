@@ -18,46 +18,25 @@
     }
     ],
 
-    "content_alternative": [
-    [
-    "Contetnt First",
-    "style",
-    "metaType",
-    "metaPath"
-    ],
-    [
-    "Link",
-    "H3",
-    "link",
-    "https://google.com"
-    ],
-    [
-    "Normal Text",
-    "p"
-    ],
-    [
-    "",
-    "brake_line"
-    ],
-    [
-    "",
-    "Code",
-    "python",
-    [
-    "Every Line,",
-    "in new",
-    "element"
-    ]
-    ],
-    [
-    "First element",
-    "Orderd_list",
-    "0"
-    ],
-    [
-    "seccond element",
-    "Orderd_list",
-    "1"
-    ]
-    ]
+    "contenta": [
+        {
+        "type": "h",
+        "text": "Test Text to format",
+        "style": "1"
+        },
+        {
+        "type": "li",
+        "text": "Google",
+        "path": "www.google.com"
+        },
+        {
+        "type": "p",
+        "text": "normal Text"
+        },
+        {
+        "type": "li",
+        "text": "",
+        "path": "www.google.com"
+        }
+        ]
 }

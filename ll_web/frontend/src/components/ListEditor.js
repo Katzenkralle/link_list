@@ -1,5 +1,7 @@
 import React, { useEffect, useState, Component} from 'react';
 import ReactDOM from 'react-dom/client';
+import renderByLine from './ViewContent';
+import '../../static/ViewUserContent.css'
 
 const styles = {
     overlay: {
@@ -28,6 +30,7 @@ const styles = {
       flexDirection: 'column' 
     },
     head: {
+      all: 'unset',
       flexGrow: 0,
       flexShrink: 1,
       flexBasis: 'auto',
@@ -37,7 +40,10 @@ const styles = {
     mainBody: {
       flexGrow: 1,
       flexShrink: 1,
-      flexBasis: 'auto'
+      flexBasis: 'auto',
+      marginLeft: '1em',
+      marginRight: '1em',
+      cursor: 'default'
     },
     footer: {
       margin: 'auto'
@@ -49,6 +55,15 @@ const styles = {
 
 function ListEditor (props){
     const [viewMode, setViewMode] = useState('view');
+
+    const [content, setContent] = useState(props.content);
+    const [tag, setTag] = useState(props.tag);
+    const [color, setColor] = useState(props.color);
+    const [name, setName] = useState(props.name)
+
+    useEffect(() => {
+      setContent(props.content);
+    }, [props.content]);
 
     const addLink = () => {
 
@@ -65,38 +80,62 @@ function ListEditor (props){
     const seperator = () => {
 
     }
+    const updateListData = () => {
+      fetch('api/getMetaHome/')
+      .then(response => response.json())
+      .then(data => {var relevantList = JSON.parse(data.metaLists).find(obj => obj.name === name);
+                     setColor(relevantList.color); setTag(relevantList.tag); setContent(relevantList.content)}) //console.log(data.metaTags)
+      .catch(error => console.error('Error:', error));
+  };
+    
 
-    const save_list = () => {
+    const saveList = () => {
+      const formData = new FormData();
+      formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
+      formData.append("list_name", name)
+      formData.append("list_tag", document.getElementById('select_tag').value)
+      formData.append("list_color", document.getElementById('list_color').value)
+      formData.append("list_content", document.getElementById('list_content').value)
 
+      fetch("api/manageLists/", {
+        method: 'POST',
+        body: formData,
+      })
+        .then((response) => {
+          // Handle the response if needed
+          if (response.status == 406){
+            document.getElementById('list_edit_msg').innerHTML = "An Error occurred!"
+          }
+          else {
+            props.update_data()
+            updateListData()
+            document.getElementById('list_edit_msg').innerHTML = "Operation Successful";
+            
+          }
+          setTimeout(() => {  document.getElementById('list_edit_msg').innerHTML = '';}, 5000);
+          
+        })
+        .catch((error) => {
+          // Handle any errors that occur during the submission
+          console.log("err")
+          console.error('Form submission error:', error);
+        });
     }
 
-    const DivViewMode = () => {
-        return (
-          <div style={styles.mainBody}>
-            {/* Content for view mode */}
-          </div>
-        );
-      };
-      
-      const DivEditMode = () => {
-        return (
-          <div style={styles.mainBody}>
-            {/* Content for edit mode */}
-          </div>
-        );
-      };
+  
     return (
         <div style={styles.overlay}>
           <div style={styles.box}>
             
             <div style={styles.head}>
-                <h3>{props.name}</h3>
-                <select id='select_tag' defaultValue={props.tag} style={styles.button}>
+                <h3>{name}</h3>
+                <select id='select_tag' defaultValue={tag} style={styles.button}>
                     <option value="default" >Default</option>
                     {props.tag_names.map((option) => (
                         <option key={option} value={option}>{option}</option>
                     ))}
                 </select>
+                <input style={styles.button} type="color" id="list_color" name="list_color" defaultValue={color}/>
                 <button style={styles.button} onClick={() => {ReactDOM.createRoot(document.getElementById('listEditor')).unmount()}}>Exit</button>
             </div>
 
@@ -109,15 +148,20 @@ function ListEditor (props){
             </div>):(<div hidden/>)}
             
             {viewMode === 'view' ? (
-                <DivViewMode />
+                <div style={styles.mainBody} dangerouslySetInnerHTML={{ __html: renderByLine(content, 'view') }} />
             ) : (
-                <DivEditMode />
+                <textarea id="list_content" style={{...styles.mainBody, backgroundColor: '#a5a5a5'}} defaultValue={renderByLine(content, 'edit')}></textarea>
             )}
             
             <div style={styles.footer}>
                 <button onClick={() => {if (viewMode === 'view'){setViewMode('edit');} else{setViewMode('view')}}}>Change Mode</button>
-                <button onClick={() => {save_list}}>Save</button>
-                </div>
+                {viewMode === 'view' ? (
+                    <button onClick={() => {}}>Open all Links</button>
+                ) : (
+                    <button onClick={() => {saveList()}}>Save</button>
+                )}
+                <p id='list_edit_msg'></p>
+              </div>
             
           </div>
         </div>

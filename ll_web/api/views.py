@@ -5,25 +5,36 @@ from rest_framework import status
 
 from .models import Profile, List
 
-from .json_handler import from_json, to_json
+from .json_handler import from_json, to_json, content_for_db
 # Create your views here.
 
 @login_required(login_url='login')
-def create_list(request):
+def manage_lists(request):
     if request.method != 'POST':
         return HttpResponse("Post domain", status=status.HTTP_204_NO_CONTENT)
+    
     new_list_name = request.POST['list_name']
-    new_list_color = request.POST['list_color']
     new_list_tag = request.POST['list_tag']
-
-    if List.objects.all().filter(user=request.user, name=new_list_name).exists():
-        return HttpResponse("Already exists", status=status.HTTP_406_NOT_ACCEPTABLE)
-    else:
-        List.objects.create(user = request.user,
-                            name = new_list_name,
-                            tag = new_list_tag,
-                            color = new_list_color).save()
+    new_list_color = request.POST['list_color']
+    try:
+        #Code to edit an exsisting List
+        new_list_content = request.POST['list_content']
+        content = content_for_db(new_list_content)
+        list_to_modify = List.objects.all().get(user=request.user, name=new_list_name)
+        list_to_modify.tag = new_list_tag; list_to_modify.color = new_list_color; list_to_modify.content = to_json(content)
+        list_to_modify.save()
         return HttpResponse("Saved", status=status.HTTP_202_ACCEPTED)
+
+    except:
+        #Code to Create a new List
+        if List.objects.all().filter(user=request.user, name=new_list_name).exists():
+            return HttpResponse("Already exists", status=status.HTTP_406_NOT_ACCEPTABLE)
+        else:
+            List.objects.create(user = request.user,
+                                name = new_list_name,
+                                tag = new_list_tag,
+                                color = new_list_color).save()
+            return HttpResponse("Saved", status=status.HTTP_202_ACCEPTED)
 
 @login_required(login_url='login')
 def manage_tags(request):

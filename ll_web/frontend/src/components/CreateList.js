@@ -15,7 +15,7 @@ export default class CreateList extends Component {
       formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
       formData.append("list_tag", document.getElementById('select_tag').value)
 
-      fetch("api/createList/", {
+      fetch("api/manageLists/", {
         method: 'POST',
         body: formData,
       })

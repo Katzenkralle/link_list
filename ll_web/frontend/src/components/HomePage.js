@@ -8,6 +8,7 @@ function HomePage() {
   const [metaTags, setMetaTags] = useState([]);
   const [metaLists, setMetaLists] = useState([]);
 
+
   const fetchData = () => {
     fetch('api/getMetaHome/')
       .then(response => response.json())
@@ -44,6 +45,7 @@ function HomePage() {
 
       <div id='tagContainer'></div>
       <div id='listEditor'></div>
+      
     </div>
   );
 }
