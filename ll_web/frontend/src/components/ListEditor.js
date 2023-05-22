@@ -80,6 +80,7 @@ function ListEditor (props){
     const seperator = () => {
 
     }
+
     const updateListData = () => {
       fetch('api/getMetaHome/')
       .then(response => response.json())
@@ -88,13 +89,12 @@ function ListEditor (props){
       .catch(error => console.error('Error:', error));
   };
     
-
     const saveList = () => {
       const formData = new FormData();
       formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
       formData.append("list_name", name)
-      formData.append("list_tag", document.getElementById('select_tag').value)
-      formData.append("list_color", document.getElementById('list_color').value)
+      formData.append("list_tag", document.getElementById('select_tag_editor').value)
+      formData.append("list_color", document.getElementById('list_color_editor').value)
       formData.append("list_content", document.getElementById('list_content').value)
 
       fetch("api/manageLists/", {
@@ -107,7 +107,6 @@ function ListEditor (props){
             document.getElementById('list_edit_msg').innerHTML = "An Error occurred!"
           }
           else {
-            props.update_data()
             updateListData()
             document.getElementById('list_edit_msg').innerHTML = "Operation Successful";
             
@@ -122,22 +121,64 @@ function ListEditor (props){
         });
     }
 
+    const deleatList = () => {
+      const formData = new FormData();
+      formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
+      formData.append("list_name", name)
+      formData.append("list_color", 'del')
+
+      fetch("api/manageLists/", {
+        method: 'POST',
+        body: formData,
+      })
+        .then((response) => {
+          // Handle the response if needed
+          if (response.status == 406){
+            document.getElementById('list_edit_msg').innerHTML = "An Error occurred!"
+            setTimeout(() => {  document.getElementById('list_edit_msg').innerHTML = '';}, 5000);
+          }
+          else {
+               exitEditor()         
+          }          
+        })
+        .catch((error) => {
+          // Handle any errors that occur during the submission
+          console.log("err")
+          console.error('Form submission error:', error);
+        });
+    }
+
+    const exitEditor = () => {
+      props.update_data();
+      ReactDOM.createRoot(document.getElementById('listEditor')).unmount();
+    }
+
+    const TopBarEdit = () => {
+      return(
+        <div style={styles.head}>
+          <button style={styles.button} onClick={() => deleatList()}>Deleat</button>
+          <h3>{name}</h3>
+          <select id='select_tag_editor' defaultValue={tag} style={styles.button}>
+              <option value="default" >Default</option>
+              {props.tag_names.map((option) => (
+                  <option key={option} value={option}>{option}</option>
+              ))}
+          </select>
+          <input style={styles.button} type="color" id="list_color_editor" name="list_color_editor" defaultValue={color}/>
+          <button style={styles.button} onClick={() => exitEditor()}>Exit</button>
+        </div>
+      )
+    }
+
   
     return (
         <div style={styles.overlay}>
           <div style={styles.box}>
             
-            <div style={styles.head}>
-                <h3>{name}</h3>
-                <select id='select_tag' defaultValue={tag} style={styles.button}>
-                    <option value="default" >Default</option>
-                    {props.tag_names.map((option) => (
-                        <option key={option} value={option}>{option}</option>
-                    ))}
-                </select>
-                <input style={styles.button} type="color" id="list_color" name="list_color" defaultValue={color}/>
-                <button style={styles.button} onClick={() => {ReactDOM.createRoot(document.getElementById('listEditor')).unmount()}}>Exit</button>
-            </div>
+          {viewMode != 'view' ? (<TopBarEdit></TopBarEdit>):(<div style={styles.head}>
+            <h3>{name}</h3>
+            <button style={styles.button} onClick={() => exitEditor()}>Exit</button>
+          </div>)}
 
             {viewMode != 'view' ? (
             <div style={styles.footer}>

@@ -14,8 +14,18 @@ def manage_lists(request):
         return HttpResponse("Post domain", status=status.HTTP_204_NO_CONTENT)
     
     new_list_name = request.POST['list_name']
-    new_list_tag = request.POST['list_tag']
     new_list_color = request.POST['list_color']
+    
+    if new_list_color == 'del':
+        #Chech if Command to delaead list: list_color = del
+        List.objects.all().get(user = request.user, name=new_list_name).delete()
+        return HttpResponse("Saved", status=status.HTTP_202_ACCEPTED)
+    
+    new_list_tag = request.POST['list_tag']
+
+    
+   
+
     try:
         #Code to edit an exsisting List
         new_list_content = request.POST['list_content']

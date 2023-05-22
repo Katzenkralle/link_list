@@ -15,7 +15,7 @@ class List(models.Model):
     name = models.CharField(max_length=20)
     color = models.CharField(max_length=7, unique=False)
     tag = models.CharField(max_length=24, unique=False)
-    content = models.CharField(default='{}', max_length=500, unique=False)
+    content = models.CharField(default='[]', max_length=500, unique=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 

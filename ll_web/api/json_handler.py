@@ -29,7 +29,6 @@ def check_link_sequence(string):
 
 
 def content_for_db(data):
-    print(rf"{data}")
     lines = data.split('\n')
     db_data = []
     for line in lines:

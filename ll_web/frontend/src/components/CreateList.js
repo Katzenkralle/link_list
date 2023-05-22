@@ -25,6 +25,7 @@ export default class CreateList extends Component {
             document.getElementById('list_creation_msg').innerHTML = "An Error occurred!"
           }
           else {
+            this.props.update_data()
             document.getElementById('list_creation_msg').innerHTML = "List Sucessfully created!";
           }
         })
