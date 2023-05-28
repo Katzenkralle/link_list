@@ -1,7 +1,8 @@
-import React, { useEffect, useState, Component} from 'react';
+import React, { useEffect, useState, Component, useRef} from 'react';
 import ReactDOM from 'react-dom/client';
 import renderByLine from './ViewContent';
 import '../../static/ViewUserContent.css'
+
 
 const styles = {
     overlay: {
@@ -65,21 +66,25 @@ function ListEditor (props){
       setContent(props.content);
     }, [props.content]);
 
-    const addLink = () => {
+    //Quick Input Buttons:
+    const handleInsertion = (strToInset) => {
+      console.log(strToInset)
+      const textarea = document.getElementById('list_content');
+      const startPos = textarea.selectionStart;
+      const endPos = textarea.selectionEnd;
 
-    }
+      const currentValue = textarea.value;
+      const newValue =
+        currentValue.substring(0, startPos) +
+        strToInset +
+        currentValue.substring(endPos);
 
-    const addHeadlineLevel = () => {
+      console.log("StartPos", startPos, "Endpos", endPos)
+      textarea.value = newValue;
+      textarea.focus();
+      textarea.setSelectionRange(startPos + strToInset.length, startPos + strToInset.length);
+    };
 
-    }
-
-    const colorLine = () => {
-
-    }
-
-    const seperator = () => {
-
-    }
 
     const updateListData = () => {
       fetch('api/getMetaHome/')
@@ -182,10 +187,8 @@ function ListEditor (props){
 
             {viewMode != 'view' ? (
             <div style={styles.footer}>
-                <button onClick={() => {addLink}}>Link</button>
-                <button onClick={() => {addHeadlineLevel}}>Headline</button>
-                <button onClick={() => {colorLine}}>Color Line</button>
-                <button onClick={() => {seperator}}>Spacer</button>
+                <button onClick={() => {handleInsertion('[]()')}}>Link</button>
+                <button onClick={() => {handleInsertion('#')}}>Headline</button>
             </div>):(<div hidden/>)}
             
             {viewMode === 'view' ? (
@@ -197,7 +200,9 @@ function ListEditor (props){
             <div style={styles.footer}>
                 <button onClick={() => {if (viewMode === 'view'){setViewMode('edit');} else{setViewMode('view')}}}>Change Mode</button>
                 {viewMode === 'view' ? (
-                    <button onClick={() => {}}>Open all Links</button>
+                    <button onClick={() => {renderByLine(content, 'links').forEach(link => {
+                      window.open(link, '_blank').focus()
+                    });}}>Open all Links</button>
                 ) : (
                     <button onClick={() => {saveList()}}>Save</button>
                 )}

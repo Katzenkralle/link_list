@@ -22,6 +22,16 @@ function formatParagraph(paragraph, mode){
         return paragraph['text'] + "\n"
     }
 }
+
+function formatBreakeRow(mode){
+    if (mode == 'view'){
+        return "<br/>"
+    }
+    else {
+        return "\n"
+    }
+}
+
 function formatLink(link, mode){
     if (link['text'] == ''){
         link['text'] = link['path']
@@ -44,13 +54,26 @@ function formatLink(link, mode){
     }
 }
 
+function allLinks(content){
+    var links = []
+    content.forEach(element => {
+        if (element['type'] == 'li'){
+            links.push(element['path'])
+        }
+    })
+    //console.log(links)
+    return links
+}
 
 function renderByLine(raw_content, mode){
-    //console.log("Raw:", raw_content)
+    //console.log("Raw:", raw_content, "Mode", mode)
 
     var content = JSON.parse(raw_content)
     var formatedContent = ''
 
+    if (mode == 'links'){
+        return allLinks(content)
+    }
     //console.log(content)
     content.forEach(element => {
         //console.log("Current Element:", element)
@@ -67,9 +90,13 @@ function renderByLine(raw_content, mode){
                 //console.log('h', mode)
                 formatedContent += formatHeadline(element, mode);
                 break;
+            case "br":
+                formatedContent += formatBreakeRow(mode)
         }
     });
     //console.log("All:", formatedContent)
     return formatedContent
 }
+
+
 export default renderByLine

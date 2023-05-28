@@ -53,6 +53,9 @@ def content_for_db(data):
                             'text': link_text,
                             'path': link_path})
 
+        elif line == '\r':
+            db_data.append({'type':'br',
+                            'text' : ""})
         else:
             db_data.append({'type': 'p',
                             'text': line})
