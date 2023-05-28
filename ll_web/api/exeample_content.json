@@ -1,42 +1,11 @@
-{
-    "content": [
-    {
-    "text": "Example Text",
-    "Style": "H1",
-    "metaType": "link",
-    "metaPath": "https://Google.com"
-    },
-    {
-    "text": "Immage",
-    "metaType": "img",
-    "metaPath": "C:\\sth.png"
-    },
-    {
-    "text": "normal Text",
-    "Style": "H1",
-    "metaType": "p"
-    }
-    ],
-
-    "contenta": [
-        {
-        "type": "h",
-        "text": "Test Text to format",
-        "style": "1"
-        },
-        {
-        "type": "li",
-        "text": "Google",
-        "path": "www.google.com"
-        },
-        {
-        "type": "p",
-        "text": "normal Text"
-        },
-        {
-        "type": "li",
-        "text": "",
-        "path": "www.google.com"
-        }
-        ]
-}
+[{"type": "p", "text": "Biggest\r", "style": [["h", 1]]},
+{"type": "p", "text": "2Biggest\r", "style": [["h", 2]]},
+{"type": "p", "text": "3Biggest\r", "style": [["h", 3]]},
+{"type": "p", "text": "4Biggest\r", "style": [["h", 4]]},
+{"type": "p", "text": "5Biggest\r", "style": [["h", 5]]},
+{"type": "p", "text": "6Biggest\r", "style": [["h", 6]]},
+{"type": "br", "text": "", "style": []},
+{"type": "p", "text": "Normal P\r", "style": []},
+{"type": "p", "text": "Now Links can be Headlines Look\r", "style": [["h", 1]]},
+{"type": "li", "text": "", "path": "https://aur.archlinux.org/", "style": [["h", 2]]},
+{"type": "li", "text": "", "path": "http://192.168.2.209:8080/", "style": []}]

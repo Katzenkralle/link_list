@@ -1,13 +1,11 @@
 .viewUserContentP {
     all: unset;
     display: flex;
-    font-size: initial;
 }
 
 .viewUserContentLi {
     all: unset;
     display: flex;
-    font-size: initial;
     color: rgb(43, 43, 150);
     cursor: pointer;
 }

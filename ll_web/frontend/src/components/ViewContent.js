@@ -1,13 +1,12 @@
-
-
-function formatHeadline(headline, mode){
+function styleHeadline(line, level, mode){
+    //console.log(line, level, mode)
     if (mode == 'view'){
-        var htmlElement = `<h${headline['style']} class='viewUserContentH'>${headline['text']}</h${headline['style']}>`
+        var htmlElement = `<h${level} class='viewUserContentH'>${line}</h${level}>`
         //console.log("H:", htmlElement)
         return htmlElement
     }
     else {
-        var line = "#".repeat(headline['style']) + headline['text'] + "\n"
+        var line = "#".repeat(level) + line
         return line
     }
 }
@@ -76,25 +75,33 @@ function renderByLine(raw_content, mode){
     }
     //console.log(content)
     content.forEach(element => {
+        var formatedLine
         //console.log("Current Element:", element)
+        //Type
         switch (element['type']){
             case 'p':
                 //console.log('p', mode)
-                formatedContent += formatParagraph(element, mode);
+                formatedLine = formatParagraph(element, mode);
                 break;
             case 'li':
                 //console.log('li', mode)
-                formatedContent += formatLink(element, mode);
-                break;
-            case 'h':
-                //console.log('h', mode)
-                formatedContent += formatHeadline(element, mode);
+                formatedLine = formatLink(element, mode);
                 break;
             case "br":
-                formatedContent += formatBreakeRow(mode)
+                formatedLine = formatBreakeRow(mode);
         }
+        //console.log("Pre Style:", formatedLine)
+        //Style:
+        element['style'].forEach(style => {
+            switch (style[0]){
+                case 'h':
+                    formatedLine = styleHeadline(formatedLine, style[1], mode);
+                    break;
+            }
+        });
+        formatedContent += formatedLine;
     });
-    //console.log("All:", formatedContent)
+    console.log("All:", formatedContent)
     return formatedContent
 }
 
