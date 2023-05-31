@@ -30,14 +30,14 @@ function Settings() {
 const handleTagSubmit = (event) => {
     event.preventDefault(); // Prevent the default form submission
     // Perform any additional logic or data manipulation here
-    if (document.getElementById("input_tag_name").value == 'default'){
+    if (document.getElementById("del_tag_name").value == 'default'){
       return
     }
 
     // Send the form data to a different URL using AJAX/fetch
     const formData = new FormData(event.target);
     formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
-    formData.append("tag_name", document.getElementById("input_tag_name").value)
+    formData.append("tag_name", document.getElementById("del_tag_name").value)
     formData.append("action", 'del')
     fetch("api/manageTags/", {
       method: 'POST',
@@ -45,8 +45,13 @@ const handleTagSubmit = (event) => {
     })
       .then((response) => {
         // Handle the response if needed
-        console.log('Form data submitted successfully');
-        updateData()
+        if (response.status == 202){
+          updateData()
+        }
+        else {
+          document.getElementById('settings_tag_msg').innerHTML = 'Error, the Tag is proabably used by a list!'
+        }
+        setTimeout(() => {  document.getElementById('settings_tag_msg').innerHTML = '';}, 5000);
       })
       .catch((error) => {
         // Handle any errors that occur during the submission
@@ -64,8 +69,8 @@ const handleTagSubmit = (event) => {
         <h1>Settings</h1>
         <h3>Tag management:</h3>
         <form onSubmit={(e) => handleTagSubmit(e)}>
-          <label htmlFor="input_tag_name">Delete Tag:</label>
-          <select id='input_tag_name'>
+          <label htmlFor="del_tag_name">Delete Tag:</label>
+          <select id='del_tag_name'>
             <option value="default">None</option>
             {metaTags.map((option) => (
               <option key={option} value={option}>{option}</option>
@@ -78,6 +83,7 @@ const handleTagSubmit = (event) => {
             <ManageTags mode='create' update_data={updateData}/>
           );
         }}>New Tag</button>
+        <div id='settings_tag_msg'></div>
         <h3>Other:</h3>
         
       </div>

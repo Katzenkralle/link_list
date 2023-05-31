@@ -23,9 +23,6 @@ def manage_lists(request):
     
     new_list_tag = request.POST['list_tag']
 
-    
-   
-
     try:
         #Code to edit an exsisting List
         new_list_content = request.POST['list_content']
@@ -58,18 +55,29 @@ def manage_tags(request):
                 return HttpResponse("Already present", status=status.HTTP_304_NOT_MODIFIED)
             elif new_tag == 'default':
                 return HttpResponse("Forbidden value", status=status.HTTP_400_BAD_REQUEST)
+            elif new_tag == '':
+                return HttpResponse("May not be none", status=status.HTTP_400_BAD_REQUEST)
             else:    
                 user_tags.append(new_tag)
                 working_entry = Profile.objects.all().get(user = request.user)
                 working_entry.tags = to_json(user_tags)
                 working_entry.save()
+                return HttpResponse("Success", status=status.HTTP_201_CREATED)
         case "del": 
-            user_tags.remove(request.POST['tag_name'])
+            del_tag = request.POST['tag_name']
+            #user_lists = List.objects.all().filter(user=request.user)
+            for list in List.objects.all().filter(user=request.user):
+                if list.tag == del_tag:
+                    return HttpResponse("A list withe this Tak exists!", status=status.HTTP_304_NOT_MODIFIED)
+            user_tags.remove(del_tag)
             working_entry = Profile.objects.all().get(user = request.user)
             working_entry.tags = to_json(user_tags)
             working_entry.save()
+            return HttpResponse("", status=status.HTTP_202_ACCEPTED)
+        
+
         case _: pass
-    return HttpResponse("Success", status=status.HTTP_201_CREATED)
+    
 
 @login_required(login_url='login')
 def get_data_for_home(request):
@@ -83,5 +91,5 @@ def get_data_for_home(request):
                           'color': object.color,
                           'tag': object.tag,
                           'content': object.content})
-    
+
     return JsonResponse({'metaTags': user_tags, 'metaLists': to_json(user_list)}, safe=False)

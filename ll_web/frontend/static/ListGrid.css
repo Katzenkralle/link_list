@@ -2,12 +2,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Adjust this value to center vertically */
+     /* Adjust this value to center vertically */
+    flex-wrap: wrap;
   }
   
   .box {
-    width: 25vw; /* Adjust this value to control the size of the boxes */
-    height: 25vw; /* Adjust this value to maintain square aspect ratio */
+    width: 20vw; /* Adjust this value to control the size of the boxes */
+    height: 20vw; /* Adjust this value to maintain square aspect ratio */
     background-color: #ccc;
     margin: 10px;
+    overflow: hidden;
   }

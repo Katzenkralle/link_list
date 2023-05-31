@@ -38,7 +38,7 @@ export default class ManageTags extends Component {
 
     handleSelfDestruct = () => {
       ReactDOM.createRoot(document.getElementById('tagContainer')).unmount()
-      document.getElementById('select_tag').value = 'default'
+      //document.getElementById('select_tag').value = 'default'
     }
 
     handleSubmit = (event) => {
@@ -74,7 +74,7 @@ export default class ManageTags extends Component {
               <div>
                 <button onClick={this.handleSelfDestruct}>Close</button>
                 <h3>Input New Tag:</h3>
-                <form onSubmit={this.handleSubmit}>
+                <form onSubmit={(e) => {this.handleSubmit(e)}}>
                   <input type="text" id="input_tag_name" placeholder="Name..."></input>
                   <button type="submit">Submit</button>
                 </form>
