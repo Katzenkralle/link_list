@@ -3,10 +3,11 @@ import CreateList from './CreateList';
 import ReactDOM from 'react-dom/client';
 import ManageTags from './ManageTags';
 
+
 function Settings() {
   // Fetch Data
   const [metaTags, setMetaTags] = useState([]);
-  const [metaLists, setMetaLists] = useState([]);
+  //const [metaLists, setMetaLists] = useState([]);
 
   const fetchData = () => {
     fetch('api/getMetaHome/')
@@ -61,10 +62,14 @@ const handleTagSubmit = (event) => {
 
 
   return (
-    <div className='main_contend'>
-      <div>
+    <div className='box_for_main_contend'>
+      <div className='main_contend'>
       <div id='tagContainer'></div>
-      <button className="alinge_right" onClick={() => window.location.href = "/"}>Home</button>
+      <div className="top_bar">
+        <button onClick={() => window.location.href = "/"}>Home</button>
+        <button className="alinge_right" onClick={() => window.location.href = "logout"}>Logout</button>
+      </div>
+      
 
         <h1>Settings</h1>
         <h3>Tag management:</h3>

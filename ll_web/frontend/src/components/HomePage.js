@@ -2,11 +2,13 @@ import React, { useEffect, useState, Component} from 'react';
 import CreateList from './CreateList';
 import ListGrid from './ListGrid';
 import SelectMenu from './SelectMenu';
+import '../../static/home.css'
 
 function HomePage() {
 
   const [metaTags, setMetaTags] = useState([]);
   const [metaLists, setMetaLists] = useState([]);
+  const [metaUser, setMetaUser] = useState([]);
   const [tagFilter, setTagFilter] = useState([]);
   const [listAfterFilter, setListAfterFilter] = useState([]);
 
@@ -68,6 +70,7 @@ function HomePage() {
       .then(response => response.json())
       .then(data => {setMetaTags(JSON.parse(data.metaTags)); 
                      setMetaLists(JSON.parse(data.metaLists));
+                     setMetaUser(JSON.parse(data.metaUser))
                      filterHandler();}) //console.log(data.metaTags)
       .catch(error => console.error('Error:', error));
   };
@@ -92,18 +95,17 @@ function HomePage() {
   return (
     <div>
       <div className="top_bar">
-        <p className="alinge_left">Username</p>
-        <p>{Date()}</p>
+        <p className="alinge_left">{metaUser.name}</p>
         <button className="alinge_right" onClick={() => window.location.href = "settings"}>Settings</button>
       </div>
 
       <h1 id="headline">Link Liste</h1>
 
-      <div className="main_contend">
+      <div className="box_for_main_contend tags">
         <CreateList tag_names={metaTags} update_data={updateData}></CreateList>
       </div>
 
-      <div className='filter'>
+      <div className='box_for_main_contend filter'>
         <input type='text' id='list_search' placeholder='Search...' onChange={filterHandler}></input>
         <SelectMenu
           id="filter_tag"
@@ -117,7 +119,7 @@ function HomePage() {
                   )}/>
       </div>
 
-      <div className='main_contend'>
+      <div className='box_for_main_contend list_grid'>
         <ListGrid lists={listAfterFilter} tag_names={metaTags} update_data={updateData}></ListGrid>
       </div>
 

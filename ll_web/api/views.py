@@ -92,4 +92,4 @@ def get_data_for_home(request):
                           'tag': object.tag,
                           'content': object.content})
 
-    return JsonResponse({'metaTags': user_tags, 'metaLists': to_json(user_list)}, safe=False)
+    return JsonResponse({'metaTags': user_tags, 'metaLists': to_json(user_list), 'metaUser': to_json({'name': user.username})}, safe=False)

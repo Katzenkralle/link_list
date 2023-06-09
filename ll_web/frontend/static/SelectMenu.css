@@ -1,0 +1,26 @@
+/* Styles for the ReactSelect component */
+.SelectMenu__menu {
+    /* Custom styles for the dropdown menu */
+    color: #9f1616;
+    background-color: red;
+  }
+  
+  /* Styles for the Option component */
+  div > .Option {
+    color: aquamarine;
+    background-color: aqua;
+    /* Custom styles for the Option component container */
+  }
+  
+  div > .Option input[type="checkbox"] {
+    /* Custom styles for the checkbox */
+    color: blue;
+    background-color: blueviolet;
+  }
+  
+  div > .Option label {
+    /* Custom styles for the label */
+    color: black;
+    background-color: blanchedalmond;
+  }
+  

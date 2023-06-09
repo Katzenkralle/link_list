@@ -12,6 +12,20 @@ h1 {
     font-size: 2.5em;
 }
 
+button, input, select{
+    width: 10em;
+    height: 2em;
+    background-color: #1e1e1e;
+    color: #858382;
+    border: none;
+    border-radius: 25px;
+    margin: 0.5em;  
+}
+button:hover, input:hover{
+    color: white;
+    border: rgb(165, 165, 165);
+}
+
 .top_bar {
     align-items: center;
     justify-content: center;
@@ -27,9 +41,17 @@ h1 {
     margin-right: 0;
 }
 
-.main_contend{
-    justify-content: center;
+.box_for_main_contend{
     display: flex;
-    margin: 0;
-    padding: 0.5em;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.main_contend{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 75%;
 }
