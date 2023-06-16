@@ -150,9 +150,13 @@ function ListEditor (props){
 
             {viewMode != 'view' ? (
             //If in edit mode, show quick insert buttons
-            <div className='footer'>
+            <div className='editButtons'>
                 <button onClick={() => {handleInsertion('[]()')}}>Link</button>
                 <button onClick={() => {handleInsertion('#')}}>Headline</button>
+                <button onClick={() => {handleInsertion('---')}}>Seperator</button>
+                <button onClick={() => {handleInsertion('->. ')}}>List Item</button>
+                <button onClick={() => {handleInsertion('-x. ')}}>Orderd List Item</button>
+                <button onClick={() => {handleInsertion('!x!')}}>Ignore</button>
             </div>
             ):(
             //else show nothing (not possible so a hidden empty div is rendert)
@@ -180,8 +184,7 @@ function ListEditor (props){
                                                     : `http://${link}`), '_blank').focus()});}}
                                         >Open all Links</button>
                 )}
-
-                <p id='list_edit_msg'></p>
+              <p id='list_edit_msg' className='rightBlock'></p>
               </div>
           </div>
         </div>

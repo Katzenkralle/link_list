@@ -7,7 +7,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        overflow: auto;
+        overflow: scroll;
         color: white;
         background-color: #787878;
         display: flex;
@@ -40,6 +40,7 @@
         width: 90%;
         display: flex;
         flex-direction: column;
+        overflow: scroll;
       }
 }
 
@@ -74,11 +75,24 @@
     
   }
 
-
   .footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin: auto;
   }
 
+.editButtons{
+  display: flex;
+  flex-wrap: wrap;  
+  justify-content: center;
+}
+.editButtons button{
+  margin-right: 4px;
+  margin-left: 4px;
+  margin-bottom: 4px;
+  margin-top: 0; 
+}
 textarea {
     cursor: text;
 }

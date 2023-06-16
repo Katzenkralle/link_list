@@ -25,6 +25,17 @@ def check_link_sequence(string):
         else:
             return '', ''
 
+def check_lists(line):
+    if line[:4] == '->. ':
+        return (line[4:], 'ul',)
+    elif line[:4] == '-x. ':
+        return (line[4:], 'ol',)
+    elif line[:2] == '- ':  #Simplefied versions, may be removed
+        return (line[2:], 'ul',)
+    elif line[:2] == 'x.':  #Simplefied versions, may be removed
+        return (line[2:], 'ol',)
+    else:
+        return (line, None, )
 
 def count_headline(line):
     h_num = 0
@@ -40,8 +51,18 @@ def content_for_db(data):
     db_data = []
     for line in lines:
         if line == '': continue
+                #Check if Ignor operator is on line start
+        if line[:3] == '!x!':
+            #If true, skip ckecking for styles or formats and continue with next line
+            db_data.append({'type': 'p',
+                            'text': line[3:],
+                            'style': [['ig']]})
+            continue
+
         #Check for Links
         link_text, link_path = check_link_sequence(line)
+        #Check for lists
+        line, list_type = check_lists(line)
         #Check for Headline:
         h_num = count_headline(line)
 
@@ -53,6 +74,9 @@ def content_for_db(data):
         elif line == '\r':
             db_data.append({'type':'br',
                             'text' : ""})
+        elif line == '---\r' or line == '---':
+            db_data .append({'type': 'sp',
+                             'text': ""})
         else:
             db_data.append({'type': 'p',
                             'text': line})
@@ -63,6 +87,11 @@ def content_for_db(data):
         #elif line[0] == '#':
             db_data[-1]['text'] = db_data[-1]['text'][h_num:]
             db_data[-1]['style'].append(['h', h_num])
+
+        if list_type == 'ul':
+            db_data[-1]['style'].append(['ul'])
+        elif list_type == 'ol':
+            db_data[-1]['style'].append(['ol'])
 
     return db_data
             

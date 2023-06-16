@@ -10,9 +10,8 @@
 }
 
 @media (max-width: 600px) {
-  
   .box {
-    width: 100%; /* Adjust this value to control the initial size of the boxes */
+    width: 80vw; /* Adjust this value to control the initial size of the boxes */
   }
   }
 

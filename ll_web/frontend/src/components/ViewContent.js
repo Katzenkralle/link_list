@@ -14,6 +14,29 @@ function styleHeadline(line, level, mode){
     }
 }
 
+function styleList(line, previousLine, nextLine,type, mode){
+    var htmlElement = ''
+    if (mode == 'view'){
+        if (previousLine == undefined || !previousLine.style.some(arr => arr.includes(type))){ //If it dosnt include
+            htmlElement = `<${type}>`
+        }
+        htmlElement += `<li>${line}</li>`
+        if (nextLine == undefined || !nextLine.style.some(arr => arr.includes(type))){ //If it dosnt include
+            htmlElement += `</${type}>`
+        }
+
+        return htmlElement
+    }
+    else{
+        if (type == 'ul'){
+            var line = '->. ' + line}
+        else{
+            var line = '-x. ' + line
+        }
+        return line
+    }
+}
+
 function formatParagraph(paragraph, mode){
     //Takes paragraph=current element in itteration; mode=view/edit
     if (mode == 'view'){
@@ -25,6 +48,16 @@ function formatParagraph(paragraph, mode){
     else {
         //returns text of paragraph element and new line (Md-syntax)
         return paragraph['text'] + "\n"
+    }
+}
+
+function formatSeparator(mode){
+    if (mode == 'view'){
+        var htmlElement = `<hr/>`
+        return htmlElement
+    }
+    else{
+        return '---' + "\n"
     }
 }
 
@@ -66,6 +99,8 @@ function formatLink(link, mode){
     }
 }
 
+
+
 function allLinks(content){
     //Takes content=all elements, searches for links
     var links = []
@@ -91,7 +126,7 @@ function renderByLine(raw_content, mode){
         return allLinks(content)
     }
     //console.log(content)
-    content.forEach(element => {
+    content.forEach((element, index) => {
         //For each line=element
         var formatedLine
         //console.log("Current Element:", element)
@@ -107,14 +142,24 @@ function renderByLine(raw_content, mode){
                 break;
             case "br":
                 formatedLine = formatBreakeRow(mode);
+                break;
+            case "sp":
+                formatedLine = formatSeparator(mode);
+                break;
         }
         //console.log("Pre Style:", formatedLine)
         ////Folloring Styles the above created html element thou covering it in another HTML element
         element['style'].forEach(style => {
-            switch (style[0]){
-                case 'h':
-                    formatedLine = styleHeadline(formatedLine, style[1], mode);
-                    break;
+            if (style[0] == 'h'){
+                    formatedLine = styleHeadline(formatedLine, style[1], mode);}
+            if (style[0] == 'ul'){
+                formatedLine = styleList(formatedLine, content[(index-1)], content[(index+1)], 'ul', mode)
+            }
+            if (style[0] == 'ol'){
+                formatedLine = styleList(formatedLine, content[(index-1)], content[(index+1)], 'ol', mode)
+            }
+            if (style[0] == 'ig'){
+                if (mode != 'view'){formatedLine = '!x!' + formatedLine}
             }
         });
         formatedContent += formatedLine;
