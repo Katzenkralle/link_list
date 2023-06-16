@@ -2,57 +2,7 @@ import React, { useEffect, useState, Component, useRef} from 'react';
 import ReactDOM from 'react-dom/client';
 import renderByLine from './ViewContent';
 import '../../static/ViewUserContent.css'
-
-
-const styles = {
-    overlay: {
-      position: 'fixed',
-      display: 'flex',
-      width: '100%',
-      height: '100%',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      zIndex: 2,
-      cursor: 'pointer',
-    },
-    box: {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      color: 'white',
-      transform: 'translate(-50%, -50%)',
-      backgroundColor: '#787878',
-      height:'90%',
-      width: '90%',
-      display: 'flex',
-      flexDirection: 'column' 
-    },
-    head: {
-      all: 'unset',
-      flexGrow: 0,
-      flexShrink: 1,
-      flexBasis: 'auto',
-      margin: 'auto',
-      display: 'flex'
-    },
-    mainBody: {
-      flexGrow: 1,
-      flexShrink: 1,
-      flexBasis: 'auto',
-      marginLeft: '1em',
-      marginRight: '1em',
-      cursor: 'default'
-    },
-    footer: {
-      margin: 'auto'
-    },
-    button: {
-      margin: 'auto' // Added margin property
-    },
-  };
+import '../../static/ListEditor.css'
 
 
 //If done, consider creatin on large if (mode = view){suite}else{suit} instead of many smal ones
@@ -173,34 +123,34 @@ function ListEditor (props){
     }
   
     return (
-        <div style={styles.overlay}>
-          <div style={styles.box}>
+        <div className='overlay'>
+          <div className='editorBox'>
             
             {viewMode != 'view' ? (
             //Top bar in edit mode
-            <div style={styles.head}>
-              <button style={styles.button} onClick={() => deleatList()}>Deleat</button>
-              <h3>{name}</h3>
-              <select id='select_tag_editor' defaultValue={tag} style={styles.button}>
+            <div className='head'>
+              <button className='leftBlock' onClick={() => deleatList()}>Deleat</button>
+              <select className='centerBlock' id='select_tag_editor' defaultValue={tag}>
                   <option value="default" >Default</option>
                   {props.tag_names.map((option) => (
                       <option key={option} value={option}>{option}</option>
                   ))}
               </select>
-              <input style={styles.button} type="color" id="list_color_editor" name="list_color_editor" defaultValue={color}/>
-              <button style={styles.button} onClick={() => exitEditor()}>Exit</button>
+              <h3 className='centerBlock'>{name}</h3>
+              <input className='centerBlock' type="color" id="list_color_editor" name="list_color_editor" defaultValue={color}/>
+              <button  className='rightBlock' onClick={() => exitEditor()}>Exit</button>
             </div>
             ):(
             //Top bar in view mode
-            <div style={styles.head}>
-                <h3>{name}</h3>
-                <button style={styles.button} onClick={() => exitEditor()}>Exit</button>
+            <div className='head'>
+                <h3 className='centerBlock' style={{marginLeft:'auto',}}>{name}</h3>
+                <button className='rightBlock' onClick={() => exitEditor()}>Exit</button>
             </div>
             )}
 
             {viewMode != 'view' ? (
             //If in edit mode, show quick insert buttons
-            <div style={styles.footer}>
+            <div className='footer'>
                 <button onClick={() => {handleInsertion('[]()')}}>Link</button>
                 <button onClick={() => {handleInsertion('#')}}>Headline</button>
             </div>
@@ -210,13 +160,13 @@ function ListEditor (props){
             
             {viewMode != 'view' ? (
                 //If in edit mode, render textarea input field with default value gained from renderByLine
-                <textarea id="list_content" style={{...styles.mainBody, backgroundColor: '#a5a5a5'}} defaultValue={renderByLine(content, 'edit')}></textarea>
+                <textarea id="list_content" className='mainBody' style={{backgroundColor: '#a5a5a5'}} defaultValue={renderByLine(content, 'edit')}></textarea>
             ) : (
                 //If in view mode, render html container with inner html formated by renderByLine, it must be set dangously to enable this 
-                <div style={styles.mainBody} dangerouslySetInnerHTML={{ __html: renderByLine(content, 'view') }} />
+                <div className='mainBody' dangerouslySetInnerHTML={{ __html: renderByLine(content, 'view') }} />
             )}
   
-            <div style={styles.footer}>
+            <div className='footer'>
                 <button onClick={() => {if (viewMode === 'view'){setViewMode('edit');} else{setViewMode('view')}}}>Change Mode</button>
                 {viewMode != 'view' ? (
                     //If in edit mode, render a Save button to save changes

@@ -21,6 +21,7 @@
   margin: 7px;
   padding: 4px;
   overflow: hidden;
+  border-radius: 5%;
 }
 
 .container {

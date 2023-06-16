@@ -1,0 +1,89 @@
+
+@media (max-width: 600px) {
+    .editorBox {
+        
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow: auto;
+        color: white;
+        background-color: #787878;
+        display: flex;
+        flex-direction: column;
+      }
+}
+
+@media (min-width: 600px) {
+    .overlay {
+        position: fixed;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 2;
+      }
+      
+      .editorBox {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        color: white;
+        transform: translate(-50%, -50%);
+        background-color: #787878;
+        height: 90%;
+        width: 90%;
+        display: flex;
+        flex-direction: column;
+      }
+}
+
+
+  /*Headline Styles */
+    .head {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+
+    .centerBlock{
+    /*Placholder for possible Future css*/
+    /*Some css sitill in .js file: Top bar in view mode*/
+    }
+    .leftBlock{
+    margin-right:auto;
+    margin-left: 1em;
+    }
+    .rightBlock{
+    margin-right: 1em;
+    margin-left: auto;
+    }
+
+/*Styling of MainBody (HTML injection fiel and Editor)*/
+.mainBody {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+    margin-left: 1em;
+    margin-right: 1em;
+    
+  }
+
+
+  .footer {
+    margin: auto;
+  }
+
+textarea {
+    cursor: text;
+}
+
+button, input, select {
+    cursor: auto;
+  }
+  
