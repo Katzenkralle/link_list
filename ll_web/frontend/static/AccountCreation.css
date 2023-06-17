@@ -1,0 +1,48 @@
+.form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.form-submit {
+    display: flex;
+    margin-left: auto;
+    margin-right: 14vw;
+    align-items: baseline;
+    justify-content: end;
+}
+
+.main_frame_login {
+    height: auto;
+    display: flex;
+    justify-content: center;
+}
+
+.main_frame_login div {
+    width: 70%;
+}
+
+label {
+    flex-basis: 40%; /* Adjust as needed */
+}
+
+input[type='text'],
+input[type='password'] {
+    flex-basis: 50%; /* Adjust as needed */
+}
+
+input[type='submit'] {
+    flex-basis: 13%; /* Adjust as needed */
+    align-items: end;
+}
+a {
+    text-align: right;
+    font-size: small;
+    margin-left: 4vw;
+    
+}
+h3 {
+    text-align: center;
+}

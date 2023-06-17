@@ -94,4 +94,12 @@ def content_for_db(data):
             db_data[-1]['style'].append(['ol'])
 
     return db_data
-            
+
+def has_letter(string):
+    # Iterate through each character in the string
+    for char in string:
+        # Check if the character is a letter
+        if char.isalpha():
+            return True  # Found a letter, return True
+
+    return False  # No letters found in the string

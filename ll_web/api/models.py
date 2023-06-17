@@ -18,6 +18,9 @@ class List(models.Model):
     content = models.CharField(default='[]', max_length=500, unique=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+class AppWideData(models.Model):
+    news_baner = models.CharField(max_length=500, default='')
+    invatation_codes = models.CharField(max_length=200, default='[]')
 
 """
 Data Structure LinkListProfile:

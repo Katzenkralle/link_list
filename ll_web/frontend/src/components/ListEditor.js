@@ -86,7 +86,7 @@ function ListEditor (props){
         });
     }
 
-    const deleatList = () => {
+    const deletList = () => {
       //Request list removel, takes persistant (unique) name and sets color (which otherwise only can be hex) to del
       const formData = new FormData();
       formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
@@ -129,7 +129,7 @@ function ListEditor (props){
             {viewMode != 'view' ? (
             //Top bar in edit mode
             <div className='head'>
-              <button className='leftBlock' onClick={() => deleatList()}>Deleat</button>
+              <button className='leftBlock' onClick={() => deletList()}>Delet</button>
               <select className='centerBlock' id='select_tag_editor' defaultValue={tag}>
                   <option value="default" >Default</option>
                   {props.tag_names.map((option) => (

@@ -99,7 +99,7 @@ function HomePage() {
         <button className="alinge_right" onClick={() => window.location.href = "settings"}>Settings</button>
       </div>
 
-      <h1 id="headline">Link Liste</h1>
+      <h1 id="headline">Link List</h1>
 
       <div className="box_for_main_contend tags">
         <CreateList tag_names={metaTags} update_data={updateData}></CreateList>

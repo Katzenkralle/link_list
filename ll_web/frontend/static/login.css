@@ -32,6 +32,7 @@ button:hover, input:hover{
     margin: auto;
 }
 
+
 .login_field {
     margin-left: 25%;
 }
@@ -42,3 +43,9 @@ button:hover, input:hover{
     }
 }
 
+a{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: small;
+}

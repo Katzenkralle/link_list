@@ -1,11 +1,14 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
+
 from django.http import HttpResponse, JsonResponse
 from rest_framework.views import APIView
 from rest_framework import status
 
-from .models import Profile, List
+from .models import Profile, List, AppWideData
 
-from .json_handler import from_json, to_json, content_for_db
+from .json_handler import from_json, to_json, content_for_db, has_letter
 # Create your views here.
 
 @login_required(login_url='login')
@@ -93,3 +96,29 @@ def get_data_for_home(request):
                           'content': object.content})
 
     return JsonResponse({'metaTags': user_tags, 'metaLists': to_json(user_list), 'metaUser': to_json({'name': user.username})}, safe=False)
+
+def modify_account(request): 
+    if request.method != 'POST':
+        return HttpResponse("Post domain", status=status.HTTP_204_NO_CONTENT)
+    
+    user = request.POST['user']
+    action = request.POST['action']
+
+    if action == 'account_creation':
+        invatation_code = request.POST['invatation_code']
+
+        if User.objects.filter(username=user).exists():
+            return HttpResponse("already used", status=status.HTTP_226_IM_USED)
+        elif invatation_code not in from_json(AppWideData.objects.get(id=1).invatation_codes):
+            return HttpResponse("not invited", status=status.HTTP_423_LOCKED)
+        #At this point, all chanlanges have been passed, an the creation prosses can start 
+        new_passwd = request.POST['passwd']
+        
+        #Check validety of username and passed
+        if not has_letter(user) or not has_letter(new_passwd):
+            return HttpResponse("invalid user name", status=status.HTTP_406_NOT_ACCEPTABLE)
+    
+        #Create user and profile
+        user = User.objects.create_user(username=user, password=new_passwd)
+        Profile(user=user).save()
+        return HttpResponse('created', status=status.HTTP_201_CREATED)

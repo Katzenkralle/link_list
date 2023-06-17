@@ -10,6 +10,9 @@ from django.contrib.auth import authenticate, login, logout
 def index(request, *args, **kwargs):
     return render(request, 'index.html')
 
+def index_no_login(request, *args, **kwargs):
+    #this index function is only beeing accest when creating an account
+    return render(request, 'index.html')
 
 def login_page(request):
     if request.method == 'POST':
