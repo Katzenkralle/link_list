@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+import os
 
 from pathlib import Path
 
@@ -20,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-122(gq4)3z#^@l*za8s$!)ie-nroj(@aw4i#6=w3w*p!7w&pjc'
+SECRET_KEY = os.environ.get('SECRET_KEY') #os.environ['SECRET_KEY'] would rais an error, if non existent
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.environ.get('RUN_IN_DEBUG'))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(';')  #Seperate Hosts by ;
 
 
 # Application definition
@@ -124,3 +125,17 @@ STATIC_URL = 'api/static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS').split(';')
+
+
+#SECURE_HSTS_SECONDS = 31536000 #Instruckts the Webbrowser only to use secure connections on the Website for one year !TEst befor Production! cant be tunrd off easily
+
+#CSRF_COOKIE_SECURE = True
+
+#SESSION_COOKIE_SECURE = True
+
+#SECURE_SSL_REDIRECT = True #Would only alow ssl connections
+
+#mimetypes.add_type("text/css", ".css", True)
+#mimetypes.add_type("text/html", ".html", True)
