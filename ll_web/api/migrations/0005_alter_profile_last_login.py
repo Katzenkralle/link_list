@@ -7,13 +7,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0003_alter_profile_last_login'),
+        ('api', '0004_alter_profile_last_login'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='profile',
             name='last_login',
-            field=models.DateTimeField(default=datetime.datetime(2023, 6, 19, 11, 39, 15, 791926)),
+            field=models.DateTimeField(default=datetime.datetime(2023, 6, 19, 11, 39, 19, 916170)),
         ),
     ]

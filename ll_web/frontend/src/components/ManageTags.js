@@ -37,6 +37,7 @@ export default class ManageTags extends Component {
     }
 
     handleSelfDestruct = () => {
+      document.getElementById("select_tag").value = "default"
       ReactDOM.createRoot(document.getElementById('tagContainer')).unmount()
       //document.getElementById('select_tag').value = 'default'
     }

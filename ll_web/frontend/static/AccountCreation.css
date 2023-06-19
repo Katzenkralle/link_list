@@ -28,11 +28,12 @@ label {
     flex-basis: 40%; /* Adjust as needed */
 }
 
+/*
 input[type='text'],
 input[type='password'] {
-    flex-basis: 50%; /* Adjust as needed */
+    flex-basis: 50%; might not be needet
 }
-
+*/
 input[type='submit'] {
     flex-basis: 13%; /* Adjust as needed */
     align-items: end;

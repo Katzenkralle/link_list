@@ -28,9 +28,9 @@ function HomePage() {
     var listSelection = []
     if (keyword  != ''){
       //if keyword is not default, search for all lists with name=keyword
-      //console.log("Key != None")
+      console.log(keyword)
       metaLists.forEach(list => {
-        if (keyword == list['name']){
+        if (list['name'].toLowerCase().includes(keyword.toLowerCase())){ //prior == instead of in
           if (tagFilter.length != 0){
             //if tagFilter is not default, also check if the found list is in the array of selected tags
             tagFilter.forEach(tag => {
