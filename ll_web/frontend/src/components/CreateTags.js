@@ -31,7 +31,7 @@ const styles = {
 
 
 
-export default class ManageTags extends Component {
+export default class CreateTags extends Component {
     constructor(props) {
       super(props);
     }

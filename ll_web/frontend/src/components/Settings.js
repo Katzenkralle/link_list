@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import CreateList from './CreateList';
 import ReactDOM from 'react-dom/client';
-import ManageTags from './ManageTags';
+import CreateTags from './CreateTags';
 
 
 function Settings() {
@@ -31,14 +31,14 @@ function Settings() {
 const handleTagSubmit = (event) => {
     event.preventDefault(); // Prevent the default form submission
     // Perform any additional logic or data manipulation here
-    if (document.getElementById("del_tag_name").value == 'default'){
+    if (document.getElementById("select_tag").value == 'default'){
       return
     }
 
     // Send the form data to a different URL using AJAX/fetch
     const formData = new FormData(event.target);
     formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
-    formData.append("tag_name", document.getElementById("del_tag_name").value)
+    formData.append("tag_name", document.getElementById("select_tag").value)
     formData.append("action", 'del')
     fetch("api/manageTags/", {
       method: 'POST',
@@ -74,8 +74,8 @@ const handleTagSubmit = (event) => {
         <h1>Settings</h1>
         <h3>Tag management:</h3>
         <form onSubmit={(e) => handleTagSubmit(e)}>
-          <label htmlFor="del_tag_name">Delete Tag:</label>
-          <select id='del_tag_name'>
+          <label htmlFor="select_tag">Delete Tag:</label>
+          <select id='select_tag'>
             <option value="default">None</option>
             {metaTags.map((option) => (
               <option key={option} value={option}>{option}</option>
@@ -85,12 +85,12 @@ const handleTagSubmit = (event) => {
         </form>
         <button onClick={() => {
           ReactDOM.createRoot(document.getElementById("tagContainer")).render(
-            <ManageTags mode='create' update_data={updateData}/>
+            <CreateTags mode='create' update_data={updateData}/>
           );
         }}>New Tag</button>
         <div id='settings_tag_msg'></div>
         <h3>Other:</h3>
-        
+
       </div>
     </div>
   );
