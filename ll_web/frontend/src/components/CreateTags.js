@@ -1,36 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom/client';
 
-const styles = {
-  overlay: {
-    position: 'fixed',
-    display: 'flex',
-    width: '100%',
-    height: '100%',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    zIndex: 2,
-    cursor: 'pointer',
-  },
-  box: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    color: 'white',
-    transform: 'translate(-50%, -50%)',
-    backgroundColor: '#787878',
-    height:'10em',
-    width: '20em',
-    justifyContent: 'center',
-    display: 'flex'
-  },
-};
-
-
-
 export default class CreateTags extends Component {
     constructor(props) {
       super(props);
@@ -69,11 +39,11 @@ export default class CreateTags extends Component {
 
       render() {
       return (
-        <div style={styles.overlay}>
-          <div style={styles.box}>
+        <div className='dialog_overlay'>
+          <div className='dialog_box'>
             {this.props.mode === 'create' && (
-              <div>
-                <button onClick={this.handleSelfDestruct}>Close</button>
+              <div className='main_contend'>
+                <button onClick={this.handleSelfDestruct} className='alinge_right'>Close</button>
                 <h3>Input New Tag:</h3>
                 <form onSubmit={(e) => {this.handleSubmit(e)}}>
                   <input type="text" id="input_tag_name" placeholder="Name..."></input>

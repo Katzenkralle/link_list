@@ -129,6 +129,7 @@ function ListEditor (props){
             {viewMode != 'view' ? (
             //Top bar in edit mode
             <div className='head'>
+              <h6 className='leftBlock' style={{marginRight: '0',}}>Edit Mode</h6>
               <button className='leftBlock' onClick={() => deletList()}>Delete</button>
               <select className='centerBlock' id='select_tag_editor' defaultValue={tag}>
                   <option value="default" >Default</option>
@@ -143,7 +144,8 @@ function ListEditor (props){
             ):(
             //Top bar in view mode
             <div className='head'>
-                <h3 className='centerBlock' style={{marginLeft:'auto',}}>{name}</h3>
+                <h6 className='leftBlock'>View Mode</h6>
+                <h3 className='centerBlock'>{name}</h3>
                 <button className='rightBlock' onClick={() => exitEditor()}>Exit</button>
             </div>
             )}

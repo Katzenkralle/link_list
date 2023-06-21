@@ -45,25 +45,25 @@
 }
 
 
-  /*Headline Styles */
-    .head {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    }
+/*Headline Styles */
+  .head {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  }
 
-    .centerBlock{
-    /*Placholder for possible Future css*/
-    /*Some css sitill in .js file: Top bar in view mode*/
-    }
-    .leftBlock{
-    margin-right:auto;
-    margin-left: 1em;
-    }
-    .rightBlock{
-    margin-right: 1em;
-    margin-left: auto;
-    }
+  .centerBlock{
+  /*Placholder for possible Future css*/
+  /*Some css sitill in .js file: Top bar in view mode*/
+  }
+  .leftBlock{
+  margin-right:auto;
+  margin-left: 1em;
+  }/*Some css sitill in .js file: Top bar in view mode*/
+  .rightBlock{
+  margin-right: 1em;
+  margin-left: auto;
+  }
 
 /*Styling of MainBody (HTML injection fiel and Editor)*/
 .mainBody {
@@ -72,7 +72,6 @@
     flex-basis: auto;
     margin-left: 1em;
     margin-right: 1em;
-    
   }
 
   .footer {

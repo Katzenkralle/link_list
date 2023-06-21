@@ -24,7 +24,7 @@ def login_page(request):
             login(request, user)
             return redirect('index')
         else:
-            messages.info(request, 'Token is incorrect!')
+            messages.info(request, 'Username or Password incorrect!')
     return render(request, 'login.html')
 
 @login_required(login_url='login')

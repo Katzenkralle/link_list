@@ -108,10 +108,11 @@ def modify_account(request):
     if request.method != 'POST':
         return HttpResponse("Post domain", status=status.HTTP_204_NO_CONTENT)
     
-    user = request.POST['user']
+    
     action = request.POST['action']
 
     if action == 'account_creation':
+        user = request.POST['user']
         invatation_code = request.POST['invatation_code']
 
         if User.objects.filter(username=user).exists():
@@ -129,3 +130,6 @@ def modify_account(request):
         user = User.objects.create_user(username=user, password=new_passwd)
         Profile(user=user).save()
         return HttpResponse('created', status=status.HTTP_201_CREATED)
+    elif action == 'account_removal':
+        User.objects.get(username=request.user).delete()
+        return HttpResponse("Removed User", status=status.HTTP_202_ACCEPTED)

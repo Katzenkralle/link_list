@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import CreateList from './CreateList';
 import ReactDOM from 'react-dom/client';
 import CreateTags from './CreateTags';
-
+import ConfirmDialog from './ConfirmDialog'
 
 function Settings() {
   // Fetch Data
@@ -60,39 +60,76 @@ const handleTagSubmit = (event) => {
       });
   };
 
+//Handel Acount Deletion:
+const deleteAccount = (usrInput) => {
+  if (usrInput != true){
+    return
+  } else {
+    const formData = new FormData();
+        formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
+        formData.append("action", 'account_removal')
+
+      fetch("api/accountCreation/", {
+        method: 'POST',
+        body: formData,
+      })
+        .then((response) => {
+          switch (response.status){
+            case 204: setCreationMsgInnerHTML("This should never happen"); break;
+            case 201: window.location.href = '/login'; break;
+          }
+        })
+        .catch((error) => {
+          setCreationMsgInnerHTML("This should never happen:" + error);
+        });
+  }
+
+}
 
   return (
-    <div className='box_for_main_contend'>
-      <div className='main_contend'>
-      <div id='tagContainer'></div>
+    <div>
       <div className="top_bar">
-        <button onClick={() => window.location.href = "/"}>Home</button>
+        <button className="alinge_left" onClick={() => window.location.href = "/"}>Home</button>
         <button className="alinge_right" onClick={() => window.location.href = "logout"}>Logout</button>
       </div>
       
 
         <h1>Settings</h1>
-        <h3>Tag management:</h3>
-        <form onSubmit={(e) => handleTagSubmit(e)}>
-          <label htmlFor="select_tag">Delete Tag:</label>
-          <select id='select_tag'>
-            <option value="default">None</option>
-            {metaTags.map((option) => (
-              <option key={option} value={option}>{option}</option>
-            ))}
-          </select>
-          <button type='submit'>Delete!</button>
-        </form>
-        <button onClick={() => {
-          ReactDOM.createRoot(document.getElementById("tagContainer")).render(
-            <CreateTags mode='create' update_data={updateData}/>
-          );
-        }}>New Tag</button>
-        <div id='settings_tag_msg'></div>
-        <h3>Other:</h3>
 
+        <div className='box_for_main_contend'>
+          <div className='main_contend'>
+          <h3>Tag management:</h3>
+          <form onSubmit={(e) => handleTagSubmit(e)}>
+            <label htmlFor="select_tag">Delete Tag:</label>
+            <select id='select_tag'>
+              <option value="default">None</option>
+              {metaTags.map((option) => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
+            <button type='submit'>Delete!</button>
+          </form>
+          <button onClick={() => {
+            ReactDOM.createRoot(document.getElementById("tagContainer")).render(
+              <CreateTags mode='create' update_data={updateData}/>
+            );
+          }}>New Tag</button>
+          </div>
+        </div>
+
+        
+        <h3>Other:</h3>
+        <div className='box_for_main_contend'>
+          <button onClick={() => {
+            {ReactDOM.createRoot(document.getElementById("tagContainer")).render(<ConfirmDialog 
+              onConfirmation={(e) => {deleteAccount(e)}} question="Do you realy want to delete your Account?" trueBtnText="Delete!" falseBtnText="Go Back!"/>)}
+          }}>Delead Account</button>
+        </div>
+          
+
+        <div id='tagContainer'></div>
       </div>
-    </div>
+    
   );
 }
 

@@ -19,6 +19,7 @@ const Option = (props) => {
   );
 };
 
+
 export default class SelectMenu extends Component {
   constructor(props) {
     super(props);
@@ -72,6 +73,7 @@ export default class SelectMenu extends Component {
               ...provided,
                // On Hover:
               color: state.isFocused ? "white" : provided.color,
+              
               // Add any other styles you want to modify for the placeholder
               //Experimental might be removed:
               width: '20vw'

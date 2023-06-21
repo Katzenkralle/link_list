@@ -22,6 +22,11 @@
   overflow: hidden;
   border-radius: 5%;
 }
+.box:hover{
+  outline: 5px solid #565559;
+  /*outline-offset: 4px;*/
+  cursor: pointer;
+}
 
 .container {
   display: flex;
