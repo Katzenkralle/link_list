@@ -43,7 +43,6 @@ button:hover, input:hover{
 
 .box_for_main_contend{
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
     margin: 0 auto;

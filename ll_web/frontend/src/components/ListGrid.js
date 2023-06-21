@@ -9,7 +9,6 @@ function ListGrid (props){
 
     useEffect(() => {
       setLists(props.lists);
-      console.log("ListGridLists:", lists)
     }, [props.lists]);
 
     return(

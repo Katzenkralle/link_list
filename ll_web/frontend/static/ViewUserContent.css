@@ -14,3 +14,8 @@
     display: flex;
     font-size: revert;    
 }
+
+.viewUserContentHr{
+    color: rgb(74, 77, 80);
+    width: 95%;
+}

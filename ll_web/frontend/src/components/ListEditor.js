@@ -153,7 +153,7 @@ function ListEditor (props){
             <div className='editButtons'>
                 <button onClick={() => {handleInsertion('[]()')}}>Link</button>
                 <button onClick={() => {handleInsertion('#')}}>Headline</button>
-                <button onClick={() => {handleInsertion('---')}}>Seperator</button>
+                <button onClick={() => {handleInsertion('---\n')}}>Seperator</button>
                 <button onClick={() => {handleInsertion('->. ')}}>List Item</button>
                 <button onClick={() => {handleInsertion('-x. ')}}>Orderd List Item</button>
                 <button onClick={() => {handleInsertion('!x!')}}>Ignore</button>

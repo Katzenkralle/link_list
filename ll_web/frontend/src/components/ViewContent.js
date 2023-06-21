@@ -53,7 +53,7 @@ function formatParagraph(paragraph, mode){
 
 function formatSeparator(mode){
     if (mode == 'view'){
-        var htmlElement = `<hr/>`
+        var htmlElement = `<hr class='viewUserContentHr' />`
         return htmlElement
     }
     else{
@@ -164,7 +164,6 @@ function renderByLine(raw_content, mode){
         });
         formatedContent += formatedLine;
     });
-    console.log("All:", formatedContent)
     //Returns the formated content (either HTML elemet or Md-like syntax)
     return formatedContent
 }

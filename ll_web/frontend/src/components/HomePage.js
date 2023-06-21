@@ -28,7 +28,7 @@ function HomePage() {
     var listSelection = []
     if (keyword  != ''){
       //if keyword is not default, search for all lists with name=keyword
-      console.log(keyword)
+      
       metaLists.forEach(list => {
         if (list['name'].toLowerCase().includes(keyword.toLowerCase())){ //prior == instead of in
           if (tagFilter.length != 0){
@@ -47,7 +47,7 @@ function HomePage() {
       })
     } else {
       //If keyword is default, tagFilter must not be default (otherwise the abouve would have already returned)
-      console.log("Tag!=None")
+      
       tagFilter.forEach(tag => {
         metaLists.forEach(list => {
           //Iterates thou every tag in the array and every dict in metaList
@@ -91,7 +91,7 @@ function HomePage() {
     fetchData();
   };
   //
-  console.log("SelectetTag:", tagFilter)
+  
   return (
     <div>
       <div className="top_bar">
@@ -103,9 +103,12 @@ function HomePage() {
 
       <div className="box_for_main_contend tags">
         <CreateList tag_names={metaTags} update_data={updateData}></CreateList>
+        <hr></hr>
       </div>
 
       <div className='box_for_main_contend filter'>
+        {/*Bothe elements hear do not support below 300px in display width, du to css
+          Should maby be changed in the Future!*/}
         <input type='text' id='list_search' placeholder='Search...' onChange={filterHandler}></input>
         <SelectMenu
           id="filter_tag"
@@ -122,7 +125,10 @@ function HomePage() {
       <div className='box_for_main_contend list_grid'>
         <ListGrid lists={listAfterFilter} tag_names={metaTags} update_data={updateData}></ListGrid>
       </div>
-
+      
+      {/*tagContainer is a empty placeholder div in which the TagCreate component is placed once it gets calld by the tag selctor
+         listEditor is a empty placehoder div in which the listEditor component is placed once it gets calld by clicking on a list in ListGrid 5+
+      */}
       <div id='tagContainer'></div>
       <div id='listEditor'></div>
       

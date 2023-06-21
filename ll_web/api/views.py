@@ -40,6 +40,13 @@ def manage_lists(request):
         if List.objects.all().filter(user=request.user, name=new_list_name).exists():
             return HttpResponse("Already exists", status=status.HTTP_406_NOT_ACCEPTABLE)
         else:
+            #Creates UnnamedListx, wehen name == ''
+            if new_list_name == "":
+                i, unamed_list_name = 1, "UnamedList"
+                while List.objects.filter(user = request.user, name=f"{unamed_list_name}{i}.").exists():
+                    i += 1
+                new_list_name = f"{unamed_list_name}{i}."
+
             List.objects.create(user = request.user,
                                 name = new_list_name,
                                 tag = new_list_tag,

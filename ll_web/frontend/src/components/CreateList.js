@@ -56,7 +56,7 @@ export default class CreateList extends Component {
             <input type="text" placeholder="Name..." id="list_name" name="list_name" />
             <input type="color" id="list_color" name="list_color" />
             {this.tagField()}
-            <button type="submit">Submit</button>
+            <button type="submit">Create List</button>
           </form>
           <div id="list_creation_msg"></div>
         </div>
