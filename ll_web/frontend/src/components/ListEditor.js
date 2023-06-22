@@ -1,6 +1,7 @@
 import React, { useEffect, useState, Component, useRef} from 'react';
 import ReactDOM from 'react-dom/client';
 import renderByLine from './ViewContent';
+import ConfirmDialog from './ConfirmDialog'
 import '../../static/ViewUserContent.css'
 import '../../static/ListEditor.css'
 
@@ -86,7 +87,7 @@ function ListEditor (props){
         });
     }
 
-    const deletList = () => {
+    const deleteList = () => {
       //Request list removel, takes persistant (unique) name and sets color (which otherwise only can be hex) to del
       const formData = new FormData();
       formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
@@ -130,7 +131,10 @@ function ListEditor (props){
             //Top bar in edit mode
             <div className='head'>
               <h6 className='leftBlock' style={{marginRight: '0',}}>Edit Mode</h6>
-              <button className='leftBlock' onClick={() => deletList()}>Delete</button>
+              <button className='leftBlock' onClick={() =>  {ReactDOM.createRoot(document.getElementById("tagContainer")).render(
+                                      <ConfirmDialog onConfirmation={(usrInput) => usrInput == true ? deleteList() : undefined} question="Do you realy want to delete this List?" trueBtnText="Delete!" falseBtnText="Go Back!"/>)}}>
+                                      Delete</button>
+
               <select className='centerBlock' id='select_tag_editor' defaultValue={tag}>
                   <option value="default" >Default</option>
                   {props.tag_names.map((option) => (

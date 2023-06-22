@@ -40,7 +40,7 @@ export default class CreateList extends Component {
     tagField = () => {
       return (
         <select id='select_tag'>
-          <option value="default" >Default</option>
+          <option value="Default" >Default</option>
           {this.props.tag_names.map((option) => (
             <option key={option} value={option}>{option}</option>
           ))}

@@ -1,10 +1,47 @@
 import React, { useEffect, useState, Component} from 'react';
 import CreateList from './CreateList';
 import ListGrid from './ListGrid';
-import SelectMenu from './SelectMenu';
+import Multiselect from 'multiselect-react-dropdown';
 import '../../static/home.css'
 
 function HomePage() {
+
+  const multiselectStyles = {
+      /* Add your styles here */
+      /* Example: width: '300px' */
+    
+    searchBox: {
+      borderRadius: '25px',
+      background: '#1e1e1e',
+      input: {
+        border: 'none',
+        fontSize: '10px',
+        minHeight: '50px',
+        width: '12vw', // Add this line
+        height: '2.5em', // Add this line
+      },
+    },
+    inputField: {
+      margin: '5px',
+      background: '#1e1e1e'
+
+    },
+    chips: {
+      background: '#565559',
+    },
+    optionContainer: {
+      border: '2px solid',
+      background: '#1e1e1e',
+    },
+    option: {
+      color: 'white',
+     }
+    
+    // groupHeading: {
+    //   /* Add your styles here */
+    //   /* Example: fontWeight: 'bold' */
+    // },
+  };
 
   const [metaTags, setMetaTags] = useState([]);
   const [metaLists, setMetaLists] = useState([]);
@@ -24,7 +61,7 @@ function HomePage() {
       }
       return;
     }
-
+    
     var listSelection = []
     if (keyword  != ''){
       //if keyword is not default, search for all lists with name=keyword
@@ -34,7 +71,7 @@ function HomePage() {
           if (tagFilter.length != 0){
             //if tagFilter is not default, also check if the found list is in the array of selected tags
             tagFilter.forEach(tag => {
-              if (tag['value'] == list['tag']){
+              if (tag == list['tag']){
                 //if so, add to working variable listSelection
                 listSelection.push(list)
               }
@@ -51,7 +88,7 @@ function HomePage() {
       tagFilter.forEach(tag => {
         metaLists.forEach(list => {
           //Iterates thou every tag in the array and every dict in metaList
-          if (tag['value'] == list['tag']){
+          if (tag == list['tag']){
             //if list with fitting name found, add to listSelection
             listSelection.push(list)
           }
@@ -110,16 +147,16 @@ function HomePage() {
         {/*Bothe elements hear do not support below 300px in display width, du to css
           Should maby be changed in the Future!*/}
         <input type='text' id='list_search' placeholder='Search...' onChange={filterHandler}></input>
-        <SelectMenu
+        <Multiselect
           id="filter_tag"
           type="checkbox"
-          checked={tagFilter}
-          isMulti={true}
-          onChange={(e) => {setTagFilter(e);}}
-          options={([{value: 'default', label: 'Default'}]).concat(
-                    metaTags.map((tag) => ({
-                    value: tag, label: tag,}))
-                  )}/>
+          isObject={false}
+          selectedValues={tagFilter}
+          style={multiselectStyles}//style in index.css
+          onSelect={(e) => {setTagFilter(e)}}//onChange={(e) => {setTagFilter(e);}}
+          onRemove={(e) => {setTagFilter(e)}}//
+          options={(['Default']).concat(
+            metaTags.map((tag) => tag))}/>
       </div>
 
       <div className='box_for_main_contend list_grid'>
@@ -129,9 +166,8 @@ function HomePage() {
       {/*tagContainer is a empty placeholder div in which the TagCreate component is placed once it gets calld by the tag selctor
          listEditor is a empty placehoder div in which the listEditor component is placed once it gets calld by clicking on a list in ListGrid 5+
       */}
-      <div id='tagContainer'></div>
       <div id='listEditor'></div>
-      
+      <div id='tagContainer'></div>
     </div>
   );
 }

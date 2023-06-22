@@ -86,3 +86,12 @@ button:hover, input:hover, select:hover{
 .dialog_box h3{
     margin-top: 0;
 }
+.multiselect-container li:hover {
+    background: #565559 !important;
+    color: #fff;
+    cursor: pointer;
+  }.highlightOption {
+    background: #565559;
+    color: #ffffff;
+  }
+  
