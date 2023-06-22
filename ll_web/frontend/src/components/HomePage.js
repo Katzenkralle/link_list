@@ -7,35 +7,38 @@ import '../../static/home.css'
 function HomePage() {
 
   const multiselectStyles = {
-      /* Add your styles here */
-      /* Example: width: '300px' */
+      /* https://github.com/srigar/multiselect-react-dropdown */
     
     searchBox: {
+      border: 'none',
       borderRadius: '25px',
       background: '#1e1e1e',
+      alignContent: 'center',
+      display: 'flex',
+      
       input: {
         border: 'none',
         fontSize: '10px',
         minHeight: '50px',
-        width: '12vw', // Add this line
-        height: '2.5em', // Add this line
       },
     },
     inputField: {
-      margin: '5px',
-      background: '#1e1e1e'
-
+      margin: '0',
     },
     chips: {
       background: '#565559',
+      marginBottom: '0',
     },
     optionContainer: {
-      border: '2px solid',
+      border: '3px solid #565559',
       background: '#1e1e1e',
+      overflow: 'hidden'
     },
     option: {
       color: 'white',
-     }
+      overflow: 'hidden'
+     },
+    
     
     // groupHeading: {
     //   /* Add your styles here */
@@ -152,7 +155,16 @@ function HomePage() {
           type="checkbox"
           isObject={false}
           selectedValues={tagFilter}
-          style={multiselectStyles}//style in index.css
+          closeOnSelect={true}
+          showArrow={true}
+          avoidHighlightFirstOption={true}
+          style={{
+            ...multiselectStyles,
+            searchBox: {
+              ...multiselectStyles.searchBox,
+              minWidth: '12vw',
+              height: '1.75em',
+            }}}
           onSelect={(e) => {setTagFilter(e)}}//onChange={(e) => {setTagFilter(e);}}
           onRemove={(e) => {setTagFilter(e)}}//
           options={(['Default']).concat(

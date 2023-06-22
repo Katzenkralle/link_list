@@ -15,13 +15,22 @@ function ListEditor (props){
     const [content, setContent] = useState(props.content);
     const [tag, setTag] = useState(props.tag);
     const [color, setColor] = useState(props.color);
-    const [name, setName] = useState(props.name)
+    const [name, setName] = useState(props.name);
+    const [renderedContent, setRenderedContent] = useState("")
 
     useEffect(() => {
       //Content needs to be dynamicly updated
       setContent(props.content);
     }, [props.content]);
     
+    useEffect(() => {
+      //For exit confirmation, when not saved and to render content once when view mode changes
+      if (viewMode !== 'view') {
+        setRenderedContent(renderByLine(content, 'edit'));
+      }
+  }, [viewMode]);
+
+
     const handleInsertion = (strToInset) => {
       //Handels insertion of quick formatt buttons at current cursor possition
       //Takes string from preset str in the button element
@@ -49,7 +58,8 @@ function ListEditor (props){
       fetch('api/getMetaHome/')
       .then(response => response.json())
       .then(data => {var relevantList = JSON.parse(data.metaLists).find(obj => obj.name === name);//.find needet becaus backend returns all lists from the user; Finds by list name
-                     setColor(relevantList.color); setTag(relevantList.tag); setContent(relevantList.content)}) //console.log(data.metaTags)
+                     setColor(relevantList.color); setTag(relevantList.tag); setContent(relevantList.content)})
+      .then(viewMode !== 'view' ? setRenderedContent(document.getElementById('list_content').value) : undefined)
       .catch(error => console.error('Error:', error));
   };
     
@@ -74,7 +84,6 @@ function ListEditor (props){
           else {
             updateListData()
             document.getElementById('list_edit_msg').innerHTML = "Operation Successful";
-            
           }
           //Resets previously set innerHTML info msg (after 5s)
           setTimeout(() => {  document.getElementById('list_edit_msg').innerHTML = '';}, 5000);
@@ -143,8 +152,24 @@ function ListEditor (props){
               </select>
               <h3 className='centerBlock'>{name}</h3>
               <input className='centerBlock' type="color" id="list_color_editor" name="list_color_editor" defaultValue={color}/>
-              <button  className='rightBlock' onClick={() => exitEditor()}>Exit</button>
+              <button className='rightBlock' onClick={() => {
+                if (document.getElementById('list_content').value.replace(/\r/g, '') === renderedContent.replace(/\r/g, '')) {
+                    exitEditor();
+                } else {
+                    ReactDOM.createRoot(document.getElementById("tagContainer")).render(
+                        <ConfirmDialog
+                            onConfirmation={(usrInput) => usrInput === true ? exitEditor() : undefined}
+                            question="Do you really want to exit without saving?"
+                            trueBtnText="Exit"
+                            falseBtnText="Stay"
+            />
+        );
+    }
+}}>Exit</button>
+
             </div>
+//" asdad\ndvbnnvn\n  fuj\nasd\n"
+//" asdad\ndvbnnvn\n  fuj\nasd\nsd"
             ):(
             //Top bar in view mode
             <div className='head'>
@@ -170,7 +195,8 @@ function ListEditor (props){
             
             {viewMode != 'view' ? (
                 //If in edit mode, render textarea input field with default value gained from renderByLine
-                <textarea id="list_content" className='mainBody' style={{backgroundColor: '#a5a5a5'}} defaultValue={renderByLine(content, 'edit')}></textarea>
+                
+                <textarea id="list_content" className='mainBody' style={{backgroundColor: '#a5a5a5'}} defaultValue={renderedContent}></textarea>
             ) : (
                 //If in view mode, render html container with inner html formated by renderByLine, it must be set dangously to enable this 
                 <div className='mainBody' dangerouslySetInnerHTML={{ __html: renderByLine(content, 'view') }} />

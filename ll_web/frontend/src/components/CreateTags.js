@@ -7,11 +7,9 @@ export default class CreateTags extends Component {
     }
 
     handleSelfDestruct = () => {
-      document.getElementById("select_tag").value = "default"
+      document.getElementById("select_tag").value = "Default"
       ReactDOM.createRoot(document.getElementById('tagContainer')).unmount()
-      //document.getElementById('select_tag').value = 'default'
     }
-
     handleSubmit = (event) => {
       event.preventDefault(); // Prevent the default form submission
       // Perform any additional logic or data manipulation here

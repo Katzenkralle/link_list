@@ -27,6 +27,11 @@ button:hover, input:hover, select:hover{
     cursor: pointer;
 }
 
+input[type="color"]:hover {
+    border: 3px solid #565559;
+}
+
+
 .top_bar {
     align-items: center;
     justify-content: center;
