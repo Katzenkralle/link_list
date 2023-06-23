@@ -79,6 +79,13 @@
     justify-content: center;
     align-items: center;
     margin: auto;
+    flex-direction: column;
+  }
+  #list_edit_msg {
+    font-style: italic;
+    color: #6700ae;
+    font-size: 19px;
+    margin: 0;
   }
 
 .editButtons{

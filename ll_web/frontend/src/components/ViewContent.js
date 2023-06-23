@@ -100,7 +100,6 @@ function formatLink(link, mode){
 }
 
 
-
 function allLinks(content){
     //Takes content=all elements, searches for links
     var links = []

@@ -5,13 +5,16 @@ hr {
 }
 
 #list_search {
-    width: 12vw;
+    width: 19em;
     height: 2.5em;
 }
 
 @media (max-width: 600px){
     .filter{
         flex-direction: column;
+    }
+    #list_search {
+        width: 90%;
     }
 }
 

@@ -15,7 +15,8 @@ function HomePage() {
       background: '#1e1e1e',
       alignContent: 'center',
       display: 'flex',
-      
+      overflow: 'scroll',
+      maxWidth: "19em",
       input: {
         border: 'none',
         fontSize: '10px',
@@ -32,7 +33,7 @@ function HomePage() {
     optionContainer: {
       border: '3px solid #565559',
       background: '#1e1e1e',
-      overflow: 'hidden'
+      overflow: 'hidden',
     },
     option: {
       color: 'white',
@@ -156,13 +157,14 @@ function HomePage() {
           isObject={false}
           selectedValues={tagFilter}
           closeOnSelect={true}
-          showArrow={true}
+          placeholder="▼ Select..."
           avoidHighlightFirstOption={true}
           style={{
             ...multiselectStyles,
             searchBox: {
               ...multiselectStyles.searchBox,
-              minWidth: '12vw',
+              with: '19em',
+              minWidth: '12em',
               height: '1.75em',
             }}}
           onSelect={(e) => {setTagFilter(e)}}//onChange={(e) => {setTagFilter(e);}}

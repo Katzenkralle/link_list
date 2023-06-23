@@ -20,7 +20,7 @@
   margin: 7px;
   padding: 4px;
   overflow: hidden;
-  border-radius: 5%;
+  border-radius: 1em;
 }
 .box:hover{
   outline: 5px solid #565559;

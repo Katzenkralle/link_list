@@ -17,7 +17,6 @@ function ListEditor (props){
     const [color, setColor] = useState(props.color);
     const [name, setName] = useState(props.name);
     const [renderedContent, setRenderedContent] = useState("")
-
     useEffect(() => {
       //Content needs to be dynamicly updated
       setContent(props.content);
@@ -50,6 +49,12 @@ function ListEditor (props){
       textarea.focus();
       textarea.setSelectionRange(startPos + strToInset.length, startPos + strToInset.length);
     };
+
+    const monitorKeyPressTextarea = (event) => {
+      if (event.keyCode === 9) { //If Tab is pressed
+        event.preventDefault()
+        handleInsertion("    ")
+      }};
 
 
     const updateListData = () => {
@@ -196,27 +201,41 @@ function ListEditor (props){
             {viewMode != 'view' ? (
                 //If in edit mode, render textarea input field with default value gained from renderByLine
                 
-                <textarea id="list_content" className='mainBody' style={{backgroundColor: '#a5a5a5'}} defaultValue={renderedContent}></textarea>
+                <textarea id="list_content" className='mainBody' style={{backgroundColor: '#a5a5a5'}} defaultValue={renderedContent} onKeyDown={(e) => {monitorKeyPressTextarea(e)}}></textarea>
             ) : (
                 //If in view mode, render html container with inner html formated by renderByLine, it must be set dangously to enable this 
                 <div className='mainBody' dangerouslySetInnerHTML={{ __html: renderByLine(content, 'view') }} />
             )}
   
             <div className='footer'>
-                <button onClick={() => {if (viewMode === 'view'){setViewMode('edit');} else{setViewMode('view')}}}>Change Mode</button>
-                {viewMode != 'view' ? (
-                    //If in edit mode, render a Save button to save changes
-                    <button onClick={() => {saveList()}}>Save</button>
-                ) : (
-                    //else render a button that opens all links in new tabs
-                    //if link dos not start with http, append it --> convert to absolut link
-                  <button onClick={() => {renderByLine(content, 'links').forEach(link => {
-                                        window.open((link.startsWith('http')
-                                                    ? link
-                                                    : `http://${link}`), '_blank').focus()});}}
-                                        >Open all Links</button>
-                )}
-              <p id='list_edit_msg' className='rightBlock'></p>
+            <p id='list_edit_msg'></p>
+                <div>
+                  <button onClick={() => {if (viewMode === 'view'){setViewMode('edit');} else{if (document.getElementById('list_content').value.replace(/\r/g, '') === renderedContent.replace(/\r/g, '')) {
+                      setViewMode('view')
+                  } else {
+                      ReactDOM.createRoot(document.getElementById("tagContainer")).render(
+                          <ConfirmDialog
+                              onConfirmation={(usrInput) => usrInput === true ? setViewMode('view') : undefined}
+                              question="Do you really want to Change Mode without saving?"
+                              trueBtnText="Continue"
+                              falseBtnText="Go back"
+                          />
+                      );
+                  }}}}>Change Mode</button>
+                  {viewMode != 'view' ? (
+                      //If in edit mode, render a Save button to save changes
+                      <button onClick={() => {saveList()}}>Save</button>
+                  ) : (
+                      //else render a button that opens all links in new tabs
+                      //if link dos not start with http, append it --> convert to absolut link
+                    
+                    <button onClick={() => {renderByLine(content, 'links').forEach(link => {
+                                          window.open((link.startsWith('http')
+                                                      ? link
+                                                      : `http://${link}`), '_blank').focus()});}}
+                                          >Open all Links</button>
+                  )}
+                </div>
               </div>
           </div>
         </div>
