@@ -94,8 +94,8 @@ function ListEditor (props){
       const formData = new FormData();
       formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
       formData.append("list_name", name)
-      formData.append("list_tag", document.getElementById('select_tag_editor').value)
-      formData.append("list_color", document.getElementById('list_color_editor').value)
+      formData.append("list_tag", tag)
+      formData.append("list_color", color)
       formData.append("list_content", document.getElementById('list_content').value)
 
       fetch("api/manageLists/", {
@@ -167,6 +167,7 @@ function ListEditor (props){
             displayWidth > 600 ? (
               <div className='head'>
                 <h6 className='leftBlock' style={{ marginRight: '0' }}>Edit Mode</h6>
+
                 <button
                   className='leftBlock'
                   onClick={() => {
@@ -178,19 +179,18 @@ function ListEditor (props){
                         falseBtnText="Go Back!"
                       />
                     );
-                  }}
-                >
+                  }}>
                   Delete
                 </button>
     
-                <select className='centerBlock' id='select_tag_editor' defaultValue={tag}>
-                  <option value="default">Default</option>
+                <select className='centerBlock' id='select_tag_editor' defaultValue={tag} onChange={(e) => {setTag(e.target.value)}}>
+                  <option value="Default">Default</option>
                   {props.tag_names.map((option) => (
                     <option key={option} value={option}>{option}</option>
                   ))}
                 </select>
                 <h3 className='centerBlock'>{name}</h3>
-                <input className='centerBlock' type="color" id="list_color_editor" name="list_color_editor" defaultValue={color} />
+                <input className='centerBlock' type="color" id="list_color_editor" name="list_color_editor" defaultValue={color} onChange={(e) => {setColor(e.target.value)}}/>
                 <button
                   className='rightBlock'
                   onClick={() => {
@@ -223,7 +223,7 @@ function ListEditor (props){
               </div>
               {showMenu && (
                 <div className="menu-items">
-                  <div className='blur_background'></div>
+                  <div className='blur_background' onClick={toggleMenu}></div>
                   <button
                     onClick={() => {
                       ReactDOM.createRoot(
@@ -242,24 +242,49 @@ function ListEditor (props){
                   >
                     Delete
                   </button>
-        
-                  <select
-                    id="select_tag_editor"
-                    defaultValue={tag}
-                  >
-                    <option value="default">Default</option>
-                    {props.tag_names.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
+                  <div>
+                    <p>Tag:</p>
+                    <select
+                      onChange={(e) => {setTag(e.target.value)}}
+                      id="select_tag_editor"
+                      defaultValue={tag}
+                    >
+                      <option value="Default">Default</option>
+                      {props.tag_names.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <p>Color:</p>
                   <input
+                    onChange={(e) => {setColor(e.target.value)}}
                     type="color"
                     id="list_color_editor"
                     name="list_color_editor"
                     defaultValue={color}
                   />
+                  </div>
+                  <button
+                  onClick={() => {
+                    if (document.getElementById('list_content').value.replace(/\r/g, '') === renderedContent.replace(/\r/g, '')) {
+                      exitEditor();
+                    } else {
+                      ReactDOM.createRoot(document.getElementById('tagContainer')).render(
+                        <ConfirmDialog
+                          onConfirmation={(usrInput) => usrInput === true ? exitEditor() : undefined}
+                          question="Do you really want to exit without saving?"
+                          trueBtnText="Exit"
+                          falseBtnText="Stay"
+                        />
+                      );
+                    }
+                  }}
+                >
+                  Exit
+                </button>
                   </div>
                 
               )
