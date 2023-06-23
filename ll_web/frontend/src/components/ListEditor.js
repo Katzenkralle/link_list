@@ -17,6 +17,27 @@ function ListEditor (props){
     const [color, setColor] = useState(props.color);
     const [name, setName] = useState(props.name);
     const [renderedContent, setRenderedContent] = useState("")
+    const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
+    const [showMenu, setShowMenu] = useState(false);
+
+    const toggleMenu = () => {
+      setShowMenu(!showMenu);
+    };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setDisplayWidth(window.innerWidth);
+    };
+
+    // Add event listener for window resize
+    window.addEventListener('resize', handleResize);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
     useEffect(() => {
       //Content needs to be dynamicly updated
       setContent(props.content);
@@ -143,36 +164,109 @@ function ListEditor (props){
             
             {viewMode != 'view' ? (
             //Top bar in edit mode
-            <div className='head'>
-              <h6 className='leftBlock' style={{marginRight: '0',}}>Edit Mode</h6>
-              <button className='leftBlock' onClick={() =>  {ReactDOM.createRoot(document.getElementById("tagContainer")).render(
-                                      <ConfirmDialog onConfirmation={(usrInput) => usrInput == true ? deleteList() : undefined} question="Do you realy want to delete this List?" trueBtnText="Delete!" falseBtnText="Go Back!"/>)}}>
-                                      Delete</button>
-
-              <select className='centerBlock' id='select_tag_editor' defaultValue={tag}>
-                  <option value="default" >Default</option>
+            displayWidth > 600 ? (
+              <div className='head'>
+                <h6 className='leftBlock' style={{ marginRight: '0' }}>Edit Mode</h6>
+                <button
+                  className='leftBlock'
+                  onClick={() => {
+                    ReactDOM.createRoot(document.getElementById('tagContainer')).render(
+                      <ConfirmDialog
+                        onConfirmation={(usrInput) => usrInput === true ? deleteList() : undefined}
+                        question="Do you really want to delete this List?"
+                        trueBtnText="Delete!"
+                        falseBtnText="Go Back!"
+                      />
+                    );
+                  }}
+                >
+                  Delete
+                </button>
+    
+                <select className='centerBlock' id='select_tag_editor' defaultValue={tag}>
+                  <option value="default">Default</option>
                   {props.tag_names.map((option) => (
-                      <option key={option} value={option}>{option}</option>
+                    <option key={option} value={option}>{option}</option>
                   ))}
-              </select>
-              <h3 className='centerBlock'>{name}</h3>
-              <input className='centerBlock' type="color" id="list_color_editor" name="list_color_editor" defaultValue={color}/>
-              <button className='rightBlock' onClick={() => {
-                if (document.getElementById('list_content').value.replace(/\r/g, '') === renderedContent.replace(/\r/g, '')) {
-                    exitEditor();
-                } else {
-                    ReactDOM.createRoot(document.getElementById("tagContainer")).render(
+                </select>
+                <h3 className='centerBlock'>{name}</h3>
+                <input className='centerBlock' type="color" id="list_color_editor" name="list_color_editor" defaultValue={color} />
+                <button
+                  className='rightBlock'
+                  onClick={() => {
+                    if (document.getElementById('list_content').value.replace(/\r/g, '') === renderedContent.replace(/\r/g, '')) {
+                      exitEditor();
+                    } else {
+                      ReactDOM.createRoot(document.getElementById('tagContainer')).render(
                         <ConfirmDialog
-                            onConfirmation={(usrInput) => usrInput === true ? exitEditor() : undefined}
-                            question="Do you really want to exit without saving?"
-                            trueBtnText="Exit"
-                            falseBtnText="Stay"
-            />
-        );
-    }
-}}>Exit</button>
-
+                          onConfirmation={(usrInput) => usrInput === true ? exitEditor() : undefined}
+                          question="Do you really want to exit without saving?"
+                          trueBtnText="Exit"
+                          falseBtnText="Stay"
+                        />
+                      );
+                    }
+                  }}
+                >
+                  Exit
+                </button>
+              </div>
+            ) : (
+              <div className='head'>
+                <h6 className='leftBlock' style={{ marginRight: 'auto' }}>Edit Mode</h6>
+                <h3 className='centerBlock' style={{ marginRight: 'auto' }}>{name}</h3>
+              <div className="hamburger-menu">
+              <div className="hamburger-icon" onClick={toggleMenu}>
+                <div className="icon-bar"></div>
+                <div className="icon-bar"></div>
+                <div className="icon-bar"></div>
+              </div>
+              {showMenu && (
+                <div className="menu-items">
+                  <div className='blur_background'></div>
+                  <button
+                    onClick={() => {
+                      ReactDOM.createRoot(
+                        document.getElementById('tagContainer')
+                      ).render(
+                        <ConfirmDialog
+                          onConfirmation={(usrInput) =>
+                            usrInput === true ? deleteList() : undefined
+                          }
+                          question="Do you really want to delete this List?"
+                          trueBtnText="Delete!"
+                          falseBtnText="Go Back!"
+                        />
+                      );
+                    }}
+                  >
+                    Delete
+                  </button>
+        
+                  <select
+                    id="select_tag_editor"
+                    defaultValue={tag}
+                  >
+                    <option value="default">Default</option>
+                    {props.tag_names.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="color"
+                    id="list_color_editor"
+                    name="list_color_editor"
+                    defaultValue={color}
+                  />
+                  </div>
+                
+              )
+              }
             </div>
+            </div>
+            )
 //" asdad\ndvbnnvn\n  fuj\nasd\n"
 //" asdad\ndvbnnvn\n  fuj\nasd\nsd"
             ):(
