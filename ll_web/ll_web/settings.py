@@ -13,6 +13,13 @@ import os
 
 from pathlib import Path
 
+print(os.environ.get('ALLOWED_HOSTS'))
+if os.environ.get('ALLOWED_HOSTS') == None:
+    ALLOWED_HOSTS = ['127.0.0.0']  #Seperate Hosts by ;
+
+else:
+    ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(';')  #Seperate Hosts by ;
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,9 +31,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY') #os.environ['SECRET_KEY'] would rais an error, if non existent
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(os.environ.get('RUN_IN_DEBUG'))
+DEBUG = bool(int(os.environ.get('RUN_IN_DEBUG')))
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(';')  #Seperate Hosts by ;
 
 
 # Application definition
@@ -58,7 +64,7 @@ ROOT_URLCONF = 'll_web.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['api/templates'],
+        'DIRS': ['frontend/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -119,14 +125,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'frontend/static/'
-
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'frontend/static')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS').split(';')
+if os.environ.get('CSRF_TRUSTED_ORIGINS') == None:
+    CSRF_TRUSTED_ORIGINS = ['http://127.0.0.0']
+else:
+    CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS').split(';')
 
 
 #SECURE_HSTS_SECONDS = 31536000 #Instruckts the Webbrowser only to use secure connections on the Website for one year !TEst befor Production! cant be tunrd off easily
