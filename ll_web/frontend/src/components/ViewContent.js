@@ -14,9 +14,9 @@ function styleHeadline(line, level, mode){
     }
 }
 
-function styleList(line, previousLine, nextLine,type, mode){
-    var htmlElement = ''
+function styleList(line, previousLine, nextLine, type, mode){
     if (mode == 'view'){
+        var htmlElement = ''
         if (previousLine == undefined || !previousLine.style.some(arr => arr.includes(type))){ //If it dosnt include
             htmlElement = `<${type}>`
         }
@@ -34,6 +34,17 @@ function styleList(line, previousLine, nextLine,type, mode){
             var line = '-x. ' + line
         }
         return line
+    }
+}
+
+function styleCheckbox(line, state, id, mode){
+    if (mode == 'view'){
+        var htmlElement
+        htmlElement = `<input type="checkbox" ${state == true ? 'checked' : ''} id="${id}">${line}</input>`
+        return htmlElement
+    }
+    else {
+        return `[${state == true ? 'x' : ' '}] ${line}`
     }
 }
 
@@ -119,6 +130,7 @@ function renderByLine(raw_content, mode){
     //as seperet elements in an array, each element has type, text and style
     var content = JSON.parse(raw_content)
     var formatedContent = ''
+    var interactiveElements = []
 
     if (mode == 'links'){
         //Return only all links in an array
@@ -151,6 +163,12 @@ function renderByLine(raw_content, mode){
         element['style'].forEach(style => {
             if (style[0] == 'h'){
                     formatedLine = styleHeadline(formatedLine, style[1], mode);}
+            if (style[0] == 'cb'){
+                var htmlId = `interactiveElement${index}`
+                formatedLine = styleCheckbox(formatedLine, style[1], htmlId, mode)
+                interactiveElements.push({'id': index,
+                                            'state': style[1]})
+                }
             if (style[0] == 'ul'){
                 formatedLine = styleList(formatedLine, content[(index-1)], content[(index+1)], 'ul', mode)
             }
@@ -160,11 +178,12 @@ function renderByLine(raw_content, mode){
             if (style[0] == 'ig'){
                 if (mode != 'view'){formatedLine = '!x!' + formatedLine}
             }
+            
         });
         formatedContent += formatedLine;
     });
     //Returns the formated content (either HTML elemet or Md-like syntax)
-    return formatedContent
+    return [formatedContent, interactiveElements]
 }
 
 export default renderByLine

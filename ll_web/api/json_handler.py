@@ -46,6 +46,14 @@ def count_headline(line):
             break
     return h_num
 
+def check_checkbox(line):
+        if line[:4] == '[ ] ':
+            return [line[4:], ['cb', False]]
+        elif line[:4] == '[x] ':
+            return [line[4:], ['cb', True]]
+        else:
+            return [line, None]
+
 def content_for_db(data):
     lines = data.split('\n')
     db_data = []
@@ -65,6 +73,8 @@ def content_for_db(data):
         line, list_type = check_lists(line)
         #Check for Headline:
         h_num = count_headline(line)
+        #Check for Checkboxes
+        line, checkbox = check_checkbox(line)
 
         #What Type?
         if link_path:
@@ -81,18 +91,20 @@ def content_for_db(data):
             db_data.append({'type': 'p',
                             'text': line})
             
-        #What Style?
+        #What Style?, db_data[-1] = aktuelles (letztes) element der liste
         db_data[-1]['style'] = []
         if h_num != 0:
-        #elif line[0] == '#':
             db_data[-1]['text'] = db_data[-1]['text'][h_num:]
             db_data[-1]['style'].append(['h', h_num])
+
+        if checkbox:
+            db_data[-1]['style'].append(checkbox)
 
         if list_type == 'ul':
             db_data[-1]['style'].append(['ul'])
         elif list_type == 'ol':
             db_data[-1]['style'].append(['ol'])
-
+        #endfor
     return db_data
 
 def has_letter(string):

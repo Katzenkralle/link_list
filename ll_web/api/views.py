@@ -88,6 +88,20 @@ def manage_tags(request):
 
         case _: pass
     
+@login_required(login_url='login')
+def manage_interactive_elements(request):
+    if request.method != 'POST':
+        return HttpResponse("Post domain", status=status.HTTP_204_NO_CONTENT)
+    relevant_list = List.objects.all().get(user=request.user, name=request.POST['list_name'])
+    content = from_json(relevant_list.content)
+    changes = from_json(request.POST['changes'])
+    for element in changes:
+        for style in content[element['id']]['style']:
+            if style[0] == 'cb':
+                style[1] = element['state']
+    relevant_list.content = to_json(content)
+    relevant_list.save()
+    return HttpResponse("Done", status=status.HTTP_202_ACCEPTED)
 
 @login_required(login_url='login')
 def get_data_for_home(request):
@@ -101,7 +115,6 @@ def get_data_for_home(request):
                           'color': object.color,
                           'tag': object.tag,
                           'content': object.content})
-
     return JsonResponse({'metaTags': user_tags, 'metaLists': to_json(user_list), 'metaUser': to_json({'name': user.username})}, safe=False)
 
 def modify_account(request): 
