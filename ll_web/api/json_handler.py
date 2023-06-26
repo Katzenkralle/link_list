@@ -7,10 +7,10 @@ def from_json(data):
 def to_json(data):
     return json.dumps(data)
 
-def check_link_sequence(string):
+def check_link_sequence(line):
     #Check for Markdown Link sequence
     pattern = r"^.*\[(.*?)\]\((.*?)\).*"
-    match = re.match(pattern, string)
+    match = re.match(pattern, line)
     if match:
         path = match.group(2)
         text = match.group(1)
@@ -18,10 +18,10 @@ def check_link_sequence(string):
     else:
         #Check for Link after pattern
         pattern = r"(www\.|https?://)([^\s]*)"
-        match = re.search(pattern, string)
+        match = re.search(pattern, line)
         if match:
             path = match.group(0)
-            return '', path
+            return re.sub(r'\n|\r', '', line).strip(path), path
         else:
             return '', ''
 
@@ -44,7 +44,7 @@ def count_headline(line):
             h_num +=1
         else:
             break
-    return h_num
+    return line[h_num:], h_num
 
 def check_checkbox(line):
         if line[:4] == '[ ] ':
@@ -67,14 +67,16 @@ def content_for_db(data):
                             'style': [['ig']]})
             continue
 
-        #Check for Links
-        link_text, link_path = check_link_sequence(line)
+        ##CHeck Styles
         #Check for lists
         line, list_type = check_lists(line)
-        #Check for Headline:
-        h_num = count_headline(line)
         #Check for Checkboxes
         line, checkbox = check_checkbox(line)
+        #Check for Headline:
+        line, h_num = count_headline(line)
+        #Check for Links
+        link_text, link_path = check_link_sequence(line)
+
 
         #What Type?
         if link_path:
@@ -94,7 +96,7 @@ def content_for_db(data):
         #What Style?, db_data[-1] = aktuelles (letztes) element der liste
         db_data[-1]['style'] = []
         if h_num != 0:
-            db_data[-1]['text'] = db_data[-1]['text'][h_num:]
+            #db_data[-1]['text'] = db_data[-1]['text'][h_num:]
             db_data[-1]['style'].append(['h', h_num])
 
         if checkbox:

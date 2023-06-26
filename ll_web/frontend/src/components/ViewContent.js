@@ -20,7 +20,7 @@ function styleList(line, previousLine, nextLine, type, mode){
         if (previousLine == undefined || !previousLine.style.some(arr => arr.includes(type))){ //If it dosnt include
             htmlElement = `<${type}>`
         }
-        htmlElement += `<li>${line}</li>`
+        htmlElement += `<li class="viewUserContentUlOlElem">${line}</li>`
         if (nextLine == undefined || !nextLine.style.some(arr => arr.includes(type))){ //If it dosnt include
             htmlElement += `</${type}>`
         }
@@ -40,7 +40,7 @@ function styleList(line, previousLine, nextLine, type, mode){
 function styleCheckbox(line, state, id, mode){
     if (mode == 'view'){
         var htmlElement
-        htmlElement = `<input type="checkbox" ${state == true ? 'checked' : ''} id="${id}">${line}</input>`
+        htmlElement = `<input type="checkbox" ${state == true ? 'checked' : ''} id="${id}" class="viewUserContentCb">${line}</input>`
         return htmlElement
     }
     else {
