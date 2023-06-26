@@ -18,7 +18,11 @@
 .viewUserContentH {
     all: unset;
     display: flex;
-    font-size: revert;    
+    font-size: revert;   
+}
+ul li .viewUserContentH {
+    display: inline-block;
+    vertical-align: middle; 
 }
 
 .viewUserContentHr{
@@ -29,8 +33,10 @@
 .viewUserContentCb{
     width: 1.5em;
     height: 1.5em;
-    margin: auto 1em auto 0;
-    margin-right: 1em;
+    margin: 0 1em auto 0;
+    vertical-align: middle;
 }
 
-
+.viewUserContentUlOlElem{
+    position: relative;
+  }

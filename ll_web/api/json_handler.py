@@ -21,7 +21,13 @@ def check_link_sequence(line):
         match = re.search(pattern, line)
         if match:
             path = match.group(0)
-            return re.sub(r'\n|\r', '', line).strip(path), path
+            text = re.sub(r'\n|\r', '', line).strip(path)
+            if re.match(r'^ *$', text):# Pattern to match ' ' zero or more times from the start (^) to the end ($)
+                text = ''
+            elif text[0] == ' ':
+                text = text[1:]
+                
+            return text, path
         else:
             return '', ''
 
