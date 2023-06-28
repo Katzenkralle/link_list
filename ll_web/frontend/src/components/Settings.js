@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import CreateList from './CreateList';
 import ReactDOM from 'react-dom/client';
 import CreateTags from './CreateTags';
 import ConfirmDialog from './ConfirmDialog'
@@ -7,13 +6,14 @@ import ConfirmDialog from './ConfirmDialog'
 function Settings() {
   // Fetch Data
   const [metaTags, setMetaTags] = useState([]);
-  //const [metaLists, setMetaLists] = useState([]);
+  const [metaLists, setMetaLists] = useState([]);
 
   const fetchData = () => {
     fetch('api/getMetaHome/')
       .then(response => response.json())
       .then(data => {
-        setMetaTags(JSON.parse(data.metaTags));
+        setMetaTags(JSON.parse(data.metaTags))
+        setMetaLists(JSON.parse(data.metaLists));
       })
       .catch(error => console.error('Error:', error));
   };
@@ -23,7 +23,7 @@ function Settings() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const updateData = () => {
+const updateData = () => {
     console.log("Fetching new Data");
     fetchData();
   };
@@ -86,6 +86,22 @@ const deleteAccount = (usrInput) => {
 
 }
 
+const handelListPublication = (concernedList) => {
+  return new Promise((resolve, reject) => {
+  const formData = new FormData();
+  formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
+  formData.append('list', concernedList.name)
+  formData.append('readonly', concernedList.isReadonly == true ? true : concernedList.isReadonly == false ? 'writable' : 'false')
+  formData.append('passwd', '')
+  fetch("api/listPublicationChanges/", {
+    method: 'POST',
+    body: formData,
+  })
+    .then((response) => resolve())
+    .catch((error) => reject())
+  })
+}
+
   return (
     <div>
       <div className="top_bar">
@@ -125,8 +141,57 @@ const deleteAccount = (usrInput) => {
               onConfirmation={(e) => {deleteAccount(e)}} question="Do you realy want to delete your Account?" trueBtnText="Delete!" falseBtnText="Go Back!"/>)}
           }}>Delead Account</button>
         </div>
-          
 
+        <div>
+          <form>
+            <label htmlFor='selectPublishList'>Select a list to Publish:</label>
+            <select id='selectPublishList'>
+            {metaLists.map((list) =>
+              list.is_public === "False" ? (
+                <option key={list.name} value={list.name}>
+                  {list.name}
+                </option>
+              ) : null
+            )}
+          </select>
+
+            <label htmlFor='publishListMode'>Readonly?</label>
+            <input type="checkbox" id='publishListMode' defaultChecked/>
+            <button onClick={async (e) => {e.preventDefault();
+                            await handelListPublication({'name': document.getElementById('selectPublishList').value,
+                                                           'isReadonly': document.getElementById('publishListMode').checked})
+                            updateData()}}>Submit</button>
+          </form>
+
+            <table>
+              <thead>
+              <tr>
+                <th>List Name</th>
+                <th>URL</th>
+                <th>Readonly?</th>
+                <th>Remove from public</th>
+              </tr>
+              </thead>
+              <tbody>
+              {metaLists.map((list) =>
+              list.is_public !== "False" ? (
+              <tr>
+                <th>{list.name}</th>
+                <th>{(window.location.origin + list.url)}</th>
+                <th><input id={`${list.name}_cb`} type="checkbox" defaultChecked={list.is_public === 'r'} 
+                      onChange={(e) => {handelListPublication({'name':list.name, 'isReadonly': e.target.checked})}} /></th>
+                <th><button id={`${list.name}_del`} 
+                    onClick={async () => {
+                      await handelListPublication({ name: list.name, isReadonly: 'del' });
+                      updateData();
+                    }}
+                    >Make private</button></th>
+              </tr>
+              ) : null
+            )}
+              </tbody>
+            </table>
+        </div>
         <div id='tagContainer'></div>
       </div>
     

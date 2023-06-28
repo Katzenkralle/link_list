@@ -86,12 +86,14 @@
     color: #6700ae;
     font-size: 19px;
     margin: 0;
-  }
+  } 
 
 .editButtons{
   display: flex;
   flex-wrap: wrap;  
   justify-content: center;
+  max-height: 3em;
+  overflow: scroll;
 }
 .editButtons button{
   margin-right: 4px;
@@ -99,6 +101,7 @@
   margin-bottom: 4px;
   margin-top: 0; 
 }
+
 textarea {
     cursor: text;
 }

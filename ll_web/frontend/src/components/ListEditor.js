@@ -11,21 +11,21 @@ import '../../static/ListEditor.css'
 
 function ListEditor (props){
     //Presets all neaded useStates
-    const [viewMode, setViewMode] = useState('view');
-    const [content, setContent] = useState(props.content);
-    const [tag, setTag] = useState(props.tag);
-    const [color, setColor] = useState(props.color);
-    const [name, setName] = useState(props.name);
-    const [renderedContent, setRenderedContent] = useState("")
-    const [renderingContent, setRenderingContent] = useState(false)
-    const [interactiveElements, setInteractiveElements] = useState([])
-    const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
-    const [showMenu, setShowMenu] = useState(false);
+  const [viewMode, setViewMode] = useState('view');
+  const [content, setContent] = useState(props.content);
+  const [tag, setTag] = useState(props.tag);
+  const [color, setColor] = useState(props.color);
+  const [name, setName] = useState(props.name);
+  const [renderedContent, setRenderedContent] = useState("")
+  const [renderingContent, setRenderingContent] = useState(false)
+  const [interactiveElements, setInteractiveElements] = useState([])
+  const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
+  const [showMenu, setShowMenu] = useState(false);
     
 
-    const toggleMenu = () => {
-      setShowMenu(!showMenu);
-    };
+  const toggleMenu = () => {
+    setShowMenu(!showMenu);
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -41,18 +41,18 @@ function ListEditor (props){
     };
   }, []);
 
-    useEffect(() => {
-      //Content needs to be dynamicly updated
-      setContent(props.content);
-    }, [props.content]);
-    
-    useEffect(() => {
-      //For exit confirmation, when not saved and to render content once when view mode changes
-      var [formatedContent, intElem] = renderByLine(content, viewMode);
-      setRenderedContent(formatedContent);
-      setInteractiveElements(intElem);
-      setRenderingContent(false);
-  }, [viewMode]);
+  useEffect(() => {
+    //Content needs to be dynamicly updated
+    setContent(props.content);
+  }, [props.content]);
+  
+  useEffect(() => {
+    //For exit confirmation, when not saved and to render content once when view mode changes
+    var [formatedContent, intElem] = renderByLine(content, viewMode);
+    setRenderedContent(formatedContent);
+    setInteractiveElements(intElem);
+    setRenderingContent(false);
+}, [viewMode]);
 
 
   const interactiveElementsChangeHandler = () => {

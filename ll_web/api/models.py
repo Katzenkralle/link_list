@@ -7,7 +7,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     tags = models.CharField(default='[]', max_length=500)
     last_login = models.DateTimeField(default=datetime.now())
-    
+    foreign_lists = models.CharField(default='[]', max_length=500)
     #rights = models.CharField(blank=True)
     #user_settings = models.CharField(blank=True)
 
@@ -17,6 +17,10 @@ class List(models.Model):
     tag = models.CharField(max_length=24, unique=False)
     content = models.CharField(default='[]', max_length=500, unique=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    url = models.CharField(max_length=30, default='')
+    creation_date = models.DateTimeField(default=datetime.now())
+    public_list = models.CharField(max_length=20, default='False')
+    public_list_passwd = models.CharField(max_length=20, default='', null=True)
 
 class AppWideData(models.Model):
     news_baner = models.CharField(max_length=500, default='')

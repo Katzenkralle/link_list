@@ -21,6 +21,8 @@ function ListGrid (props){
                 )}}>
                 <h5>{list.name}</h5>
                 <p>{list.tag}</p>
+                <p>{list.owner}</p>
+                <p>{list.creation_date}</p>
             </div>
           ))}
         </div>

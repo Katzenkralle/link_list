@@ -87,7 +87,7 @@ def manage_tags(request):
         
 
         case _: pass
-    
+
 @login_required(login_url='login')
 def manage_interactive_elements(request):
     if request.method != 'POST':
@@ -114,7 +114,11 @@ def get_data_for_home(request):
         user_list.append({'name': object.name, 
                           'color': object.color,
                           'tag': object.tag,
-                          'content': object.content})
+                          'content': object.content,
+                          'owner': object.user.username,
+                          'url': object.url,
+                          'creation_date': object.creation_date.strftime("%d %B %Y"),
+                          'is_public': object.public_list})
     return JsonResponse({'metaTags': user_tags, 'metaLists': to_json(user_list), 'metaUser': to_json({'name': user.username})}, safe=False)
 
 def modify_account(request): 
@@ -146,3 +150,31 @@ def modify_account(request):
     elif action == 'account_removal':
         User.objects.get(username=request.user).delete()
         return HttpResponse("Removed User", status=status.HTTP_202_ACCEPTED)
+
+@login_required(login_url='login')
+def list_right_managment(request):
+    if request.method != 'POST':
+        return HttpResponse("Post domain", status=status.HTTP_204_NO_CONTENT)
+    
+    list_name = request.POST['list']
+    list_public_passwd = request.POST['passwd']
+    list_readonly = request.POST['readonly']#Readonly functions a as thristat, it can be False=List not public, True=Public but Readonly and Reitable=Public and editable
+    db_entry = List.objects.get(name=list_name)
+
+    if list_readonly == 'false':
+        db_entry.url = ''
+        db_entry.public_list = 'False'
+        db_entry.public_list_passwd = ''
+    elif list_readonly == 'true':
+        db_entry.public_list = "r"
+        db_entry.public_list_passwd = list_public_passwd
+    elif list_readonly == 'writable':
+        db_entry.public_list = 'rw'
+        db_entry.public_list_passwd = list_public_passwd
+    db_entry.url = f"/q?li={db_entry.id}"
+    db_entry.save()
+    return HttpResponse("Done", status=status.HTTP_202_ACCEPTED)
+
+"""
+            created_list.url = f"/q?li={created_list.id}"
+            created_list.save()"""
