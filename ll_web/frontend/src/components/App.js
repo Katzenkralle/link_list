@@ -6,6 +6,7 @@ import { BrowserRouter as Router,  Route, Routes} from "react-router-dom";
 import HomePage from './HomePage';
 import Settings from "./Settings";
 import CreateAccount from "./AccountCreation";
+import PublicListEditor from "./PublicListEditor";
 
 function App() {
     return (
@@ -14,6 +15,7 @@ function App() {
                 <Route exact path="/" element={<HomePage />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="account-creation" element={<CreateAccount/>} />
+                <Route path="/q" element={<PublicListEditor/>} />
             </Routes>
         </Router>
     );

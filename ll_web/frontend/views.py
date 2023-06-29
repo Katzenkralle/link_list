@@ -3,6 +3,10 @@ from django.contrib.auth.decorators import login_required
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponse
+from rest_framework import status
+
+from api.models import Profile, List, AppWideData
 # Create your views here.
 
 
@@ -31,3 +35,22 @@ def login_page(request):
 def logout_page(request):
     logout(request)
     return redirect('login')
+
+def index_public_lists(request):
+    #http://127.0.0.1:8000/q?li=1
+    try: 
+        list_id = int(request.GET['li'])
+    except (KeyError, ValueError):
+        return HttpResponse("Invaled Request!", status=status.HTTP_204_NO_CONTENT)
+    try:
+        list = List.objects.get(id=list_id)
+        is_public = list.public_list
+        if is_public == 'false': 
+            raise PermissionError
+        if list.public_list_passwd != '':
+            return render(request, 'index.html', {'status': "passwd_req"})
+        else:
+            return render(request, 'index.html', {'status': "continue"})
+    except PermissionError:
+        return HttpResponse("List Not Public", status=status.HTTP_403_FORBIDDEN)
+    
