@@ -7,6 +7,7 @@ hr {
 #list_search {
     width: 19em;
     height: 2.5em;
+    cursor: text;
 }
 
 @media (max-width: 600px){
