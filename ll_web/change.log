@@ -1,9 +1,0 @@
-v0.5.9:
-- "ChangeMode without Saving" dialog implemented
-- Corners of List Boxes now properly round on displays <600px
-- input Search and Tag filter now adapte to display size
-- Templates now serve name and icon
-- "operation sucsesfull" now dosnt move any other Buttons
-- Prevented TagFilter from exeting screen
-- Spaces at the start of a row are now beeing displayed in the View Mode
-- Pressing tab in the Editor Textfiled now adds 4 Spaces

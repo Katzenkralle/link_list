@@ -17,7 +17,17 @@ function ListGrid (props){
             {lists.map((list) => (
             <div key={list.name} style={{backgroundColor: list.color}} className='box' onClick={(e) => {
                     ReactDOM.createRoot(document.getElementById("listEditor")).render(
-                    <ListEditor update_data={props.update_data} name={list.name} color={list.color} tag={list.tag} content={list.content} tag_names={props.tag_names}></ListEditor>
+                    <ListEditor 
+                    update_data={props.update_data} 
+                    id = {list.id}
+                    name={list.name} 
+                    color={list.color} 
+                    tag={list.tag} 
+                    content={list.content} 
+                    tag_names={props.tag_names}
+                    called_from_large_viewer = {false}
+                    is_editable = {true}
+                    />
                 )}}>
                 <h5>{list.name}</h5>
                 <p>{list.tag}</p>

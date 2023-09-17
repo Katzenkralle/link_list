@@ -92,7 +92,7 @@ const handelListPublication = (concernedList) => {
   formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
   formData.append('list', concernedList.name)
   formData.append('readonly', concernedList.isReadonly == true ? true : concernedList.isReadonly == false ? 'writable' : 'false')
-  formData.append('passwd', '')
+  formData.append('passwd', concernedList.passwd)
   fetch("api/listPublicationChanges/", {
     method: 'POST',
     body: formData,
@@ -157,9 +157,11 @@ const handelListPublication = (concernedList) => {
 
             <label htmlFor='publishListMode'>Readonly?</label>
             <input type="checkbox" id='publishListMode' defaultChecked/>
+            <input type='password' id='publishListPasswd' placeholder='Password (optional)'/>
             <button onClick={async (e) => {e.preventDefault();
                             await handelListPublication({'name': document.getElementById('selectPublishList').value,
-                                                           'isReadonly': document.getElementById('publishListMode').checked})
+                                                          'isReadonly': document.getElementById('publishListMode').checked,
+                                                          'passwd': document.getElementById('publishListPasswd').value})
                             updateData()}}>Submit</button>
           </form>
 
@@ -169,6 +171,7 @@ const handelListPublication = (concernedList) => {
                 <th>List Name</th>
                 <th>URL</th>
                 <th>Readonly?</th>
+                <th>Password?</th>
                 <th>Remove from public</th>
               </tr>
               </thead>
@@ -180,6 +183,7 @@ const handelListPublication = (concernedList) => {
                 <th>{(window.location.origin + list.url)}</th>
                 <th><input id={`${list.name}_cb`} type="checkbox" defaultChecked={list.is_public === 'r'} 
                       onChange={(e) => {handelListPublication({'name':list.name, 'isReadonly': e.target.checked})}} /></th>
+                <th><p>{list.has_passwd ? 'Password protected.' : 'No Password set!'}</p></th>
                 <th><button id={`${list.name}_del`} 
                     onClick={async () => {
                       await handelListPublication({ name: list.name, isReadonly: 'del' });

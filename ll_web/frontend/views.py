@@ -3,6 +3,9 @@ from django.contrib.auth.decorators import login_required
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponse, JsonResponse
+from rest_framework import status
+
 # Create your views here.
 
 
@@ -31,3 +34,13 @@ def login_page(request):
 def logout_page(request):
     logout(request)
     return redirect('login')
+
+def large_viewer(request):
+    try: 
+        list_id = request.GET['li']
+        int(list_id)
+        if list_id == '0':
+            raise ValueError
+    except:
+        return HttpResponse("No list wit that id", status=status.HTTP_204_NO_CONTENT)
+    return render(request, 'index.html')

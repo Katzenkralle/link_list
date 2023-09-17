@@ -12,6 +12,7 @@ import '../../static/ListEditor.css'
 function ListEditor (props){
     //Presets all neaded useStates
   const [viewMode, setViewMode] = useState('view');
+  const [id, setId] = useState(props.id);
   const [content, setContent] = useState(props.content);
   const [tag, setTag] = useState(props.tag);
   const [color, setColor] = useState(props.color);
@@ -21,6 +22,8 @@ function ListEditor (props){
   const [interactiveElements, setInteractiveElements] = useState([])
   const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
   const [showMenu, setShowMenu] = useState(false);
+  const [isEditable, setIsEditable] = useState(props.is_editable);
+  const [calledFromLargeViewer, setCalledFromLargeViewer] = useState(props.called_from_large_viewer);
     
 
   const toggleMenu = () => {
@@ -116,6 +119,25 @@ function ListEditor (props){
       //Fetches new information abou selected list from backend (only after changes saved)
       //and updates the useState of Color, Tag, Content
       return new Promise((resolve, reject) => {
+        if (calledFromLargeViewer == true) {
+          fetch('api/getDataViewerLarge' + window.location.search)
+            .then(response => response.json())
+            .then(data => {
+              setColor(('color' in data ? data.color : undefined));
+              setTag(('tag' in data ? data.tag[0] : undefined));
+              setContent(data.content);
+            })
+            .then(() => {
+              if (viewMode !== 'view') {
+                setRenderedContent(document.getElementById('list_content').value);
+              }
+            })
+            .then(() => resolve())
+            .catch(error => {
+              console.error('Error:', error);
+              reject();
+            });
+        } else {
         fetch('api/getMetaHome/')
           .then(response => response.json())
           .then(data => {
@@ -134,14 +156,16 @@ function ListEditor (props){
             console.error('Error:', error);
             reject();
           });
-      });
+      }});
     };
       
     
     const saveList = () => {
       //Saves List to backend, gets everything by Id, exept for name (which cant be changed)
+      console.log(tag, color)
       const formData = new FormData();
       formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
+      formData.append("list_id", id)
       formData.append("list_name", name)
       formData.append("list_tag", tag)
       formData.append("list_color", color)
@@ -215,7 +239,11 @@ function ListEditor (props){
       <div className="icon-bar"></div>
     </div>)}
 
-    const selectTag = (htmlClassName) => {return(
+    const selectTag = (htmlClassName) => {
+      if (props.tag_names == undefined){
+        return(<div></div>)
+      } else{ return(
+        console.log(props.tag_names),
       <select
       className={htmlClassName}
       onChange={(e) => {setTag(e.target.value)}}
@@ -229,9 +257,13 @@ function ListEditor (props){
         </option>
       ))}
     </select>
-    )}
+    )}}
 
-    const selectColor = (htmlClassName) => {return(
+    const selectColor = (htmlClassName) => {
+      if (props.color == undefined){
+        return(<div></div>)
+      } else{
+      return(
       <input
         className={htmlClassName}
         onChange={(e) => {setColor(e.target.value)}}
@@ -240,9 +272,13 @@ function ListEditor (props){
         name="list_color_editor"
         defaultValue={color}
       />
-    )}
+    )}}
 
-    const exitEditorButton = (htmlClassName) => {return(
+    const exitEditorButton = (htmlClassName) => {
+      if (calledFromLargeViewer == true) {
+        return(<button hidden/>)
+      } else{
+      return(
         <button
           className={htmlClassName}
           onClick={() => {
@@ -263,9 +299,13 @@ function ListEditor (props){
           Exit
         </button>
       )
-    }
+    }}
 
-    const deleteListButton = (htmlClassName) => {return(
+    const deleteListButton = (htmlClassName) => {
+      if (calledFromLargeViewer == true) {
+        return(<div></div>)
+      } else{
+      return(
   <button
   className={htmlClassName}
   onClick={() => {
@@ -280,12 +320,12 @@ function ListEditor (props){
         trueBtnText="Delete!"
         falseBtnText="Go Back!"
       />
-    );
-  }}
->
-  Delete
-</button>
-    )}
+      );
+        }}
+      >
+        Delete
+      </button>
+    )}}
 
 return (
     <div className='overlay'>
@@ -333,7 +373,7 @@ return (
         <div className='head'>
             <h6 className='leftBlock'>View Mode</h6>
             <h3 className='centerBlock'>{name}</h3>
-            <button className='rightBlock' onClick={() => exitEditor()}>Exit</button>
+            {calledFromLargeViewer ? <div></div> : <button className='rightBlock' onClick={() => exitEditor()}>Exit</button>}
         </div>
         )}
 
@@ -385,6 +425,7 @@ return (
         <div className='footer'>
         <p id='list_edit_msg'></p>
             <div>
+        {isEditable ? (
         <button onClick={async () => {
           if (viewMode === 'view') {
             const action = await interactiveElementsChangeHandler();
@@ -414,6 +455,9 @@ return (
         }}>
           Change Mode
         </button>
+        ) : (
+          <div></div>
+        )}
 
               {viewMode != 'view' ? (
                   //If in edit mode, render a Save button to save changes

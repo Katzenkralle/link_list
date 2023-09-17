@@ -11,14 +11,13 @@ from .models import Profile, List, AppWideData
 from .json_handler import from_json, to_json, content_for_db, has_letter
 # Create your views here.
 
-@login_required(login_url='login')
 def manage_lists(request):
     if request.method != 'POST':
         return HttpResponse("Post domain", status=status.HTTP_204_NO_CONTENT)
-    
+
     new_list_name = request.POST['list_name']
     new_list_color = request.POST['list_color']
-    
+
     if new_list_color == 'del':
         #Chech if Command to delaead list: list_color = del
         List.objects.all().get(user = request.user, name=new_list_name).delete()
@@ -30,8 +29,15 @@ def manage_lists(request):
         #Code to edit an exsisting List
         new_list_content = request.POST['list_content']
         content = content_for_db(new_list_content)
-        list_to_modify = List.objects.all().get(user=request.user, name=new_list_name)
-        list_to_modify.tag = new_list_tag; list_to_modify.color = new_list_color; list_to_modify.content = to_json(content)
+        list_to_modify = List.objects.all().get(id = int(request.POST['list_id']))
+
+        if list_to_modify.user != request.user and not request.session.get('auth', False):
+            return HttpResponse("Not allowed", status=status.HTTP_403_FORBIDDEN)
+
+        list_to_modify.tag = new_list_tag if new_list_tag != 'undefined' else list_to_modify.tag
+        list_to_modify.color = new_list_color if new_list_color != 'undefined' else list_to_modify.color
+        list_to_modify.content = to_json(content)
+
         list_to_modify.save()
         return HttpResponse("Saved", status=status.HTTP_202_ACCEPTED)
 
@@ -112,13 +118,15 @@ def get_data_for_home(request):
     user_list_objects = List.objects.all().filter(user = user)
     for object in user_list_objects:
         user_list.append({'name': object.name, 
+                          'id': object.id,
                           'color': object.color,
                           'tag': object.tag,
                           'content': object.content,
                           'owner': object.user.username,
                           'url': object.url,
                           'creation_date': object.creation_date.strftime("%d %B %Y"),
-                          'is_public': object.public_list})
+                          'is_public': object.public_list,
+                          'has_passwd': object.public_list_passwd != ''})
     return JsonResponse({'metaTags': user_tags, 'metaLists': to_json(user_list), 'metaUser': to_json({'name': user.username})}, safe=False)
 
 def modify_account(request): 
@@ -157,9 +165,11 @@ def list_right_managment(request):
         return HttpResponse("Post domain", status=status.HTTP_204_NO_CONTENT)
     
     list_name = request.POST['list']
-    list_public_passwd = request.POST['passwd']
+
+    db_entry = List.objects.get(name=list_name) 
+    list_public_passwd = request.POST['passwd'] if request.POST['passwd'] != 'undefined' else db_entry.public_list_passwd
     list_readonly = request.POST['readonly']#Readonly functions a as thristat, it can be False=List not public, True=Public but Readonly and Reitable=Public and editable
-    db_entry = List.objects.get(name=list_name)
+    
 
     if list_readonly == 'false':
         db_entry.url = ''
@@ -175,6 +185,40 @@ def list_right_managment(request):
     db_entry.save()
     return HttpResponse("Done", status=status.HTTP_202_ACCEPTED)
 
+def get_large_viewer_data(request):
+    user = request.user
+    list_id = request.GET['li']
+    if 'passwd' in request.GET:
+        list_passwd = request.GET['passwd']
+    else:
+        list_passwd = ""
+    list_object = List.objects.get(id=list_id) 
+    user_is_owner = True if list_object.user_id == user.id else False
+    if list_object.public_list == 'False' and not user_is_owner:
+        return HttpResponse("List not public", status=status.HTTP_403_FORBIDDEN)
+    if not user_is_owner and list_object.public_list_passwd != list_passwd and not request.session.get('auth', False):
+        return JsonResponse({'passwd_needed': True}, status=status.HTTP_100_CONTINUE)
+    
+    request.session['auth'] = True
+
+    list_data = {
+        'name': list_object.name,
+        'id': list_object.id,
+        'content': list_object.content,
+        'passwd_needed': False
+    }
+    if user_is_owner:
+        list_data['tag_names'] = from_json(Profile.objects.get(user=user).tags)
+        list_data['color'] = list_object.color
+        list_data['tag'] = list_object.tag,
+        list_data['is_editable'] = True
+    elif list_object.public_list == 'r':
+        list_data['is_editable'] = False
+    elif list_object.public_list == 'rw':
+        list_data['is_editable'] = True
+
+    return JsonResponse(list_data, safe=False)
+    
 """
             created_list.url = f"/q?li={created_list.id}"
             created_list.save()"""
