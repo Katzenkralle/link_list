@@ -221,4 +221,10 @@ def get_large_viewer_data(request):
     
 """
             created_list.url = f"/q?li={created_list.id}"
-            created_list.save()"""
+            created_list.save()"
+"""
+def get_data_for_public_list(request):
+    if request.method == 'POST':
+        pass
+    else:
+        pass
