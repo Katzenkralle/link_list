@@ -5,9 +5,11 @@ function CreateAccount() {
 
     const setCreationMsgInnerHTML = (msg) => {document.getElementById('creationMsg').innerHTML = msg}
     const submitCreation = (event) => {
-        event.preventDefault();
+      //Submit the form data to the api, creating a new account
+      //Prevent the default action of the form, if successful, redirect to login, else show an error message for short time  
         
-
+      event.preventDefault();
+        
         var passwd = document.getElementById('passwd').value
         var passwdCheck = document.getElementById('passwdCheck').value
 

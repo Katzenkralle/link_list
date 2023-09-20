@@ -4,11 +4,15 @@ import CreateTags from './CreateTags';
 import ConfirmDialog from './ConfirmDialog'
 
 function Settings() {
-  // Fetch Data
+  //TODO: Add a way to change the password
+  //TODO: Layout and style
+
   const [metaTags, setMetaTags] = useState([]);
   const [metaLists, setMetaLists] = useState([]);
 
   const fetchData = () => {
+    //get data about the tags and lists from api
+
     fetch('api/getMetaHome/')
       .then(response => response.json())
       .then(data => {
@@ -20,22 +24,19 @@ function Settings() {
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // fetch at load
   }, []);
 
-const updateData = () => {
-    console.log("Fetching new Data");
-    fetchData();
-  };
-//Delead Tag
-const handleTagSubmit = (event) => {
-    event.preventDefault(); // Prevent the default form submission
-    // Perform any additional logic or data manipulation here
+
+const deleteTag = (event) => {
+    //Get the tag name from the event, and send it to the backend for deleation
+    //Refetch the data after deleation, show short error message on failure
+    //Prevent the default form submission
+    event.preventDefault(); 
     if (document.getElementById("select_tag").value == 'default'){
       return
     }
 
-    // Send the form data to a different URL using AJAX/fetch
     const formData = new FormData(event.target);
     formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
     formData.append("tag_name", document.getElementById("select_tag").value)
@@ -47,7 +48,7 @@ const handleTagSubmit = (event) => {
       .then((response) => {
         // Handle the response if needed
         if (response.status == 202){
-          updateData()
+          fetchData()
         }
         else {
           document.getElementById('settings_tag_msg').innerHTML = 'Error, the Tag is proabably used by a list!'
@@ -55,13 +56,14 @@ const handleTagSubmit = (event) => {
         setTimeout(() => {  document.getElementById('settings_tag_msg').innerHTML = '';}, 5000);
       })
       .catch((error) => {
-        // Handle any errors that occur during the submission
         console.error('Form submission error:', error);
       });
   };
 
-//Handel Acount Deletion:
+
 const deleteAccount = (usrInput) => {
+  // If user confirms, send a request to the api to delete the account
+  // If the request is successful, redirect to the login page, else show an error message
   if (usrInput != true){
     return
   } else {
@@ -87,19 +89,22 @@ const deleteAccount = (usrInput) => {
 }
 
 const handelListPublication = (concernedList) => {
+  // Send a request to the api to change the publication status of a list
+  // Asynchronous because it needs to wait for the response before refetching the data, data only needs to be refetched
+  // when creating or deleting a publication, not updating readonly
   return new Promise((resolve, reject) => {
-  const formData = new FormData();
-  formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
-  formData.append('list', concernedList.name)
-  formData.append('readonly', concernedList.isReadonly == true ? true : concernedList.isReadonly == false ? 'writable' : 'false')
-  formData.append('passwd', concernedList.passwd)
-  fetch("api/listPublicationChanges/", {
-    method: 'POST',
-    body: formData,
-  })
-    .then((response) => resolve())
-    .catch((error) => reject())
-  })
+    const formData = new FormData();
+    formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
+    formData.append('list', concernedList.name)
+    formData.append('readonly', concernedList.isReadonly == true ? true : concernedList.isReadonly == false ? 'writable' : 'false')
+    formData.append('passwd', concernedList.passwd)
+    fetch("api/listPublicationChanges/", {
+      method: 'POST',
+      body: formData,
+    })
+      .then((response) => resolve())
+      .catch((error) => reject())
+    })
 }
 
   return (
@@ -115,7 +120,7 @@ const handelListPublication = (concernedList) => {
         <div className='box_for_main_contend'>
           <div className='main_contend'>
           <h3>Tag management:</h3>
-          <form onSubmit={(e) => handleTagSubmit(e)}>
+          <form onSubmit={(e) => deleteTag(e)}>
             <label htmlFor="select_tag">Delete Tag:</label>
             <select id='select_tag'>
               <option value="default">None</option>
@@ -127,7 +132,7 @@ const handelListPublication = (concernedList) => {
           </form>
           <button onClick={() => {
             ReactDOM.createRoot(document.getElementById("tagContainer")).render(
-              <CreateTags mode='create' update_data={updateData}/>
+              <CreateTags mode='create' update_data={fetchData}/>
             );
           }}>New Tag</button>
           </div>
@@ -162,7 +167,7 @@ const handelListPublication = (concernedList) => {
                             await handelListPublication({'name': document.getElementById('selectPublishList').value,
                                                           'isReadonly': document.getElementById('publishListMode').checked,
                                                           'passwd': document.getElementById('publishListPasswd').value})
-                            updateData()}}>Submit</button>
+                            fetchData()}}>Submit</button>
           </form>
 
             <table>
@@ -187,7 +192,7 @@ const handelListPublication = (concernedList) => {
                 <th><button id={`${list.name}_del`} 
                     onClick={async () => {
                       await handelListPublication({ name: list.name, isReadonly: 'del' });
-                      updateData();
+                      fetchData();
                     }}
                     >Make private</button></th>
               </tr>

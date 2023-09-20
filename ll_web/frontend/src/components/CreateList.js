@@ -1,16 +1,20 @@
 import React, { Component } from 'react';
 import CreateTags from './CreateTags'
 import ReactDOM from 'react-dom/client';
+
+//TODO: (Maby) change to functional component
+
 export default class CreateList extends Component {
     constructor(props) {
       super(props);
     }
   
     handleListSubmit = (event) => {
-      event.preventDefault(); // Prevent the default form submission
-      // Perform any additional logic or data manipulation here
-  
-      // Send the form data to a different URL using AJAX/fetch
+      //send contest of form field and selectet tag to api for listcreation
+      //if succesfull update data, shortly display message else display error message 
+      // Prevent the default form submission
+      event.preventDefault(); 
+      
       const formData = new FormData(event.target);
       formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
       formData.append("list_tag", document.getElementById('select_tag').value)
@@ -38,6 +42,8 @@ export default class CreateList extends Component {
     };
   
     tagField = () => {
+      //Arrow function just to simplify code
+      //Option Create New Tag spawns CreateTags component in tagContainer (see HomePage)
       return (
         <select id='select_tag'>
           <option value="Default" >Default</option>

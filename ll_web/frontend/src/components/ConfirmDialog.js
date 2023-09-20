@@ -2,10 +2,13 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom/client';
 
 function ConfirmDialog(props){
+  //Universal Dialog for confirmation
+  //gets props.question, props.trueBtnText, props.falseBtnText, props.onConfirmation
 
     const hadnleSelfDestruct = () => {
       ReactDOM.createRoot(document.getElementById('tagContainer')).unmount()
     }
+    
     const handleTrueClick = () => {
         props.onConfirmation(true); // Call the onUserAnswer function with the user's answer
         hadnleSelfDestruct()
@@ -16,7 +19,6 @@ function ConfirmDialog(props){
         hadnleSelfDestruct()
     };
   
-    // Rest of the dialog component code
   
     return (
     <div className='dialog_overlay'>
@@ -33,4 +35,4 @@ function ConfirmDialog(props){
     );
     }
 
-    export default ConfirmDialog;
+export default ConfirmDialog;

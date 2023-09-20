@@ -8,7 +8,7 @@ function HomePage() {
 
   const multiselectStyles = {
       /* https://github.com/srigar/multiselect-react-dropdown */
-    
+      //to be replaced with tailwind
     searchBox: {
       border: 'none',
       borderRadius: '25px',
@@ -54,12 +54,10 @@ function HomePage() {
   const [listAfterFilter, setListAfterFilter] = useState([]);
 
   const filterHandler = () => {
-    //Takes metaLists and filters dependet on user input, new value beeing stord in listAfterFilter
-    //keyword=search bar value; tagFilter=array of all selectet Tags 
+    //Takes metaLists and filters them by keyword and tag
     var keyword = document.getElementById('list_search').value
-    //console.log("Key:",keyword, "TagFilter:", tagFilter, "ListAfterFilter:",listAfterFilter)
     if (keyword == '' && tagFilter.length == 0) {
-      //Default at Page load, unfilterd metaList as listAfterFilter
+      //Default, no filter
       if (JSON.stringify(listAfterFilter) !== JSON.stringify(metaLists)) {
         setListAfterFilter(metaLists);
       }
@@ -68,71 +66,60 @@ function HomePage() {
     
     var listSelection = []
     if (keyword  != ''){
-      //if keyword is not default, search for all lists with name=keyword
-      
+      //If keyword is not default, check if keyword is in name of list 
       metaLists.forEach(list => {
-        if (list['name'].toLowerCase().includes(keyword.toLowerCase())){ //prior == instead of in
+        if (list['name'].toLowerCase().includes(keyword.toLowerCase())){
           if (tagFilter.length != 0){
-            //if tagFilter is not default, also check if the found list is in the array of selected tags
+            //If tagFilter is not default, check if tag of list is in tagFilter
             tagFilter.forEach(tag => {
               if (tag == list['tag']){
-                //if so, add to working variable listSelection
                 listSelection.push(list)
               }
             });
           } else {
-            //if tagFilter is default just add match to listSelection
+            //else just add match to listSelection
             listSelection.push(list)
           }
         }
       })
     } else {
-      //If keyword is default, tagFilter must not be default (otherwise the abouve would have already returned)
-      
+      //If keyword is default, check if tagFilter is not default
+      //Check every possible combination of tagFilter and metaLists
       tagFilter.forEach(tag => {
         metaLists.forEach(list => {
-          //Iterates thou every tag in the array and every dict in metaList
           if (tag == list['tag']){
-            //if list with fitting name found, add to listSelection
             listSelection.push(list)
           }
         })
       });
     }
-    //set working ListAfterFilter to value of working variable
+    
     setListAfterFilter(listSelection)
     return
   } 
 
   const fetchData = () => {
-    //Fetching Data from api
-    //split into metaTags=array of all tags of the user and metaList=arayy of dictonarys of all lists of the user
+    //Fetches meta data from api
+    //split into attributes to simplify, also reruns filterHandler
     fetch('api/getMetaHome/')
       .then(response => response.json())
       .then(data => {setMetaTags(JSON.parse(data.metaTags)); 
                      setMetaLists(JSON.parse(data.metaLists));
                      setMetaUser(JSON.parse(data.metaUser))
-                     filterHandler();}) //console.log(data.metaTags)
+                     filterHandler();})
       .catch(error => console.error('Error:', error));
   };
 
   useEffect(() => {
+    //calls fetchData once on load
     fetchData();
-    // maby not needet? 
   }, []);
 
   useEffect(() => {
-    //calls filterHandler when metalists or tagFilter changes
+    //calls filterHandler once metaLists or tagFilter changes
     filterHandler();
   },[metaLists, tagFilter])
 
-  const updateData = () => {
-    //used to pass as prop to components
-    console.log("Fetchin new Data")
-    fetchData();
-  };
-  //
-  
   return (
     <div>
       <div className="top_bar">
@@ -143,13 +130,11 @@ function HomePage() {
       <h1 id="headline">Link List</h1>
 
       <div className="box_for_main_contend tags">
-        <CreateList tag_names={metaTags} update_data={updateData}></CreateList>
+        <CreateList tag_names={metaTags} update_data={fetchData}></CreateList>
         <hr></hr>
       </div>
 
       <div className='box_for_main_contend filter'>
-        {/*Bothe elements hear do not support below 300px in display width, du to css
-          Should maby be changed in the Future!*/}
         <input type='text' id='list_search' placeholder='Search...' onChange={filterHandler}></input>
         <Multiselect
           id="filter_tag"
@@ -167,21 +152,18 @@ function HomePage() {
               minWidth: '12em',
               height: '1.75em',
             }}}
-          onSelect={(e) => {setTagFilter(e)}}//onChange={(e) => {setTagFilter(e);}}
-          onRemove={(e) => {setTagFilter(e)}}//
+          onSelect={(e) => {setTagFilter(e)}}
+          onRemove={(e) => {setTagFilter(e)}}
           options={(['Default']).concat(
             metaTags.map((tag) => tag))}/>
       </div>
 
       <div className='box_for_main_contend list_grid'>
-        <ListGrid lists={listAfterFilter} tag_names={metaTags} update_data={updateData}></ListGrid>
+        <ListGrid lists={listAfterFilter} tag_names={metaTags} update_data={fetchData}></ListGrid>
       </div>
       
-      {/*tagContainer is a empty placeholder div in which the TagCreate component is placed once it gets calld by the tag selctor
-         listEditor is a empty placehoder div in which the listEditor component is placed once it gets calld by clicking on a list in ListGrid 5+
-      */}
-      <div id='listEditor'></div>
-      <div id='tagContainer'></div>
+      <div id='listEditor'></div> {/* div to create ListEditor in */}
+      <div id='tagContainer'></div> {/* div to create CreateTags in */}
     </div>
   );
 }

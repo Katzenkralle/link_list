@@ -6,18 +6,17 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, JsonResponse
 from rest_framework import status
 
-# Create your views here.
-
-
 @login_required(login_url='login')
 def index(request, *args, **kwargs):
+    #Default Homepage, React rerouts
     return render(request, 'index.html')
 
 def index_no_login(request, *args, **kwargs):
-    #this index function is only beeing accest when creating an account
+    #Index for account creation, React rerouts
     return render(request, 'index.html')
 
 def login_page(request):
+    #Login Page, compleatly handeld by Django, no React
     if request.method == 'POST':
         account = request.POST.get('account')
         token = request.POST.get('token')
@@ -32,10 +31,13 @@ def login_page(request):
 
 @login_required(login_url='login')
 def logout_page(request):
+    #Jusr logout and redirect to login page 
     logout(request)
     return redirect('login')
 
 def large_viewer(request):
+    #Large viewer, React rerouts
+    #Check if list id is int, premission check is done in api/views.py (after request from react)
     try: 
         list_id = request.GET['li']
         int(list_id)

@@ -8,11 +8,13 @@ function ListGrid (props){
     const [lists, setLists] = useState(props.lists);
 
     useEffect(() => {
+      //update the lists when the props change
       setLists(props.lists);
     }, [props.lists]);
 
     return(
-        
+      //show the lists in a grid, when clicked, show the list editor
+      //for that create a new root and render the list editor in listEditor div (see HomePage)
         <div className='container'>
             {lists.map((list) => (
             <div key={list.name} style={{backgroundColor: list.color}} className='box' onClick={(e) => {

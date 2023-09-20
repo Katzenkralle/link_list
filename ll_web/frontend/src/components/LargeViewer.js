@@ -7,6 +7,7 @@ function LargeViewer() {
     const [passwdForList, setPasswdForList] = useState('');
 
     const fetchData= () => {
+      // Get data about list which id is in the url, if user provided a password, send it
         console.log("fetching data")
         fetch('api/getDataViewerLarge' + window.location.search + (passwdForList !== '' ? '&passwd=' + passwdForList : ''))
         .then(response => response.json())
@@ -21,6 +22,8 @@ function LargeViewer() {
     }, []);
     
     return (
+      //when password is not needed, show the list editor, otherwise show a password input
+      //password needet until list backend returns a list
         <div>
           {listData.passwd_needed === false ? (
             <ListEditor update_data={fetchData}

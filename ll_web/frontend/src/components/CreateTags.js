@@ -5,16 +5,20 @@ export default class CreateTags extends Component {
     constructor(props) {
       super(props);
     }
+    //TODO: (Maby) change to functional component
+    //TODO: props.mode is useless
+    //TODO: (Maby) add error handling
 
     handleSelfDestruct = () => {
       document.getElementById("select_tag").value = "Default"
       ReactDOM.createRoot(document.getElementById('tagContainer')).unmount()
+      //This will rais an error, this is expected
     }
     handleSubmit = (event) => {
-      event.preventDefault(); // Prevent the default form submission
-      // Perform any additional logic or data manipulation here
-  
-      // Send the form data to a different URL using AJAX/fetch
+      //send Tags name to create to api, action = 'add' needet for manageTags to work
+      //Prevent default form submission
+      event.preventDefault(); 
+
       const formData = new FormData(event.target);
       formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
       formData.append("tag_name", document.getElementById("input_tag_name").value)
@@ -24,13 +28,11 @@ export default class CreateTags extends Component {
         body: formData,
       })
         .then((response) => {
-          // Handle the response if needed
           console.log('Form data submitted successfully');
           this.props.update_data()
           this.handleSelfDestruct()
         })
         .catch((error) => {
-          // Handle any errors that occur during the submission
           console.error('Form submission error:', error);
         });
     };

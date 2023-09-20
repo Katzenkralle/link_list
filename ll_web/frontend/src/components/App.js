@@ -16,7 +16,6 @@ function App() {
                 <Route path="q" element={<LargeViewer />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="account-creation" element={<CreateAccount/>} />
-                <Route path="/q" element={<PublicListEditor/>} />
             </Routes>
         </Router>
     );

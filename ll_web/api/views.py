@@ -9,31 +9,46 @@ from rest_framework import status
 from .models import Profile, List, AppWideData
 
 from .json_handler import from_json, to_json, content_for_db, has_letter
-# Create your views here.
+from hashlib import sha256
+
+#TODO: rewrite to class based views
+#TODO: look into decorators
+#TODO: add json example to docstrings
 
 def manage_lists(request):
+    #Login not required, because the user can be authed by get_large_viewer_data --> Safty untested!!!
+    #Checks if the request is a POST request, if not, return 204
     if request.method != 'POST':
         return HttpResponse("Post domain", status=status.HTTP_204_NO_CONTENT)
 
+    #Get list name and color from the request
+    #TODO: Rename variables
     new_list_name = request.POST['list_name']
     new_list_color = request.POST['list_color']
 
     if new_list_color == 'del':
-        #Chech if Command to delaead list: list_color = del
+        #Code to delete a list, works if the user is the owner, from frontend instead of color
         List.objects.all().get(user = request.user, name=new_list_name).delete()
         return HttpResponse("Saved", status=status.HTTP_202_ACCEPTED)
     
+    #Get list tag from the request
+    #Separate from the other, because when deleting a list, the tag is not needed
     new_list_tag = request.POST['list_tag']
 
     try:
-        #Code to edit an exsisting List
+        #Code to modify a list
+        #Get list content from the request and convert it to a list of dicts
         new_list_content = request.POST['list_content']
         content = content_for_db(new_list_content)
+
+        #Get the list to modify from the database expectet to fail wehen creating a new list
         list_to_modify = List.objects.all().get(id = int(request.POST['list_id']))
 
-        if list_to_modify.user != request.user and not request.session.get('auth', False):
+        #Check if the user is the owner of the list, or is authed by get_large_viewer_data
+        if list_to_modify.user != request.user and not request.session.get('auth', False) == request.user.username + list_to_modify.id:
             return HttpResponse("Not allowed", status=status.HTTP_403_FORBIDDEN)
 
+        #Update the list, 'undefined' can be sent when using the large viewer and not beening the owner, then the values are not changed 
         list_to_modify.tag = new_list_tag if new_list_tag != 'undefined' else list_to_modify.tag
         list_to_modify.color = new_list_color if new_list_color != 'undefined' else list_to_modify.color
         list_to_modify.content = to_json(content)
@@ -42,17 +57,20 @@ def manage_lists(request):
         return HttpResponse("Saved", status=status.HTTP_202_ACCEPTED)
 
     except:
-        #Code to Create a new List
+        #Create a new list
+        #Check if the list name is already used
         if List.objects.all().filter(user=request.user, name=new_list_name).exists():
             return HttpResponse("Already exists", status=status.HTTP_406_NOT_ACCEPTABLE)
         else:
-            #Creates UnnamedListx, wehen name == ''
+            #Check if the list name is empty, if so, generate a unused name
             if new_list_name == "":
                 i, unamed_list_name = 1, "UnamedList"
                 while List.objects.filter(user = request.user, name=f"{unamed_list_name}{i}.").exists():
+                    #While the name is already used, increment the number
                     i += 1
                 new_list_name = f"{unamed_list_name}{i}."
 
+            #Create the new list
             List.objects.create(user = request.user,
                                 name = new_list_name,
                                 tag = new_list_tag,
@@ -61,11 +79,17 @@ def manage_lists(request):
 
 @login_required(login_url='login')
 def manage_tags(request):
+    #Checks if the request is a POST request, if not, return 204
     if request.method != 'POST':
         return HttpResponse("Post domain", status=status.HTTP_204_NO_CONTENT)
-    user_tags = from_json(Profile.objects.all().get(user = request.user).tags)
+    
+    #Get all existing tags of the user from the database
+    user = Profile.objects.all().get(user = request.user)
+    user_tags = from_json(user.tags)
     match request.POST['action']:
+        #Check if the action is add or del, if not, return 400
         case "add":
+            #Get the new tag from the request, if valid, add it to the list of tags
             new_tag = request.POST['tag_name']
             if new_tag in user_tags:
                 return HttpResponse("Already present", status=status.HTTP_304_NOT_MODIFIED)
@@ -75,32 +99,30 @@ def manage_tags(request):
                 return HttpResponse("May not be none", status=status.HTTP_400_BAD_REQUEST)
             else:    
                 user_tags.append(new_tag)
-                working_entry = Profile.objects.all().get(user = request.user)
-                working_entry.tags = to_json(user_tags)
-                working_entry.save()
-                return HttpResponse("Success", status=status.HTTP_201_CREATED)
         case "del": 
+            #Get the tag to delete from the request, if no list with this tag exists, delete it from the list of tags
             del_tag = request.POST['tag_name']
-            #user_lists = List.objects.all().filter(user=request.user)
             for list in List.objects.all().filter(user=request.user):
                 if list.tag == del_tag:
                     return HttpResponse("A list withe this Tak exists!", status=status.HTTP_304_NOT_MODIFIED)
             user_tags.remove(del_tag)
-            working_entry = Profile.objects.all().get(user = request.user)
-            working_entry.tags = to_json(user_tags)
-            working_entry.save()
-            return HttpResponse("", status=status.HTTP_202_ACCEPTED)
-        
-
-        case _: pass
+        case _: return HttpResponse("Bad request", status=status.HTTP_400_BAD_REQUEST)
+    
+    user.tags = to_json(user_tags)
+    user.save()
+    return HttpResponse("", status=status.HTTP_202_ACCEPTED)
 
 @login_required(login_url='login')
 def manage_interactive_elements(request):
+    #Checks if the request is a POST request, if not, return 204
     if request.method != 'POST':
         return HttpResponse("Post domain", status=status.HTTP_204_NO_CONTENT)
+    
+    #Get the list to modify from the database and convert its content to a list of dicts
     relevant_list = List.objects.all().get(user=request.user, name=request.POST['list_name'])
     content = from_json(relevant_list.content)
     changes = from_json(request.POST['changes'])
+    #Iterate over all changes and apply them to the content (only for interactive elements)
     for element in changes:
         for style in content[element['id']]['style']:
             if style[0] == 'cb':
@@ -111,6 +133,9 @@ def manage_interactive_elements(request):
 
 @login_required(login_url='login')
 def get_data_for_home(request):
+    #Get all tags of the user from the database and convert them to a list metaTags
+    #Get all lists of the user and their content from the database and convert them to a list metaLists
+    #Also send the username of the user
     user = request.user
     user_tags = Profile.objects.all().get(user=user).tags
 
@@ -130,13 +155,18 @@ def get_data_for_home(request):
     return JsonResponse({'metaTags': user_tags, 'metaLists': to_json(user_list), 'metaUser': to_json({'name': user.username})}, safe=False)
 
 def modify_account(request): 
+    #Checks if the request is a POST request, if not, return 204
     if request.method != 'POST':
         return HttpResponse("Post domain", status=status.HTTP_204_NO_CONTENT)
     
     
     action = request.POST['action']
 
+    #Cock if acount creation or removal is requested else return 400
     if action == 'account_creation':
+
+        #Check if the user name is already used and the password is valid, if so, return 226
+        #Also check if the invatation code is valid, if not, return 423
         user = request.POST['user']
         invatation_code = request.POST['invatation_code']
 
@@ -144,33 +174,37 @@ def modify_account(request):
             return HttpResponse("already used", status=status.HTTP_226_IM_USED)
         elif invatation_code not in from_json(AppWideData.objects.get(id=1).invatation_codes):
             return HttpResponse("not invited", status=status.HTTP_423_LOCKED)
-        #At this point, all chanlanges have been passed, an the creation prosses can start 
+        
         new_passwd = request.POST['passwd']
         
-        #Check validety of username and passed
+    
         if not has_letter(user) or not has_letter(new_passwd):
             return HttpResponse("invalid user name", status=status.HTTP_406_NOT_ACCEPTABLE)
     
-        #Create user and profile
+        #Create the new user and profile
         user = User.objects.create_user(username=user, password=new_passwd)
         Profile(user=user).save()
         return HttpResponse('created', status=status.HTTP_201_CREATED)
     elif action == 'account_removal':
+        #Remove the user, that requested it, from the database, profile and lists are deleated by on_delete=CASCADE
         User.objects.get(username=request.user).delete()
         return HttpResponse("Removed User", status=status.HTTP_202_ACCEPTED)
 
 @login_required(login_url='login')
 def list_right_managment(request):
+    #Checks if the request is a POST request, if not, return 204
     if request.method != 'POST':
         return HttpResponse("Post domain", status=status.HTTP_204_NO_CONTENT)
     
+    #Get the list to modify the public rights from the database
     list_name = request.POST['list']
 
+    #Check if passwd is set, if not, set it to the current passwd, can be none when updating readonly status
     db_entry = List.objects.get(name=list_name) 
-    list_public_passwd = request.POST['passwd'] if request.POST['passwd'] != 'undefined' else db_entry.public_list_passwd
+    list_public_passwd = sha256(request.POST['passwd']).hexdigest() if request.POST['passwd'] != 'undefined' else db_entry.public_list_passwd
     list_readonly = request.POST['readonly']#Readonly functions a as thristat, it can be False=List not public, True=Public but Readonly and Reitable=Public and editable
     
-
+    #save the changes to the database, create a url for the list and return 202
     if list_readonly == 'false':
         db_entry.url = ''
         db_entry.public_list = 'False'
@@ -186,21 +220,24 @@ def list_right_managment(request):
     return HttpResponse("Done", status=status.HTTP_202_ACCEPTED)
 
 def get_large_viewer_data(request):
+    #User can be a guest, so no login required
+    #Get list id, passwd if set (default = ''), from url (because get request)
     user = request.user
     list_id = request.GET['li']
-    if 'passwd' in request.GET:
-        list_passwd = request.GET['passwd']
-    else:
-        list_passwd = ""
+    list_passwd = request.session.get('passwd', '')
+
+    #Get requested list from the database, check if the user is the owner or the list is public then passwd must match, when non set '' in DB matches with default
     list_object = List.objects.get(id=list_id) 
     user_is_owner = True if list_object.user_id == user.id else False
     if list_object.public_list == 'False' and not user_is_owner:
         return HttpResponse("List not public", status=status.HTTP_403_FORBIDDEN)
-    if not user_is_owner and list_object.public_list_passwd != list_passwd and not request.session.get('auth', False):
+    if not user_is_owner and list_object.public_list_passwd != sha256(list_passwd.encode('utf-8')).hexdigest() and not request.session.get('auth', False) == user.username + list_id:
         return JsonResponse({'passwd_needed': True}, status=status.HTTP_100_CONTINUE)
     
-    request.session['auth'] = True
+    #Set auth for this session to the username and list id, so the user can view the list without reentering passwd
+    request.session['auth'] = user.username + list_id
 
+    #Return the data of the list, with the rights the user has
     list_data = {
         'name': list_object.name,
         'id': list_object.id,
@@ -219,12 +256,3 @@ def get_large_viewer_data(request):
 
     return JsonResponse(list_data, safe=False)
     
-"""
-            created_list.url = f"/q?li={created_list.id}"
-            created_list.save()"
-"""
-def get_data_for_public_list(request):
-    if request.method == 'POST':
-        pass
-    else:
-        pass
