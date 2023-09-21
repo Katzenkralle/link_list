@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Component} from 'react';
 import ListEditor from './ListEditor';
-import '../../static/home.css'
+import '../../../static/LinkList/home.css'
 
 function LargeViewer() {
     const [listData, setListData] = useState({passwd_needed: undefined});
@@ -9,7 +9,7 @@ function LargeViewer() {
     const fetchData= () => {
       // Get data about list which id is in the url, if user provided a password, send it
         console.log("fetching data")
-        fetch('api/getDataViewerLarge' + window.location.search + (passwdForList !== '' ? '&passwd=' + passwdForList : ''))
+        fetch('linkListApi/getDataViewerLarge' + window.location.search + (passwdForList !== '' ? '&passwd=' + passwdForList : ''))
         .then(response => response.json())
             .then(data => {
                 setListData(data);

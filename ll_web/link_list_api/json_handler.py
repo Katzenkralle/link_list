@@ -2,14 +2,6 @@ import json
 import re
 from typing import List, Dict, Union
 
-def from_json(data: str) -> Union[List, Dict]:
-    #From json to python
-    return json.loads(data)
-
-def to_json(data: Union[List, Dict]) -> str:
-    #From python to json
-    return json.dumps(data)
-
 def check_link_sequence(line: str) -> (str, str):
     #Check for Link in line (Md Syntax: [text](path)
     pattern = r"^.*\[(.*?)\]\((.*?)\).*"
@@ -127,9 +119,3 @@ def content_for_db(data: str) -> List[Dict]:
         
     return db_data
 
-def has_letter(string: str) -> bool:
-    #Check if string contains a letter
-    for char in string:
-        if char.isalpha():
-            return True  
-    return False

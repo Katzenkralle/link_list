@@ -23,7 +23,7 @@ export default class CreateTags extends Component {
       formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
       formData.append("tag_name", document.getElementById("input_tag_name").value)
       formData.append("action", 'add')
-      fetch("api/manageTags/", {
+      fetch("linkListApi/manageTags/", {
         method: 'POST',
         body: formData,
       })

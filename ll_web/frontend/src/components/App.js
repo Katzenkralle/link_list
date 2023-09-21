@@ -3,10 +3,10 @@ import { createRoot } from "react-dom/client";
 
 import { BrowserRouter as Router,  Route, Routes} from "react-router-dom";
 
-import HomePage from './HomePage';
-import Settings from "./Settings";
-import CreateAccount from "./AccountCreation";
-import LargeViewer from "./LargeViewer";
+import HomePage from './LinkList/HomePage';
+import Settings from "./Other/Settings";
+import CreateAccount from "./Other/AccountCreation";
+import LargeViewer from "./LinkList/LargeViewer";
 
 function App() {
     return (

@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api.apps.ApiConfig',
+    'link_list_api',
+    'other_api',
     'frontend',
     'rest_framework'
 ]
@@ -86,8 +87,8 @@ WSGI_APPLICATION = 'll_web.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'data/db.sqlite3',
-    }
+        'NAME': BASE_DIR / 'data/default.db.sqlite3',
+    },
 }
 
 

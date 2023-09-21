@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import CreateTags from './CreateTags';
+import CreateTags from '../LinkList/CreateTags';
 import ConfirmDialog from './ConfirmDialog'
 
 function Settings() {
@@ -13,7 +13,7 @@ function Settings() {
   const fetchData = () => {
     //get data about the tags and lists from api
 
-    fetch('api/getMetaHome/')
+    fetch('linkListApi/getMetaHome/')
       .then(response => response.json())
       .then(data => {
         setMetaTags(JSON.parse(data.metaTags))
@@ -41,7 +41,7 @@ const deleteTag = (event) => {
     formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
     formData.append("tag_name", document.getElementById("select_tag").value)
     formData.append("action", 'del')
-    fetch("api/manageTags/", {
+    fetch("linkListApi/manageTags/", {
       method: 'POST',
       body: formData,
     })
@@ -71,7 +71,7 @@ const deleteAccount = (usrInput) => {
         formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
         formData.append("action", 'account_removal')
 
-      fetch("api/accountCreation/", {
+      fetch("otherApi/accountCreation/", {
         method: 'POST',
         body: formData,
       })
@@ -98,7 +98,7 @@ const handelListPublication = (concernedList) => {
     formData.append('list', concernedList.name)
     formData.append('readonly', concernedList.isReadonly == true ? true : concernedList.isReadonly == false ? 'writable' : 'false')
     formData.append('passwd', concernedList.passwd)
-    fetch("api/listPublicationChanges/", {
+    fetch("linkListApi/listPublicationChanges/", {
       method: 'POST',
       body: formData,
     })

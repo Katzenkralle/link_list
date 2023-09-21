@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../static/AccountCreation.css'
+import '../../../static/LinkList/AccountCreation.css'
 
 function CreateAccount() {
 
@@ -27,7 +27,7 @@ function CreateAccount() {
         formData.append("passwd", document.getElementById('passwd').value)
         formData.append("action", 'account_creation')
 
-      fetch("api/accountCreation/", {
+      fetch("otherApi/accountCreation/", {
         method: 'POST',
         body: formData,
       })

@@ -1,13 +1,5 @@
-ll_web/ll_web/api/__pycache__/*
-ll_web/ll_web/api/migrations/__init__.py
-ll_web/ll_web/api/migrations/__pycache__/*
-ll_web/api/__pycache__/*
-ll_web/api/migrations/__pycache__/*
-ll_web/frontend/__pycache__/*
-ll_web/frontend/migrations/__pycache__/*
-ll_web/frontend/node_modules/*
-ll_web/ll_web/__pycache__/*
-ll_web/ll_web/ll_web/__pycache__/*
-ll_web/db.sqlite3
+__pycache__
+node_modules
+*.sqlite3
 dockertestvol/
 ll_web/data/*

@@ -2,7 +2,7 @@ import React, { useEffect, useState, Component} from 'react';
 import CreateList from './CreateList';
 import ListGrid from './ListGrid';
 import Multiselect from 'multiselect-react-dropdown';
-import '../../static/home.css'
+import '../../../static/LinkList/home.css'
 
 function HomePage() {
 
@@ -101,7 +101,7 @@ function HomePage() {
   const fetchData = () => {
     //Fetches meta data from api
     //split into attributes to simplify, also reruns filterHandler
-    fetch('api/getMetaHome/')
+    fetch('linkListApi/getMetaHome/')
       .then(response => response.json())
       .then(data => {setMetaTags(JSON.parse(data.metaTags)); 
                      setMetaLists(JSON.parse(data.metaLists));

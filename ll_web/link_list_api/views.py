@@ -6,10 +6,14 @@ from django.http import HttpResponse, JsonResponse
 from rest_framework.views import APIView
 from rest_framework import status
 
-from .models import Profile, List, AppWideData
+from .models import LinkListProfile, List
+from other_api.models import AppWideData
 
-from .json_handler import from_json, to_json, content_for_db, has_letter
+from .json_handler import content_for_db
 from hashlib import sha256
+
+from json import loads as from_json
+from json import dumps as to_json
 
 #TODO: rewrite to class based views
 #TODO: look into decorators
@@ -84,7 +88,7 @@ def manage_tags(request):
         return HttpResponse("Post domain", status=status.HTTP_204_NO_CONTENT)
     
     #Get all existing tags of the user from the database
-    user = Profile.objects.all().get(user = request.user)
+    user = LinkListProfile.objects.all().get(user = request.user)
     user_tags = from_json(user.tags)
     match request.POST['action']:
         #Check if the action is add or del, if not, return 400
@@ -137,7 +141,7 @@ def get_data_for_home(request):
     #Get all lists of the user and their content from the database and convert them to a list metaLists
     #Also send the username of the user
     user = request.user
-    user_tags = Profile.objects.all().get(user=user).tags
+    user_tags = LinkListProfile.objects.all().get(user=user).tags
 
     user_list = []
     user_list_objects = List.objects.all().filter(user = user)
@@ -153,42 +157,6 @@ def get_data_for_home(request):
                           'is_public': object.public_list,
                           'has_passwd': object.public_list_passwd != ''})
     return JsonResponse({'metaTags': user_tags, 'metaLists': to_json(user_list), 'metaUser': to_json({'name': user.username})}, safe=False)
-
-def modify_account(request): 
-    #Checks if the request is a POST request, if not, return 204
-    if request.method != 'POST':
-        return HttpResponse("Post domain", status=status.HTTP_204_NO_CONTENT)
-    
-    
-    action = request.POST['action']
-
-    #Cock if acount creation or removal is requested else return 400
-    if action == 'account_creation':
-
-        #Check if the user name is already used and the password is valid, if so, return 226
-        #Also check if the invatation code is valid, if not, return 423
-        user = request.POST['user']
-        invatation_code = request.POST['invatation_code']
-
-        if User.objects.filter(username=user).exists():
-            return HttpResponse("already used", status=status.HTTP_226_IM_USED)
-        elif invatation_code not in from_json(AppWideData.objects.get(id=1).invatation_codes):
-            return HttpResponse("not invited", status=status.HTTP_423_LOCKED)
-        
-        new_passwd = request.POST['passwd']
-        
-    
-        if not has_letter(user) or not has_letter(new_passwd):
-            return HttpResponse("invalid user name", status=status.HTTP_406_NOT_ACCEPTABLE)
-    
-        #Create the new user and profile
-        user = User.objects.create_user(username=user, password=new_passwd)
-        Profile(user=user).save()
-        return HttpResponse('created', status=status.HTTP_201_CREATED)
-    elif action == 'account_removal':
-        #Remove the user, that requested it, from the database, profile and lists are deleated by on_delete=CASCADE
-        User.objects.get(username=request.user).delete()
-        return HttpResponse("Removed User", status=status.HTTP_202_ACCEPTED)
 
 @login_required(login_url='login')
 def list_right_managment(request):
@@ -245,7 +213,7 @@ def get_large_viewer_data(request):
         'passwd_needed': False
     }
     if user_is_owner:
-        list_data['tag_names'] = from_json(Profile.objects.get(user=user).tags)
+        list_data['tag_names'] = from_json(LinkListProfile.objects.get(user=user).tags)
         list_data['color'] = list_object.color
         list_data['tag'] = list_object.tag,
         list_data['is_editable'] = True

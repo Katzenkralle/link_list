@@ -1,11 +1,9 @@
 import React, { useEffect, useState, Component, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
 import renderByLine from './ContentRender';
-import ConfirmDialog from './ConfirmDialog'
-import '../../static/ViewUserContent.css'
-import '../../static/ListEditor.css'
-
-import { updateListData, deleteList, saveList } from './ListEditorApiRequests';
+import ConfirmDialog from '../Other/ConfirmDialog'
+import '../../../static/LinkList/ViewUserContent.css'
+import '../../../static/LinkList/ListEditor.css'
 
 function ListEditor(props) {
   //Presets all neaded useStates
@@ -68,7 +66,7 @@ function ListEditor(props) {
     return new Promise((resolve, reject) => {
       if (calledFromLargeViewer == true) {
         //Use different api call if called from large viewer gertting less data, and handeling auth 
-        fetch('api/getDataViewerLarge' + window.location.search)
+        fetch('linkListApi/getDataViewerLarge' + window.location.search)
           .then(response => response.json())
           .then(data => {
             // : data.color/.tag in large viewer not always present
@@ -88,7 +86,7 @@ function ListEditor(props) {
           });
       } else {
         //Get all data from backend for loged in user
-        fetch('api/getMetaHome/')
+        fetch('linkListApi/getMetaHome/')
           .then(response => response.json())
           .then(data => {
             var relevantList = JSON.parse(data.metaLists).find(obj => obj.name === name);
@@ -123,7 +121,7 @@ function ListEditor(props) {
     formData.append("list_color", color)
     formData.append("list_content", document.getElementById('list_content').value)
 
-    fetch("api/manageLists/", {
+    fetch("linkListApi/manageLists/", {
       method: 'POST',
       body: formData,
     })
@@ -156,7 +154,7 @@ function ListEditor(props) {
     formData.append("list_name", name)
     formData.append("list_color", 'del')
 
-    fetch("api/manageLists/", {
+    fetch("linkListApi/manageLists/", {
       method: 'POST',
       body: formData,
     })
@@ -201,7 +199,7 @@ function ListEditor(props) {
         formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value);
         formData.append("changes", changes);
         formData.append("list_name", name);
-        fetch("api/interactiveElements/", {
+        fetch("linkListApi/interactiveElements/", {
           method: 'POST',
           body: formData,
         })
