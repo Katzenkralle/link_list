@@ -10,11 +10,13 @@ class WeatherData(models.Model):
     current_weather = models.TextField(max_length=1000)
     alert = models.TextField(max_length=1000, null=True, blank=True)
     historical = models.BooleanField(default=False)
+    source = models.TextField(max_length=20, null=True, blank=True)
 
 class ForecastWeatherData(models.Model):
     date = models.IntegerField()
     time = models.IntegerField()
     forecast_weather = models.TextField(max_length=1000)
+    source = models.TextField(max_length=20, null=True, blank=True)
     associated_data = models.ForeignKey(WeatherData, on_delete=models.CASCADE)
 
 class WeatherProfile(models.Model):
@@ -22,3 +24,4 @@ class WeatherProfile(models.Model):
     api_key = models.CharField(max_length=100, default='', blank=True, null=True)
     custom_coordinates = models.CharField(max_length=100, default='', blank=True, null=True)
     default_location = models.CharField(max_length=100, default='Hamburg')
+    

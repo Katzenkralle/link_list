@@ -26,7 +26,8 @@ class SaveData():
         date, time = datetime.utcfromtimestamp(self.current_weather['dt']).strftime('%Y%m%d-%H%M').split("-")
         lat, lon = (round(self.current_weather['coord']['lat'], 1), round(self.current_weather['coord']['lon'], 1))
         alert = self.current_weather.get('alerts', None)
-        self.current_weather = SaveData.remove_keys(self.current_weather, ['coord', 'dt', 'timezone'])
+        souce = self.current_weather.get('source', 'openweather')
+        self.current_weather = SaveData.remove_keys(self.current_weather, ['coord', 'dt', 'timezone', 'source', 'alerts'])
 
         self.createdWeatherObject = WeatherData.objects.create(
             lat=lat,
@@ -35,6 +36,7 @@ class SaveData():
             time=time,
             current_weather=dumps(self.current_weather),
             historical=self.historical,
+            source= souce,
             alert=dumps(alert) if alert else None,
         )
         if self.forcast_weather:
@@ -44,10 +46,12 @@ class SaveData():
     def save_forecast(self):
         for entry in self.forcast_weather['list']:
             date, time = datetime.utcfromtimestamp(entry['dt']).strftime('%Y%m%d-%H%M').split("-")
-            entry = SaveData.remove_keys(entry, ['dt', 'dt_txt', 'sys'])
+            source = entry.get('source', 'openweather')
+            entry = SaveData.remove_keys(entry, ['dt', 'dt_txt', 'sys', 'source'])
             ForecastWeatherData.objects.create(
                 date=date,
                 time=time,
+                source = source,
                 forecast_weather=dumps(entry),
                 associated_data=self.createdWeatherObject,
                 
@@ -102,10 +106,18 @@ class Data(View, SaveData):
 
     def get_backcast(self, related_data):
         backcast_range = Data.get_previous_dates(related_data.date)
-        backcasts = WeatherData.objects.filter(lat=related_data.lat, lon=related_data.lon, date__in=backcast_range) #.order_by("date", "time")
+        backcasts = []
+        backcast_queryset = WeatherData.objects.filter(lat=related_data.lat, lon=related_data.lon, date__in=backcast_range).order_by("date", "time")
+        for entry_current in backcast_queryset:
+            if entry_current.source == 'open-meteo':
+                #replace queryaet with
+                for entry in ForecastWeatherData.objects.filter(associated_data=entry_current).order_by("date", "time"):
+                    backcasts.append(ForecastWeatherDataSerializer(entry).data)
+            else:
+                backcasts.append(WeatherDataSerializer(entry_current).data)
         # ^ maby query every date sepratly to find if one is missing, then reqest it
         #backcasts = [WeatherDataSerializer(entry).data for entry in backcasts]
-        backcasts = [ForecastWeatherDataSerializer(entry).data for entry in ForecastWeatherData.objects.filter(associated_data__in=backcasts).order_by("date", "time")]
+
         if backcasts == []:
             formated_center_time = datetime.strptime(str(related_data.date), '%Y%m%d')
             time_range = ((formated_center_time - timedelta(days=5)).strftime('%Y-%m-%d'),  (formated_center_time - timedelta(days=1)).strftime('%Y-%m-%d')) 
