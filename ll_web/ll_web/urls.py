@@ -22,4 +22,5 @@ urlpatterns = [
     path('linkListApi/', include('link_list_api.urls')),
     path('', include('frontend.urls')),
     path('otherApi/', include('other_api.urls')),
+    path('weatherApi/', include('weather_api.urls')),
 ]

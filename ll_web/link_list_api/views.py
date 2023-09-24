@@ -183,7 +183,7 @@ def list_right_managment(request):
     elif list_readonly == 'writable':
         db_entry.public_list = 'rw'
         db_entry.public_list_passwd = list_public_passwd
-    db_entry.url = f"/q?li={db_entry.id}"
+    db_entry.url = f"/qLinkList?li={db_entry.id}"
     db_entry.save()
     return HttpResponse("Done", status=status.HTTP_202_ACCEPTED)
 

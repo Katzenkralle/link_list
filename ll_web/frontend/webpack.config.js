@@ -18,7 +18,11 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
+        use: [
+          'style-loader', // Inject styles into the DOM
+          'css-loader',   // Handles the CSS import/require statements
+          'postcss-loader', // Process CSS with PostCSS (includes Tailwind CSS and autoprefixing)
+        ],
       },
     ],
   },

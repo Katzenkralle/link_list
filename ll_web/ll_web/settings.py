@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'link_list_api',
+    'weather_api',
     'other_api',
     'frontend',
     'rest_framework'

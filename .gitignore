@@ -3,3 +3,6 @@ node_modules
 *.sqlite3
 dockertestvol/
 ll_web/data/*
+default_key.json
+.gitignore
+default_location.json
