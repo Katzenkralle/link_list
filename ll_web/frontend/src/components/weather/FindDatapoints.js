@@ -38,11 +38,20 @@ export const calculateBackcastDate = (currentDate, daysBehind) => {
 }
 
 export const findNearestDataPoints = (targetDate, targetTime, dataset) => {
-    // Sort the dataset by the absolute time difference from the target date and time
+    // Sort the dataset by the absolute date difference from the target date
     dataset.sort((a, b) => {
-        const diffA = Math.abs(a.date - targetDate) + Math.abs(a.time - targetTime);
-        const diffB = Math.abs(b.date - targetDate) + Math.abs(b.time - targetTime);
-        return diffA - diffB;
+        const dateDiffA = Math.abs(a.date - targetDate);
+        const dateDiffB = Math.abs(b.date - targetDate);
+
+        if (dateDiffA !== dateDiffB) {
+            // If date differences are not equal, prioritize date
+            return dateDiffA - dateDiffB;
+        } else {
+            // If date differences are equal, prioritize time
+            const timeDiffA = Math.abs(a.time - targetTime);
+            const timeDiffB = Math.abs(b.time - targetTime);
+            return timeDiffA - timeDiffB;
+        }
     });
 
     // The first element of the sorted dataset will be the nearest data point

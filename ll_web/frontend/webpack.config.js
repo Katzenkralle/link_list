@@ -3,6 +3,7 @@ const webpack = require("webpack");
 
 module.exports = {
   entry: "./src/index.js",
+  devtool: 'eval-source-map', // or 'cheap-module-source-map'
   output: {
     path: path.resolve(__dirname, "./static/frontend"),
     filename: "[name].js",

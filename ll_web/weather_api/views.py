@@ -142,13 +142,12 @@ class Data(View, SaveData):
 
         location = Data.default_location.get(location_name, (location_name, ""))
 
-
-        if not WeatherData.objects.filter(lat=location[0], lon=location[1], date=datetime.now().strftime('%Y%m%d') if date == 'now' else date).exists():
+        weather_object = WeatherData.objects.filter(lat=location[0], lon=location[1], date=datetime.now().strftime('%Y%m%d') if date == 'now' else date)
+        if not weather_object.exists():
             self.fetch_wether_data(location, date, user_settings)
  
         if time == "now":
-            queryset = WeatherData.objects.aggregate(max_value=Max('time'))['max_value'] #newest data
-            current_weather_object = WeatherData.objects.filter(time=queryset).first()
+            current_weather_object = WeatherData.objects.all().order_by('date', 'time').last() #.last get highest date and time
             
         else:
             queryset = WeatherData.objects.annotate(abs_diff=Abs(F('numeric_field') - time))
