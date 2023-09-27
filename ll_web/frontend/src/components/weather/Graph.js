@@ -4,10 +4,10 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend} from "chart.js";
 
 
 
-export const minMaxLineChart = (dataset) => {
+export const minMaxLineChart = (dataset, xAchses) => {
 
   const data = {
-    labels: ["-4", "-3", "-2", "-1", "Today", "+1", "+2", "+3", "+4"],
+    labels: xAchses,
     datasets: dataset
   };
 
@@ -44,8 +44,14 @@ export const minMaxLineChart = (dataset) => {
   ChartJS.register(ArcElement, Tooltip, Legend,);
   ChartJS.defaults.plugins.tooltip.enabled = false;
   ChartJS.defaults.plugins.legend.display = true;
-
+  
   return (
     <Line data={data} options={config} />
   );
 };
+/*
+
+  ChartJS.register(ArcElement, Tooltip, Legend,);
+  ChartJS.defaults.plugins.tooltip.enabled = false;
+  ChartJS.defaults.plugins.legend.display = true;
+*/

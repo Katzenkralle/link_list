@@ -16,7 +16,6 @@ export const calculateForecastDate = (currentDate, daysAhead) => {
 
     return `${year}${month}${day}`;
 }
-
 // Helper function to calculate the backcast date
 export const calculateBackcastDate = (currentDate, daysBehind) => {
     // Convert the currentDate from YYYYMMDD to a Date object
@@ -59,3 +58,70 @@ export const findNearestDataPoints = (targetDate, targetTime, dataset) => {
 
     return nearestDataPoint;
 };
+
+export const ZipFindExtremeValues = (dataset, datasetb, entry, date) => {
+    const getValueByPath = (obj, path) => {
+        const pathArray = path.split(".");
+        let value = obj;
+        for (let i = 0; i < pathArray.length; i++) {
+            value = value[pathArray[i]];
+        };
+        return value;
+    }
+    let average = [0, 0];
+    let highest = Number.NEGATIVE_INFINITY; // Initialize with the lowest possible value
+    let lowest = Number.POSITIVE_INFINITY; // Initialize with the highest possible value
+    for (let i = 0; i < dataset.length; i++) {
+        if (dataset[i].date.toString() == date) {
+            let value = getValueByPath(datasetb[i], entry);
+            if (value > highest) {
+                highest = value;
+            }
+            if (value < lowest) {
+                lowest = value;
+            }
+            average[0] += value;
+            average[1] += 1;
+            
+        }
+    }
+    return [highest, lowest, (average[0]/average[1])];
+
+}
+
+export const colorByTemp = (temp) => {
+    temp += 15 //to set refrenzpoint to 0
+
+    if (temp < 0) {
+        temp = 0;
+    }
+    const tempRef = temp * 17; //to get the scope of 1024
+    temp *= 4.25 //to get the scope of 255
+    let r = undefined
+    let g = undefined
+    let b = undefined
+
+    if (tempRef < 255) {
+        r = 0
+        g = temp;
+        b = 255;
+        
+    } else if (tempRef < 510) {
+        r = 0
+        g = 255;
+        b = 255 -temp;
+        
+    } else if (tempRef < 767){
+        r = temp;
+        g = 255;
+        b = 0;
+    
+
+    } else if (767 < tempRef) {
+        r  = 255;
+        g = 255 - tempRef;
+        b = 0;
+    }
+
+    return `rgb(${r}, ${g}, ${b})`
+    }

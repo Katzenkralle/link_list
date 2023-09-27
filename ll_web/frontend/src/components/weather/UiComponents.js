@@ -1,22 +1,36 @@
 import React from "react";
-import { calculateForecastDate } from "./FindDatapoints";
+import { calculateForecastDate, ZipFindExtremeValues, colorByTemp } from "./FindDatapoints";
+
+
+
+export const formatTime = (time) => {
+    time = time.toString();
+    while (time.length < 4) {
+        time = "0" + time;
+    }
+    return `${time.substring(0, 2)}:${time.substring(2,4)}`
+}
+
+export const formatDay = (date) => {
+    date = date.toString();
+    return `${date.substring(6, 8)}.${date.substring(4,6)}.${date.substring(0, 4)}`
+}
 
 export const DisplaySelectedDay = (props) => {
     if (props.selectedDay === undefined) {
         return <div>Loading...</div>;
     }
+    console.log("SelectedDay: ", props.selectedDay);
     //console.log(props.selectedDay);
     const weather_info = props.selectedDay.hasOwnProperty("forecast_weather")
         ? props.selectedDay.forecast_weather
         : props.selectedDay.current_weather;
-    let stringifyedDate = props.selectedDay.date.toString();
-    let stringifyedTime = props.selectedDay.time.toString();
     return (
         <div>
             <h2>
                 Weather for{" "}
-                {`${stringifyedDate.substring(6, 8)}.${stringifyedDate.substring(4,6)}.${stringifyedDate.substring(0, 4)}`}{" "}
-                at {`${stringifyedTime.substring(0, 2)}:${stringifyedTime.substring(2,4)}`}
+                {formatDay(props.selectedDay.date)}{" "}
+                at {formatTime(props.selectedDay.time)}
             </h2>
             <div>
                 <h3>Temperature:</h3>
@@ -40,6 +54,7 @@ export const DisplaySelectedDay = (props) => {
                 <h3>Weather:</h3>
                 <p>Wind Speed: {weather_info.wind.speed}m/s</p>
                 <p>Wind Direction: {weather_info.wind.deg}°</p>
+                <p>Rain probability: {weather_info.pop *100}%</p>
                 {weather_info.weather.map((weather, index) => (
                     <p key={index}>{weather.description}</p>
                 ))}
@@ -48,36 +63,6 @@ export const DisplaySelectedDay = (props) => {
     );
 };
 
-const ZipFindExtremeValues = (dataset, datasetb, entry, date) => {
-    const getValueByPath = (obj, path) => {
-        const pathArray = path.split(".");
-        let value = obj;
-        for (let i = 0; i < pathArray.length; i++) {
-            value = value[pathArray[i]];
-        };
-        return value;
-    }
-    let average = [0, 0];
-    let highest = Number.NEGATIVE_INFINITY; // Initialize with the lowest possible value
-    let lowest = Number.POSITIVE_INFINITY; // Initialize with the highest possible value
-    for (let i = 0; i < dataset.length; i++) {
-        if (dataset[i].date.toString() == date) {
-            let value = getValueByPath(datasetb[i], entry);
-            if (value > highest) {
-                highest = value;
-            }
-            if (value < lowest) {
-                lowest = value;
-            }
-            average[0] += value;
-            average[1] += 1;
-            
-            return [highest, lowest, average[0]/average[1]];
-        }
-    }
-
-}
-
 export const DisplayForecast = (props) => {
     if (!Array.isArray(props.forecastWeather) || props.forecastWeather.length === 0) {
         return <div>Loading...</div>;
@@ -85,34 +70,66 @@ export const DisplayForecast = (props) => {
     const unpackedForecast = props.forecastWeather.map((day) => {
         return JSON.parse(day.forecast_weather);
     });
-    console.log(unpackedForecast)
-    
+
     const unpackedCurrent = JSON.parse(props.currentWeather.current_weather);
-    console.log(unpackedCurrent)
-    
+    console.log(props.forecastWeather);
     return(
-        <div>
-            <div>
+        <div className="flex w-full">
+            <div className="basis-1/5">
                 <h3>Today</h3>
-                <p>{unpackedCurrent.main.temp}°C</p>
+                <p>Max {ZipFindExtremeValues([...props.forecastWeather, props.currentWeather], [...unpackedForecast, unpackedCurrent], "main.temp_max",
+                    props.currentWeather.date)[0]}°C</p>
+                <p>Min {ZipFindExtremeValues([...props.forecastWeather, props.currentWeather], [...unpackedForecast, unpackedCurrent], "main.temp_min",
+                    props.currentWeather.date)[1]}°C</p>
                 <p>Chance of Rain {ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "pop",
                     props.currentWeather.date)[2]}%</p>
-                <p>Wind Speed {unpackedCurrent.wind.speed}m/s</p>
             </div>
             {[1, 2, 3, 4].map((i) => {
                 let date = calculateForecastDate(props.currentWeather.date, i);
+
                 return (
-                    <div key={i}>
-                        <h3>{`${date.substring(6, 8)}.${date.substring(4,6)}.${date.substring(0, 4)}`}</h3>
+                    <div key={i} className="basis-1/5">
+                        <h3>{formatDay(date)}</h3>
                         <p>Max {ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "main.temp",
                          date)[0]}°C</p>
                         <p>Min {ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "main.temp",
                          date)[1]}°C</p>
                         <p>Average {ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "pop",
-                            date)[2]*100} % Rain probability</p>
+                            date)[0]*100} % Rain probability</p>
                     </div>
                 );
             })}
         </div>
     );
 };
+
+export const Bubbles = (props) => {
+    if (!Array.isArray(props.forecastWeather) || props.forecastWeather.length === 0 || props.selectedDay === undefined) {
+        return <div>Loading...</div>;
+    }
+
+        return(
+            <div className="flex flex-row">
+                {props.forecastWeather.sort((a, b) => a.time - b.time)
+                .map((day, i) => {
+                    let deepCpDay = JSON.parse(JSON.stringify(day))
+                    deepCpDay.forecast_weather = JSON.parse(day.forecast_weather)
+                    if (day.date === props.selectedDay.date) {
+                        console.log(day.forecast_weather.pop)
+                        return (
+                            <div className="relative inline-block">
+                                <button
+                                style={{backgroundColor: colorByTemp(deepCpDay.forecast_weather.main.temp), color: "black"}}
+                                className="ml-2 mr-2" key={i} onClick={() => {
+                                    props.setSelectedDay(deepCpDay)}}>{formatTime(day.time)}</button>
+                                {deepCpDay.forecast_weather.pop > 0 ? <img key={i+"a"} className="absolute top-0 left-0 w-full h-full bg-transparent bg-center bg-no-repeat bg-cover opacity-50 pointer-events-none" src="../../../static/media/raindrop.png"></img>
+                                : null}
+                                
+                            </div>
+                        );
+                    }
+                    return null;
+                })}
+            </div>
+        );
+    };
