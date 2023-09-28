@@ -54,7 +54,7 @@ export const DisplaySelectedDay = (props) => {
                 <h3>Weather:</h3>
                 <p>Wind Speed: {weather_info.wind.speed}m/s</p>
                 <p>Wind Direction: {weather_info.wind.deg}°</p>
-                <p>Rain probability: {weather_info.pop *100}%</p>
+                {weather_info.pop >=0 ? <p>Rain probability: {(weather_info.pop*100).toFixed(2)}%</p> : undefined}
                 {weather_info.weather.map((weather, index) => (
                     <p key={index}>{weather.description}</p>
                 ))}
@@ -81,8 +81,8 @@ export const DisplayForecast = (props) => {
                     props.currentWeather.date)[0]}°C</p>
                 <p>Min {ZipFindExtremeValues([...props.forecastWeather, props.currentWeather], [...unpackedForecast, unpackedCurrent], "main.temp_min",
                     props.currentWeather.date)[1]}°C</p>
-                <p>Chance of Rain {ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "pop",
-                    props.currentWeather.date)[2]}%</p>
+                <p>Chance of Rain {(ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "pop",
+                    props.currentWeather.date)[2]*100).toFixed(2)}%</p>
             </div>
             {[1, 2, 3, 4].map((i) => {
                 let date = calculateForecastDate(props.currentWeather.date, i);
@@ -94,8 +94,8 @@ export const DisplayForecast = (props) => {
                          date)[0]}°C</p>
                         <p>Min {ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "main.temp",
                          date)[1]}°C</p>
-                        <p>Average {ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "pop",
-                            date)[0]*100} % Rain probability</p>
+                        <p>Average {(ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "pop",
+                            date)[0]*100).toFixed(2)} % Rain probability</p>
                     </div>
                 );
             })}

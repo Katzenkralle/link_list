@@ -92,7 +92,7 @@ class Data(View, SaveData):
     def __init__(self, ):
         self.recursion_allowed = True
     
-    def fetch_wether_data(self, location, date, user_settings):
+    def fetch_current_weather(self, location, date, user_settings):
         current_weather = OpenWeatherCaller(location, date, user_settings.api_key).get_weather()
         if date == "now":
             forecast_weather = OpenWeatherCaller(location, 'forecast', user_settings.api_key).get_weather()
@@ -143,20 +143,22 @@ class Data(View, SaveData):
         location = Data.default_location.get(location_name, (location_name, ""))
 
         weather_object = WeatherData.objects.filter(lat=location[0], lon=location[1], date=datetime.now().strftime('%Y%m%d') if date == 'now' else date)
-        if not weather_object.exists():
-            self.fetch_wether_data(location, date, user_settings)
+
  
         if time == "now":
+            if not weather_object.exists():
+                self.fetch_current_weather(location, date, user_settings)
             current_weather_object = WeatherData.objects.all().order_by('date', 'time').last() #.last get highest date and time
-            
+            current_weather = WeatherDataSerializer(current_weather_object).data
+            forecast = self.get_forecast(current_weather_object)
         else:
             queryset = WeatherData.objects.annotate(abs_diff=Abs(F('numeric_field') - time))
             current_weather_object = queryset.order_by('abs_diff').first()
+            #get centerdat wether time + 4days (forcast)
 
-        current_weather = WeatherDataSerializer(current_weather_object).data
         current_weather['loc_name'] = location_name
         
-        forecast = self.get_forecast(current_weather_object)
+        
         backcast = self.get_backcast(current_weather_object)
 
         return JsonResponse({"current": current_weather, "forecast": forecast, "backcast": backcast})

@@ -105,8 +105,7 @@ class OpenWeatherCaller:
 
         return {'daily': formatted_days, 'hourly': formatted_hours}
     
-            
-            
+               
 
     def __get_current_weather(self) -> Dict[str, Any]:
         response = requests.get(f"https://api.openweathermap.org/data/2.5/weather?lat={self.location[0]}&lon={self.location[1]}&units=metric&appid={self.api_key}")
@@ -129,8 +128,7 @@ class OpenWeatherCaller:
             return self.__get_current_weather()
         elif self.date == "forecast":
             return self.__get_forecast_weather()
-        elif type(self.date) == int:
-            return self.__get_historical_weather()
         else:
-            raise ValueError("Date must be 'current', 'forecast', or a unix timestamp")
+            #self.date = int(datetime.strptime(self.date, "%Y%m%d").timestamp())
+            return self.__get_historical_weather()
 'https://archive-api.open-meteo.com/v1/archive?latitude=53.5453&longitude=9.9953&start_date=2023-09-19&end_date=2023-09-23&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,rain,snowfall,weathercode,pressure_msl,surface_pressure,windspeed_10m,winddirection_10m,windgusts_10m&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset,rain_sum,snowfall_sum&timeformat=unixtime&Europe%2FBerlin'

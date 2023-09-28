@@ -4,6 +4,8 @@ import { calculateBackcastDate, calculateForecastDate, findNearestDataPoints } f
 import { minMaxLineChart } from './Graph';
 import { Chart } from 'chart.js/auto';
 import { DisplaySelectedDay, DisplayForecast, Bubbles, formatDay, formatTime } from './UiComponents';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css'; // Import the CSS for styling
 
 function HomeWeather(){
     const [currentWeather, setCurrentWeather] = useState({});
@@ -22,9 +24,35 @@ function HomeWeather(){
     }, []);
 
     useEffect(() => {
+        console.log(date)
+        if (date != "") {
+        
+        if (dateToString(date) != currentWeather.date) {
+            getWeather()
+        }
+        }
+        
+    }, [date]);
+
+    useEffect(() => {
         findBasicGraphData('overwiew');
     }, [currentWeather, forecastWeather, backcastWeather]);
     
+    const strToDate = (new_date) => {
+        new_date = new_date.toString();
+        const year = new_date.slice(0, 4);
+        const month = new_date.slice(4, 6) - 1; // Months are zero-based (0 = January)
+        const day = new_date.slice(6, 8);
+        return new Date(year, month, day);
+    }
+
+    const dateToString = (new_date) => {
+        const year = new_date.getFullYear();
+        const month = (new_date.getMonth() + 1).toString().padStart(2, '0'); // Add 1 and pad with leading zero if needed
+        const day = new_date.getDate().toString().padStart(2, '0'); // Pad with leading zero if needed
+        return `${year}${month}${day}`;
+    }
+
     const findBasicGraphData = (centerDate) => {
         let workingData = [];
         let scope = [];
@@ -51,7 +79,7 @@ function HomeWeather(){
                 setDaysInRange(workingdaysInRange);
                 scope = ["-4", "-3", "-2", "-1", "Today", "+1", "+2", "+3", "+4"]
         }} else {
-            if (currentWeather.date < centerDate) {
+            if (currentWeather.date <= centerDate) {
                  workingData = forecastWeather.filter((data) => data.date == centerDate).sort((a, b) => a.time - b.time);
                  scope = forecastWeather.filter((data) => data.date == centerDate).sort((a, b) => a.time - b.time).map((data) => formatTime(data.time));
             } else {
@@ -66,7 +94,7 @@ function HomeWeather(){
     const getWeather = () => {
         
         let location = curerntLocation != "" ? curerntLocation : "default";
-        let dateTmp = date != "" ? date : "now"; 
+        let dateTmp = date != "" ? dateToString(date) : "now"; 
         let timeTmp = time != "" ? time : "now"; 
         fetch(`weatherApi/data?loc=${location}&date=${dateTmp}&time=${timeTmp}`)
             .then(response => response.json())
@@ -74,9 +102,12 @@ function HomeWeather(){
                 setCurrentWeather(data.current);
                 setForecastWeather(data.forecast);
                 setBackcastWeather(data.backcast);
+
                 let deepCpCurrent = JSON.parse(JSON.stringify(data.current));
                 deepCpCurrent.current_weather = JSON.parse(deepCpCurrent.current_weather);
                 setSelectedDay(deepCpCurrent);
+
+                setDate(strToDate(data.current.date));
             })     
             .catch(error => console.error('Error:', error));
     }
@@ -169,16 +200,23 @@ function HomeWeather(){
         return
     };
 
+    
+
     return(
         <div className='content h-screen dark:bg-zinc-700 dark:text-white'>
-            <h1>Some Weather App yet without a name</h1>
-
+            <div>
+                <h1>Some Weather App yet without a name</h1>
+                <DatePicker
+                    selected={date}
+                    onChange={(new_date) => setDate(new_date)}
+                />
+            </div>
             <div className='flex flex-row w-full'>
                 <div className='graph basis-1/2'>
                     <select onChange={(e) => findBasicGraphData(e.target.value)}>
                         <option value="overwiew">Overview</option>
                         {daysInRange.map((day, index) => (
-                            <option key={index} value={day} >{formatDay(day)}</option>
+                            <option key={index} value={day} >{currentWeather.date == day ? "Today" : formatDay(day) }</option>
                         ))
                         }
                     </select>
