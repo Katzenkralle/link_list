@@ -7,6 +7,7 @@ import { DisplaySelectedDay, DisplayForecast, Bubbles, formatDay, formatTime } f
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'; // Import the CSS for styling
 
+
 function HomeWeather(){
     const [currentWeather, setCurrentWeather] = useState({});
     const [forecastWeather, setForecastWeather] = useState({});
@@ -14,6 +15,7 @@ function HomeWeather(){
     const [curerntLocation, setCurrentLocation] = useState("");
     const [basicGraphData, setBasicGraphData] = useState({"x": [], "y": []});
     const [date, setDate] = useState("");
+    const [selectedCenterDate, setSelectedCenterDate] = useState("overview"); // [date, setDate
     const [time, setTime] = useState("");
     const [selectedDay, setSelectedDay] = useState(undefined);
     const [daysInRange, setDaysInRange] = useState([]);
@@ -24,11 +26,12 @@ function HomeWeather(){
     }, []);
 
     useEffect(() => {
-        console.log(date)
+      
         if (date != "") {
         
         if (dateToString(date) != currentWeather.date) {
             getWeather()
+            setSelectedCenterDate("overview")
         }
         }
         
@@ -74,7 +77,7 @@ function HomeWeather(){
                     workingData.unshift(findNearestDataPoints(IDate, currentWeatherTime, backcastWeather));
                 }
                 workingData.splice(4, 0, currentWeather);
-                workingdaysInRange.splice(4, 0, currentWeatherDate);
+                workingdaysInRange.splice(4, 0, currentWeatherDate.toString());
                 //console.log(workingData)
                 setDaysInRange(workingdaysInRange);
                 scope = ["-4", "-3", "-2", "-1", "Today", "+1", "+2", "+3", "+4"]
@@ -96,19 +99,33 @@ function HomeWeather(){
         let location = curerntLocation != "" ? curerntLocation : "default";
         let dateTmp = date != "" ? dateToString(date) : "now"; 
         let timeTmp = time != "" ? time : "now"; 
+        if (dateTmp == currentWeather.date) {
+            return
+        }
         fetch(`weatherApi/data?loc=${location}&date=${dateTmp}&time=${timeTmp}`)
             .then(response => response.json())
             .then(data => {
+                if (data.hasOwnProperty('error')) {
+                    document.getElementById('errorMSG').innerHTML = data.error;
+                    return
+                }
+
                 setCurrentWeather(data.current);
                 setForecastWeather(data.forecast);
                 setBackcastWeather(data.backcast);
-
+            
                 let deepCpCurrent = JSON.parse(JSON.stringify(data.current));
                 deepCpCurrent.current_weather = JSON.parse(deepCpCurrent.current_weather);
                 setSelectedDay(deepCpCurrent);
 
                 setDate(strToDate(data.current.date));
-            })     
+
+                console.log("Current:", data.current)
+                console.log("Forecast:", data.forecast)
+                console.log("Backcast:", data.backcast)
+
+                document.getElementById('errorMSG').innerHTML = "";
+            })
             .catch(error => console.error('Error:', error));
     }
 
@@ -122,7 +139,8 @@ function HomeWeather(){
         let min_temperatur = []; 
         let max_temperatur = [];
         let feels_like = []; 
-        console.log("Basic Graph:", basicGraphData)
+        let rain_prop = [];
+
         basicGraphData.y.forEach(day => {
             let weatherData; // Declare weatherData here
 
@@ -135,45 +153,58 @@ function HomeWeather(){
                 weatherData = JSON.parse(day.current_weather);
                 
             }
-            absolut_temperatur.push(weatherData.main.temp); 
+            absolut_temperatur.push(weatherData.main.temp ? 
+                weatherData.main.temp : 
+                (weatherData.main.temp_min+weatherData.main.temp_max)/2); 
             min_temperatur.push(weatherData.main.temp_min);
             max_temperatur.push(weatherData.main.temp_max);
-            feels_like.push(weatherData.main.feels_like);
+            feels_like.push(weatherData.main.feels_like ?
+                weatherData.main.feels_like :
+                (weatherData.main.temp_min+weatherData.main.temp_max)/2);
+            rain_prop.push(weatherData.pop != null ? weatherData.pop*100 : null)
         });
-        console.log("Absolut temperatur:", absolut_temperatur)
-
-        const datasets = [{
-            label: 'Absolut temperatur',
-            data: absolut_temperatur, 
-            borderColor: 'purple',
-            backgroundColor: 'purple',
-            tension: 0.3
-        },
-        {
-            label: 'Min temperatur',
-            data: min_temperatur, 
-            borderColor: 'blue',
-            backgroundColor: 'blue',
-            tension: 0.3,
-            hidden: true
-        },
-        {
-            label: 'Max temperatur',
-            data: max_temperatur, 
-            borderColor: 'red',
-            backgroundColor: 'red',
-            tension: 0.3,
-            hidden: true
-        },
-        {
-            "label": "Feels like",
-            "data": feels_like, 
-            "borderColor": "green",
-            "backgroundColor": "green",
-            tension: 0.3
-        }
-
-    ];
+        let datasets = [
+            {
+                label: "Absolut temperatur",
+                data: absolut_temperatur,
+                borderColor: "purple",
+                backgroundColor: "purple",
+                tension: 0.3,
+            },
+            {
+                label: "Min temperatur",
+                data: min_temperatur,
+                borderColor: "blue",
+                backgroundColor: "blue",
+                tension: 0.3,
+                hidden: true,
+            },
+            {
+                label: "Max temperatur",
+                data: max_temperatur,
+                borderColor: "red",
+                backgroundColor: "red",
+                tension: 0.3,
+                hidden: true,
+            },
+            {
+                label: "Feels like",
+                data: feels_like,
+                borderColor: "green",
+                backgroundColor: "green",
+                tension: 0.3,
+            }
+        ];
+            if (basicGraphData.x[4] !== "Today" && !rain_prop.every(element => element == null)) {
+                 datasets.push({
+                        label: "Rain Probability",
+                        data: rain_prop,
+                        borderColor: "white",
+                        backgroundColor: "white",
+                        tension: 0.3,
+                })
+            }
+        
         
         return minMaxLineChart(datasets, basicGraphData.x);
     }
@@ -200,7 +231,6 @@ function HomeWeather(){
         return
     };
 
-    
 
     return(
         <div className='content h-screen dark:bg-zinc-700 dark:text-white'>
@@ -209,11 +239,12 @@ function HomeWeather(){
                 <DatePicker
                     selected={date}
                     onChange={(new_date) => setDate(new_date)}
+                    
                 />
             </div>
             <div className='flex flex-row w-full'>
                 <div className='graph basis-1/2'>
-                    <select onChange={(e) => findBasicGraphData(e.target.value)}>
+                    <select onChange={(e) => {findBasicGraphData(e.target.value); setSelectedCenterDate(e.target.value)}} value={selectedCenterDate}>
                         <option value="overwiew">Overview</option>
                         {daysInRange.map((day, index) => (
                             <option key={index} value={day} >{currentWeather.date == day ? "Today" : formatDay(day) }</option>
@@ -232,11 +263,12 @@ function HomeWeather(){
                 </div>
             </div>
             <div>
-                <Bubbles selectedDay={selectedDay} forecastWeather={forecastWeather} setSelectedDay={setSelectedDay}></Bubbles>
+                <Bubbles backcastWeather={backcastWeather}  selectedDay={selectedDay} forecastWeather={forecastWeather} setSelectedDay={setSelectedDay}></Bubbles>
             </div>
             <div>
                 <DisplayForecast forecastWeather={forecastWeather} currentWeather={currentWeather}></DisplayForecast>
             </div>
+            <div id='errorMSG' style={{'color': "red"}}></div>
         </div>
     )
 }
