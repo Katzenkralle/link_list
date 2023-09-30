@@ -1,7 +1,6 @@
 import React, { useEffect, useState, Component} from 'react';
 import ListEditor from './ListEditor';
 import ReactDOM from 'react-dom/client';
-import '../../../static/LinkList/ListGrid.css'
 
 
 function ListGrid (props){

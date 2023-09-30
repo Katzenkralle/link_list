@@ -1,6 +1,5 @@
 import React, { useEffect, useState, Component} from 'react';
 import ListEditor from './ListEditor';
-import '../../../static/LinkList/home.css'
 
 function LargeViewer() {
     const [listData, setListData] = useState({passwd_needed: undefined});

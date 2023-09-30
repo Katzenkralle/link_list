@@ -1,3 +1,12 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+/* Custom Tailwind */
+.inputElement {
+  @apply bg-zinc-800 text-white p-1 rounded-lg
+}
+
+.infoHl {
+  @apply text-xl font-bold mt-2
+}

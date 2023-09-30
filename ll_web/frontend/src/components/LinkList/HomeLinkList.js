@@ -2,7 +2,6 @@ import React, { useEffect, useState, Component} from 'react';
 import CreateList from './CreateList';
 import ListGrid from './ListGrid';
 import Multiselect from 'multiselect-react-dropdown';
-import '../../../static/LinkList/home.css'
 
 function HomePage() {
 

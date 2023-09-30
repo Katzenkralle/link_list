@@ -2,8 +2,7 @@ import React, { useEffect, useState, Component, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
 import renderByLine from './ContentRender';
 import ConfirmDialog from '../Other/ConfirmDialog'
-import '../../../static/LinkList/ViewUserContent.css'
-import '../../../static/LinkList/ListEditor.css'
+
 
 function ListEditor(props) {
   //Presets all neaded useStates

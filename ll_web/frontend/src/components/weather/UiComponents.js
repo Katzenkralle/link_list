@@ -31,14 +31,14 @@ export const DisplaySelectedDay = (props) => {
     }
     return (
         weather_info.main.temp == null && weather_info.main.sea_level == null && weather_info.main.temp_max == null ? <div>Sadly, there seems to be no Data or an Error occurred</div> :
-        <div>
-            <h2>
+        <div className="bg-blue-950 rounded-md h-full mt-5 ml-2 mr-2 pl-2 pr-2 pt-2">
+            <h2 className="">
                 Weather for{" "}
                 {formatDay(props.selectedDay.date)}{" "}
                 at {formatTime(props.selectedDay.time)}
             </h2>
-            <div>
-                <h3>Temperature:</h3>
+            <div className="mr-3">
+                <h3 className="infoHl">Temperature:</h3>
                 {weather_info.main.hasOwnProperty("temp") ? (
                 <div>
                 <p>Feels like: {weather_info.main.feels_like}°C</p>
@@ -55,19 +55,19 @@ export const DisplaySelectedDay = (props) => {
             </div>
             {weather_info.main.hasOwnProperty("humidity") ? (
             <div>
-                <h3>Climates:</h3>
+                <h3 className="infoHl">Climates:</h3>
                 <p>Humidity: {weather_info.main.humidity}%</p>
                 <p>Pressure: {weather_info.main.pressure ? weather_info.main.pressure : weather_info.main.sea_level}pHa</p>
             </div>) : <div></div>}
             
             {weather_info.wind.hasOwnProperty("speed") ? (
             <div>
-                <h3>Weather:</h3>
+                <h3 className="infoHl">Weather:</h3>
                 <p>Wind Speed: {weather_info.wind.speed}m/s</p>
                 <p>Wind Direction: {weather_info.wind.deg}°</p>
                 {weather_info.pop >=0 && weather_info.pop != null ? <p>Rain probability: {(weather_info.pop*100).toFixed(2)}%</p> : undefined}
                 {weather_info.weather.map((weather, index) => (
-                    <p key={index}>{weather.description}</p>
+                    <p key={index}>→ {weather.description}</p>
                 ))}
             </div>) : <div></div>}
         </div>
@@ -146,7 +146,8 @@ export const Bubbles = (props) => {
                 {props.backcastWeather.sort((a, b) => a.time - b.time)
                 .map((day, i) => {
                     let deepCpDayB = JSON.parse(JSON.stringify(day))
-                    deepCpDayB.backcastWeather = JSON.parse(day.forecast_weather)
+                    
+                    deepCpDayB.backcastWeather = day.hasOwnProperty("forecast_weather") ? JSON.parse(day.forecast_weather) : JSON.parse(day.current_weather)
                     if (day.date === props.selectedDay.date) {
                         
                         return (

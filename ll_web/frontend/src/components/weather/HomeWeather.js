@@ -231,20 +231,32 @@ function HomeWeather(){
         return
     };
 
-
+    const customStyleDatePicker = {
+        container: provided => ({
+          ...provided,
+          fontFamily: 'Arial, sans-serif',
+          background: 'red'
+        }),
+        // Add more styles as needed
+      };
     return(
-        <div className='content h-screen dark:bg-zinc-700 dark:text-white'>
-            <div>
-                <h1>Some Weather App yet without a name</h1>
+        <div className='content dark:text-white'>
+            <div className='grid grid-cols-4 gap-0 w-full items-center'>
+                <h1 className='text-3xl col-start-2 col-span-2 justify-self-center'>Some Weather App yet without a name</h1>
+                <div className='col-start-4 justify-end ml-auto mr-0 mb-auto mt-auto'>
                 <DatePicker
+                    className='inputElement mr-3'
                     selected={date}
                     onChange={(new_date) => setDate(new_date)}
-                    
-                />
+                    style={customStyleDatePicker}
+                /></div>
             </div>
             <div className='flex flex-row w-full'>
                 <div className='graph basis-1/2'>
-                    <select onChange={(e) => {findBasicGraphData(e.target.value); setSelectedCenterDate(e.target.value)}} value={selectedCenterDate}>
+                    <select 
+                        onChange={(e) => {findBasicGraphData(e.target.value); setSelectedCenterDate(e.target.value)}}
+                        value={selectedCenterDate}
+                        className='inputElement'>
                         <option value="overwiew">Overview</option>
                         {daysInRange.map((day, index) => (
                             <option key={index} value={day} >{currentWeather.date == day ? "Today" : formatDay(day) }</option>
@@ -252,9 +264,14 @@ function HomeWeather(){
                         }
                     </select>
                     {drawGraph()}
-                    <div className='flex flex-row w-full'>
+                    <div className='flex flex-row w-full inputElement ml-1'>
                         {Array.from({ length: 9 }, (_, i) => (
-                            <button key={i} className='basis-1/9 ml-auto mr-auto' value={i} onClick={(e) => changeSelectedDay(e.target.value)}>{i-4 == 0 ? "Today" : i-4}</button>
+                            <button 
+                                key={i}
+                                className='basis-1/9 ml-auto mr-auto pl-4 pr-4'
+                                value={i}
+                                onClick={(e) => changeSelectedDay(e.target.value)}>
+                                {i-4 == 0 ? "Today" : i-4}</button>
                         ))}
                     </div>
                 </div>
