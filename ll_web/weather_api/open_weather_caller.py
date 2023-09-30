@@ -20,21 +20,17 @@ class OpenWeatherCaller:
         self.date = date
         self.range = range
         self.api_key = api_key if api_key else OpenWeatherCaller.api_key
+        self.location = location
 
-        if type(location[0]) == "str" or type(location[1]) == "str":
-            self.__get_location(location) 
-        else:  
-            self.location = location
-
-    def __get_location(self, str_location) -> Tuple[float, float]:
-        response = requests.get(f"https://api.openweathermap.org/geo/1.0/direct?q={str_location[0]}&limit=2&appid={self.api_key}")
+    def get_location(self, str_location) -> Tuple[float, float]:
+        response = requests.get(f"https://api.openweathermap.org/geo/1.0/direct?q={str_location[0]}&limit=5&appid={self.api_key}")
         response.raise_for_status()
         response = response.json()
         self.location = (response[0]["lat"], response[0]["lon"])
         print(response.json())
         return
 
-    def __format_location(self):
+    def __restructure_openmeteo(self):
         formatted_days = []
         dayly = self.response['daily']
         formatted_hours = []
@@ -121,7 +117,7 @@ class OpenWeatherCaller:
         response = requests.get(f"https://archive-api.open-meteo.com/v1/archive?latitude={self.location[0]}&longitude={self.location[1]}&start_date={self.range[0]}&end_date={self.range[1]}&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,rain,snowfall,weathercode,pressure_msl,surface_pressure,windspeed_10m,winddirection_10m,windgusts_10m&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset,rain_sum,snowfall_sum&timeformat=unixtime&timezone=GMT")
         response.raise_for_status()
         self.response = response.json()
-        return self.__format_location()
+        return self.__restructure_openmeteo()
 
     def get_weather(self):
         if self.date == "now":

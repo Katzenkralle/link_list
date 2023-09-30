@@ -22,6 +22,6 @@ class ForecastWeatherData(models.Model):
 class WeatherProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='weather_api_profile')
     api_key = models.CharField(max_length=100, default='', blank=True, null=True)
-    custom_coordinates = models.CharField(max_length=100, default='', blank=True, null=True)
+    custom_coordinates = models.CharField(max_length=100, default='{}', blank=True, null=True)
     default_location = models.CharField(max_length=100, default='Hamburg')
     

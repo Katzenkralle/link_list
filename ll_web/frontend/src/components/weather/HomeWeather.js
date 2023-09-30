@@ -3,7 +3,7 @@ import '../../../static/indexTailwind.css'
 import { calculateBackcastDate, calculateForecastDate, findNearestDataPoints } from './FindDatapoints';
 import { minMaxLineChart } from './Graph';
 import { Chart } from 'chart.js/auto';
-import { DisplaySelectedDay, DisplayForecast, Bubbles, formatDay, formatTime } from './UiComponents';
+import { DisplaySelectedDay, DisplayForecast, Bubbles, formatDay, formatTime, DateBubbles } from './UiComponents';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'; // Import the CSS for styling
 
@@ -20,6 +20,8 @@ function HomeWeather(){
     const [selectedDay, setSelectedDay] = useState(undefined);
     const [daysInRange, setDaysInRange] = useState([]);
 
+    const [profile, setProfile] = useState({});
+
 
     useEffect(() => {
         getWeather()
@@ -29,13 +31,13 @@ function HomeWeather(){
       
         if (date != "") {
         
-        if (dateToString(date) != currentWeather.date) {
+        if (dateToString(date) != currentWeather.date || curerntLocation != currentWeather.loc_name) {
             getWeather()
             setSelectedCenterDate("overview")
         }
         }
         
-    }, [date]);
+    }, [date, curerntLocation]);
 
     useEffect(() => {
         findBasicGraphData('overwiew');
@@ -99,13 +101,15 @@ function HomeWeather(){
         let location = curerntLocation != "" ? curerntLocation : "default";
         let dateTmp = date != "" ? dateToString(date) : "now"; 
         let timeTmp = time != "" ? time : "now"; 
-        if (dateTmp == currentWeather.date) {
+        if (dateTmp == currentWeather.date && curerntLocation == currentWeather.loc_name) {
             return
         }
         fetch(`weatherApi/data?loc=${location}&date=${dateTmp}&time=${timeTmp}`)
             .then(response => response.json())
             .then(data => {
                 if (data.hasOwnProperty('error')) {
+                    setCurrentLocation("");
+                    setDate("");
                     document.getElementById('errorMSG').innerHTML = data.error;
                     return
                 }
@@ -113,16 +117,19 @@ function HomeWeather(){
                 setCurrentWeather(data.current);
                 setForecastWeather(data.forecast);
                 setBackcastWeather(data.backcast);
+                setProfile(data.profile);
             
                 let deepCpCurrent = JSON.parse(JSON.stringify(data.current));
                 deepCpCurrent.current_weather = JSON.parse(deepCpCurrent.current_weather);
                 setSelectedDay(deepCpCurrent);
 
                 setDate(strToDate(data.current.date));
+                setCurrentLocation(data.current.loc_name)
 
                 console.log("Current:", data.current)
                 console.log("Forecast:", data.forecast)
                 console.log("Backcast:", data.backcast)
+                console.log(data.current.loc_name)
 
                 document.getElementById('errorMSG').innerHTML = "";
             })
@@ -241,18 +248,33 @@ function HomeWeather(){
       };
     return(
         <div className='content dark:text-white'>
-            <div className='grid grid-cols-4 gap-0 w-full items-center'>
-                <h1 className='text-3xl col-start-2 col-span-2 justify-self-center'>Some Weather App yet without a name</h1>
-                <div className='col-start-4 justify-end ml-auto mr-0 mb-auto mt-auto'>
-                <DatePicker
-                    className='inputElement mr-3'
-                    selected={date}
-                    onChange={(new_date) => setDate(new_date)}
-                    style={customStyleDatePicker}
-                /></div>
+            <div className='flex flex-row justify-between'>
+                <div className='my-auto'>
+                    <select className='inputElement'
+                    value={curerntLocation}
+                    onChange={(e) => {console.log(e.target.value); setCurrentLocation(e.target.value);}}>
+                        {profile.hasOwnProperty("locations") ? Object.entries(profile.locations).map(([key, value], index) => (
+                                <option 
+                                key={index} value={key}>{key}</option>
+                            )) : <option value="default">Default</option>}
+                    </select>
+                </div>
+                <div className='mx-auto'>
+                    <h1 className='text-3xl'>WeeWee</h1>
+                </div>
+                <div className='my-auto'>
+                    <DatePicker
+                        className='inputElement mr-3'
+                        selected={date}
+                        onChange={(new_date) => setDate(new_date)}
+                        style={customStyleDatePicker}/>
+                </div>
             </div>
-            <div className='flex flex-row w-full'>
-                <div className='graph basis-1/2'>
+
+
+
+            <div className='flex lg:flex-row sm:flex-col flex-wrap w-full my-3'>
+                <div className='graph w-full lg:basis-1/2 sm:'>
                     <select 
                         onChange={(e) => {findBasicGraphData(e.target.value); setSelectedCenterDate(e.target.value)}}
                         value={selectedCenterDate}
@@ -263,25 +285,35 @@ function HomeWeather(){
                         ))
                         }
                     </select>
+
                     {drawGraph()}
-                    <div className='flex flex-row w-full inputElement ml-1'>
-                        {Array.from({ length: 9 }, (_, i) => (
-                            <button 
-                                key={i}
-                                className='basis-1/9 ml-auto mr-auto pl-4 pr-4'
-                                value={i}
-                                onClick={(e) => changeSelectedDay(e.target.value)}>
-                                {i-4 == 0 ? "Today" : i-4}</button>
-                        ))}
-                    </div>
+                    
+                    {window.window.screen.width > 768 ?
+                        <DateBubbles changeSelectedDay={changeSelectedDay}/>
+                        : null
+                    }
+                    
                 </div>
-                <div className='basis-1/2'>
+                <div className='lg:basis-1/2 mt-5 pl-2 pr-2 pt-2 '>
                     <DisplaySelectedDay selectedDay={selectedDay}></DisplaySelectedDay>
                 </div>
             </div>
-            <div>
-                <Bubbles backcastWeather={backcastWeather}  selectedDay={selectedDay} forecastWeather={forecastWeather} setSelectedDay={setSelectedDay}></Bubbles>
+
+            {window.window.screen.width < 768 ?
+                        <DateBubbles changeSelectedDay={changeSelectedDay}/>
+                        : null
+                    }
+
+
+            <div id="flex w-full justify-evenly my-3">
+                <Bubbles
+                    backcastWeather={backcastWeather}
+                    selectedDay={selectedDay}
+                    forecastWeather={forecastWeather}
+                    setSelectedDay={setSelectedDay}
+                ></Bubbles>
             </div>
+
             <div>
                 <DisplayForecast forecastWeather={forecastWeather} currentWeather={currentWeather}></DisplayForecast>
             </div>

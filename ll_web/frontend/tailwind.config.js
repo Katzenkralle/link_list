@@ -8,6 +8,12 @@ module.exports = {
         // Set dark mode as the default
         defaultMode: 'dark',
       },
+      screens: {
+        'sm': {'max': '768px'},
+        // => @media (max-width: 1535px) { ... }
+        'lg': '769px',
+        // => @media (min-width: 768px) { ... }
+      }
     },
     darkMode: 'media',
     plugins: [],

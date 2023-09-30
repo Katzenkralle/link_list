@@ -65,15 +65,31 @@ class SaveData():
                 del dictionary[key]
         return dictionary
 
-    
 
-class Data(View, SaveData):
+
+class Settings(View):
     try:
         with open("default_location.json", "r") as f: 
             default_location = loads(f.read())
     except:
+        default_location = {}
         pass
+
+    @staticmethod
+    def getLocations(user_obj):
+        return loads(user_obj.custom_coordinates)
+
+
+    def get(self, request):
+        self.user_settings = WeatherProfile.objects.get(user=request.user)
+        return JsonResponse({"data": "data"})
     
+    def post(self, request):
+        return JsonResponse({"data": "data"})
+
+
+class Data(View, SaveData):
+   
     @staticmethod
     def is_last_week_or_future(date_str):
         try:
@@ -112,8 +128,6 @@ class Data(View, SaveData):
 
     def __init__(self, ):
         self.recursion_allowed = 2
-
-
     
     def get_forecast(self, related_data):
         forecasts = ForecastWeatherData.objects.filter(associated_data=related_data.id).order_by("date", "time")
@@ -160,50 +174,62 @@ class Data(View, SaveData):
                 return self.get_backcast(related_data, direction, include_current)
         return backcasts
 
-
     def fetch_historical_weather(self, location, date, mode="else"):
-        if mode == "get_center":
-            historical_weather = OpenWeatherCaller(location, 0, "", (f"{date[:4]}-{date[4:6]}-{date[6:]}", f"{date[:4]}-{date[4:6]}-{date[6:]}")).get_weather()
-            historical_weather['daily'] = SaveData(True, historical_weather['daily'][0], historical_weather['hourly'][0]).save()
-            
-        else:
-            historical_weather = self.get_backcast(OpenWeatherCaller(location, date).get_weather(), "+")
-        return (historical_weather['daily'], historical_weather['hourly'][0])
+        #if mode == "get_center":
+        historical_weather = OpenWeatherCaller(location, 0, "", (f"{date[:4]}-{date[4:6]}-{date[6:]}", f"{date[:4]}-{date[4:6]}-{date[6:]}")).get_weather()
+        historical_weather['daily'] = SaveData(True, historical_weather['daily'][0], historical_weather['hourly'][0]).save()
+        
+        #else:
+        #    historical_weather = self.get_backcast(OpenWeatherCaller(location, date).get_weather(), "+")
+        return #historical_weather['daily'] #, historical_weather['hourly'][0])
     
-    def fetch_current_weather(self, location, date, user_settings):
-        current_weather = OpenWeatherCaller(location, date, user_settings.api_key).get_weather()
+    def fetch_current_weather(self, location, date):
+        current_weather = OpenWeatherCaller(location, date, self.user_settings.api_key).get_weather()
         if date == "now":
-            forecast_weather = OpenWeatherCaller(location, 'forecast', user_settings.api_key).get_weather()
+            forecast_weather = OpenWeatherCaller(location, 'forecast', self.user_settings.api_key).get_weather()
         save_to_db = SaveData(False if date == 'now' else True, current_weather, forecast_weather).save()
         return
 
+        
+    def get_coordinates(self):
+        if self.location_name == "default":
+            self.location_name = self.user_settings.default_location
+
+        all_locations = {**Settings.default_location, **Settings.getLocations(self.user_settings)}
+        location = all_locations.get(self.location_name, ("", ""))
+        if location[1] == "":
+            return JsonResponse({"error": "location not found"})
+        return location, all_locations
+            #Bugged fix later location = OpenWeatherCaller(location_name, 0, user_settings.api_key).get_location(location[0])
+    
+
     def get(self, request):
-        location_name = request.GET['loc']
+        #Possible bug that sets tim by 2? hours back resulting in a api request at every request, even if data is in db
+        self.location_name = request.GET['loc']
         date = request.GET['date']
         time = request.GET['time']
-        user_settings = WeatherProfile.objects.get(user=request.user)
+        self.user_settings = WeatherProfile.objects.get(user=request.user)
 
         if Data.is_last_week_or_future(date) and date != datetime.now().strftime('%Y%m%d'):
             return JsonResponse({"error": "date out of range"})
 
-        if location_name == "default":
-            location_name = user_settings.default_location
-
-        location = Data.default_location.get(location_name, (location_name, ""))
+        location, all_locations = self.get_coordinates()
 
         weather_object = WeatherData.objects.filter(lat=location[0], lon=location[1], date=datetime.now().strftime('%Y%m%d') if date == 'now' else date)
 
  
         if date == "now" or date == datetime.now().strftime('%Y%m%d'):
+            date = "now"
             if not weather_object.exists():
-                self.fetch_current_weather(location, date, user_settings)
-            current_weather_object = WeatherData.objects.all().order_by('date', 'time').last() #.last get highest date and time
+                self.fetch_current_weather(location, date)
+            current_weather_object = WeatherData.objects.filter(lat=location[0], lon=location[1]).order_by('date', 'time').last() #.last get highest date and time
             current_weather = WeatherDataSerializer(current_weather_object).data
             forecast = self.get_forecast(current_weather_object)
         else:
             if not weather_object.exists():
                 #current_weather_object, current_weather = 
-                self.fetch_historical_weather(location, date ,mode = "get_center")
+                self.fetch_historical_weather(location, date, mode = "get_center")
+                weather_object = WeatherData.objects.filter(lat=location[0], lon=location[1], date=date)
                 #current_weather = WeatherDataSerializer(current_weather_object).data
                 #forecast = self.get_backcast(current_weather_object, "+", True)
             
@@ -213,22 +239,12 @@ class Data(View, SaveData):
             
             #get centerdat wether time + 4days (forcast)
 
-        current_weather['loc_name'] = location_name
-        
-        
+        current_weather['loc_name'] = self.location_name
+
         backcast = self.get_backcast(current_weather_object, "-")
 
-        return JsonResponse({"current": current_weather, "forecast": forecast, "backcast": backcast})
+        profile = {"locations": all_locations}
+        return JsonResponse({"current": current_weather, "forecast": forecast, "backcast": backcast, "profile": profile})
 
     def post(self, request):
         return JsonResponse({"data": "data"})
-
-
- 
-class Settings(View):
-    def get(self, request):
-        return JsonResponse({"data": "data"})
-    
-    def post(self, request):
-        return JsonResponse({"data": "data"})
-    

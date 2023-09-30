@@ -2,11 +2,28 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+/* Remove Scrollbars */
+::-webkit-scrollbar {
+  display: none;
+}
+body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 /* Custom Tailwind */
 .inputElement {
   @apply bg-zinc-800 text-white p-1 rounded-lg
 }
 
 .infoHl {
-  @apply text-xl font-bold mt-2
+  @apply text-xl font-bold 
+}
+
+.infoBox {
+  @apply mx-5 shrink-0 mt-3
+}
+
+.infoContainer {
+  @apply bg-blue-950 rounded-md min-h-full max-h-screen pt-3 sm:pb-3
 }
