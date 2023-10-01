@@ -81,12 +81,56 @@ class Settings(View):
 
 
     def get(self, request):
-        self.user_settings = WeatherProfile.objects.get(user=request.user)
-        return JsonResponse({"data": "data"})
+        user_settings = WeatherProfile.objects.get(user=request.user)
+        
+        has_api_key = True if user_settings.api_key else False 
+        uneditable_locations = [location for location in Settings.default_location.keys()]
+        locations = {**Settings.getLocations(user_settings), **Settings.default_location}
+        
+        return JsonResponse({"profile": {"locations": locations, 
+                                         'uneditable_locations': uneditable_locations,
+                                        'default_location': user_settings.default_location,
+                                        'has_api_key': has_api_key}})
     
     def post(self, request):
-        return JsonResponse({"data": "data"})
+        mode = request.POST['mode']
+        location_name = request.POST['location_name']
+        api_key = request.POST['api_key']
 
+        try:
+            if mode == "add":
+                lat, lon = round(float(request.POST['lat']),1), round(float(request.POST['lon']), 1)
+            if location_name == "undefined" and mode != "set_api_key":
+                raise ValueError
+        except ValueError:
+            return JsonResponse({"error": "invalid input"})
+        
+
+        user_settings = WeatherProfile.objects.get(user=request.user)
+        user_coordinates = loads(user_settings.custom_coordinates)
+
+        location_exists = location_name in user_coordinates.keys() or location_name in Settings.default_location.keys()
+
+        match mode:
+            case "add":
+                if location_exists:
+                    return JsonResponse({"error": "location already exists"})
+                user_coordinates[location_name] = [lat, lon]
+            case "del":
+                if not location_exists:
+                    return JsonResponse({"error": "location does not exist"})
+                del user_coordinates[location_name]
+            case "set_default":
+                if not location_exists:
+                    return JsonResponse({"error": "location does not exist"})
+                user_settings.default_location = location_name
+            case "set_api_key":
+                user_settings.api_key = api_key if api_key != "undefined" else None
+
+        
+        user_settings.custom_coordinates = dumps(user_coordinates)
+        user_settings.save()
+        return JsonResponse(status=200, data={"error": "none"})
 
 class Data(View, SaveData):
    

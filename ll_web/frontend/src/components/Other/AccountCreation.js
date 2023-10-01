@@ -46,29 +46,30 @@ function CreateAccount() {
     }
 
   return (
-<div className='main_frame_login'>
-  <div>
-    <h3>Account Creation:</h3>
-    <form onSubmit={(event) => {submitCreation(event)}}>
-      <div className='form-row'>
-        <label htmlFor='invitationCode'>Invitation Credentials:</label>
-        <input id="invitationCode" type='text'></input>
+<div className='dark:text-white flex justify-center'>
+  <div className=''>
+    <h1 className='mainHl mb-3'>Account Creation:</h1>
+    <form className='' 
+      onSubmit={(event) => {submitCreation(event)}}>
+      <div className='justify-between flex flex-row my-1'>
+        <label htmlFor='invitationCode' className='mr-1 my-auto'>Invitation Credentials:</label>
+        <input id="invitationCode" type='text' className='inputElement'></input>
       </div>
-      <div className='form-row'>
-        <label htmlFor='username'>Choose a Username:</label>
-        <input id="username" type='text'></input>
+      <div className='justify-between flex flex-row my-1'>
+        <label htmlFor='username' className='mr-1 my-auto'>Choose a Username:</label>
+        <input id="username" type='text' className='inputElement'></input>
       </div>
-      <div className='form-row'>
-        <label htmlFor='passwd'>Set a Password:</label>
-        <input id="passwd" type='password'></input>
+      <div className='justify-between flex flex-row my-1'>
+        <label htmlFor='passwd' className='mr-1 my-auto'>Set a Password:</label>
+        <input id="passwd" type='password' className='inputElement'></input>
       </div>
-      <div className='form-row'>
-        <label htmlFor='passwdCheck'>Confirm Password:</label>
-        <input id="passwdCheck" type='password'></input>
+      <div className='justify-between flex flex-row my-1'>
+        <label htmlFor='passwdCheck' className='mr-1 my-auto'>Confirm Password:</label>
+        <input id="passwdCheck" type='password' className='inputElement'></input>
       </div>
-      <div className='form-submit'>
-        <input type='submit' value='Create Account' />
-        <a href='/login'>Already have an Account?</a>
+      <div className='justify-between flex flex-row my-1'>
+        <input className='inputElement cursor-pointer' type='submit' value='Create Account' />
+        <a href='/login' className='text-blue-500 ml-auto mt-auto'>Already have an Account?</a>
       </div>
     </form>
     <p id='creationMsg'></p>

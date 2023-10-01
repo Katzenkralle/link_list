@@ -2,25 +2,14 @@ import React, { useEffect, useState, Component} from 'react';
 import CreateList from './CreateList';
 import ListGrid from './ListGrid';
 import Multiselect from 'multiselect-react-dropdown';
+import TopBar, { topBar } from '../Other/TopBar';
 
 function HomePage() {
 
   const multiselectStyles = {
-      /* https://github.com/srigar/multiselect-react-dropdown */
-      //to be replaced with tailwind
+    // ... other styles
     searchBox: {
       border: 'none',
-      borderRadius: '25px',
-      background: '#1e1e1e',
-      alignContent: 'center',
-      display: 'flex',
-      overflow: 'scroll',
-      maxWidth: "19em",
-      input: {
-        border: 'none',
-        fontSize: '10px',
-        minHeight: '50px',
-      },
     },
     inputField: {
       margin: '0',
@@ -28,23 +17,21 @@ function HomePage() {
     chips: {
       background: '#565559',
       marginBottom: '0',
+      transform: 'translateY(-1px)'
     },
     optionContainer: {
       border: '3px solid #565559',
-      background: '#1e1e1e',
+      background: '#27272a',
       overflow: 'hidden',
     },
     option: {
       color: 'white',
       overflow: 'hidden'
      },
-    
-    
-    // groupHeading: {
-    //   /* Add your styles here */
-    //   /* Example: fontWeight: 'bold' */
-    // },
+    // ... other styles
   };
+    
+  
 
   const [metaTags, setMetaTags] = useState([]);
   const [metaLists, setMetaLists] = useState([]);
@@ -120,21 +107,17 @@ function HomePage() {
   },[metaLists, tagFilter])
 
   return (
-    <div>
-      <div className="top_bar">
-        <p className="alinge_left">{metaUser.name}</p>
-        <button className="alinge_right" onClick={() => window.location.href = "settings"}>Settings</button>
-      </div>
+    <div className='dark:text-white'>
+      {TopBar()}
+      <h1 id="headline" className='mainHl text-center'>Link List</h1>
 
-      <h1 id="headline">Link List</h1>
-
-      <div className="box_for_main_contend tags">
+      <div className="flex flex-wrap justify-center">
         <CreateList tag_names={metaTags} update_data={fetchData}></CreateList>
-        <hr></hr>
+        <hr className='w-[90%] border-2 border-gray-500 mt-3'></hr>
       </div>
 
-      <div className='box_for_main_contend filter'>
-        <input type='text' id='list_search' placeholder='Search...' onChange={filterHandler}></input>
+      <div className='flex flex-wrap justify-center my-2'>
+        <input type='text' id='list_search' placeholder='Search...' onChange={filterHandler} className='inputElement h-9 my-2'></input>
         <Multiselect
           id="filter_tag"
           type="checkbox"
@@ -143,21 +126,24 @@ function HomePage() {
           closeOnSelect={true}
           placeholder="▼ Select..."
           avoidHighlightFirstOption={true}
+          className='inputElement mx-1 my-2 h-9 pb-1'
           style={{
             ...multiselectStyles,
             searchBox: {
               ...multiselectStyles.searchBox,
-              with: '19em',
-              minWidth: '12em',
-              height: '1.75em',
-            }}}
+              width: 'w-48', 
+              minWidth: 'min-w-48',
+              height: 'h-7', 
+              transform: 'translateY(-3px)' //move 3px up to align with inputElement
+            }
+          }}
           onSelect={(e) => {setTagFilter(e)}}
           onRemove={(e) => {setTagFilter(e)}}
           options={(['Default']).concat(
             metaTags.map((tag) => tag))}/>
       </div>
 
-      <div className='box_for_main_contend list_grid'>
+      <div className=''>
         <ListGrid lists={listAfterFilter} tag_names={metaTags} update_data={fetchData}></ListGrid>
       </div>
       

@@ -6,7 +6,7 @@ import { Chart } from 'chart.js/auto';
 import { DisplaySelectedDay, DisplayForecast, Bubbles, formatDay, formatTime, DateBubbles } from './UiComponents';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'; // Import the CSS for styling
-
+import TopBar, { topBar } from '../Other/TopBar';
 
 function HomeWeather(){
     const [currentWeather, setCurrentWeather] = useState({});
@@ -248,6 +248,7 @@ function HomeWeather(){
       };
     return(
         <div className='content dark:text-white'>
+            {TopBar()}
             <div className='flex flex-row justify-between'>
                 <div className='my-auto'>
                     <select className='inputElement'

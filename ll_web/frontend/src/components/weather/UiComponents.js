@@ -18,7 +18,11 @@ export const formatDay = (date) => {
 
 export const DisplaySelectedDay = (props) => {
     if (props.selectedDay === undefined) {
-        return <div className="infoContainer">Loading...</div>;
+        return <div className="infoContainer">
+            <h3 className="infoHl">Loading...</h3>
+            <p>If you have set an API key, it might be invalid!</p>
+            <p>Thus no data can be fetch, try unsettling it <a className="text-pink-500" href="/settings">in the settings</a>.</p>
+        </div>;
     }
     
     //console.log(props.selectedDay);
@@ -91,7 +95,7 @@ export const DisplayForecast = (props) => {
    
     return(
         <div className="flex flex-wrap lg:flex-row sm:flex-col w-full my-3 justify-evenly">
-            <div className="lg:basis-1/5 bg-blue-950 shrink-0 m-2 p-2 rounded-lg">
+            <div className="lg:basis-1/5 bg-blue-950 shrink-0 m-1 p-2 rounded-lg">
                 <h3 className="infoHl">Today</h3>
                 <p>Max {ZipFindExtremeValues([...props.forecastWeather, props.currentWeather], [...unpackedForecast, unpackedCurrent], "main.temp_max",
                     props.currentWeather.date)[0]}°C</p>

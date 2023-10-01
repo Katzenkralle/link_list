@@ -39,20 +39,28 @@ export default class CreateTags extends Component {
 
       render() {
       return (
-        <div className='dialog_overlay'>
-          <div className='dialog_box'>
-            {this.props.mode === 'create' && (
-              <div className='main_contend'>
-                <button onClick={this.handleSelfDestruct} className='alinge_right'>Close</button>
-                <h3>Input New Tag:</h3>
-                <form onSubmit={(e) => {this.handleSubmit(e)}}>
-                  <input type="text" id="input_tag_name" placeholder="Name..."></input>
-                  <button type="submit">Submit</button>
+        <div className="overlay">
+        <div className="absolute top-1/2 left-1/2 text-white transform -translate-x-1/2 -translate-y-1/2 bg-gray-700 h-40 w-80 justify-center flex rounded-md">
+          {this.props.mode === 'create' && (
+            <div> 
+              <button onClick={this.handleSelfDestruct} className="inputElement flex ml-auto mr-1 my-1 ">Close</button>
+              <div className="flex justify-center items-center flex-col">
+                <h3 className="infoHl my-1">Input New Tag:</h3>
+                <form onSubmit={(e) => { this.handleSubmit(e) }}>
+                  <input
+                    type="text"
+                    id="input_tag_name"
+                    placeholder="Name..."
+                    className="inputElement"
+                  ></input>
+                  <button type="submit" className="inputElement ml-1">Submit</button>
                 </form>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
+      </div>
+
       );
     }
   }

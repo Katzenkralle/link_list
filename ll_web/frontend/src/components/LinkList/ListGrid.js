@@ -14,9 +14,14 @@ function ListGrid (props){
     return(
       //show the lists in a grid, when clicked, show the list editor
       //for that create a new root and render the list editor in listEditor div (see HomePage)
-        <div className='container'>
+        <div className='flex flex-wrap justify-center align-center'>
             {lists.map((list) => (
-            <div key={list.name} style={{backgroundColor: list.color}} className='box' onClick={(e) => {
+            <div className='m-3 p-2 rounded-eml overflow-hidden flex flex-col hover:outline hover:outline-gray-500 hover:outline-5 hover:cursor-pointer
+            lg:w-[20vw] lg:h-[20vw] lg:min-w-[150px] lg:min-h-[150px] lg:max-w-[240px] lg:max-h-[240px] 
+            sm:w-[80vw]'
+            key={list.name} 
+            style={{backgroundColor: list.color}}  
+            onClick={(e) => {
                     ReactDOM.createRoot(document.getElementById("listEditor")).render(
                     <ListEditor 
                     update_data={props.update_data} 
@@ -30,9 +35,9 @@ function ListGrid (props){
                     is_editable = {true}
                     />
                 )}}>
-                <h5>{list.name}</h5>
-                <p>{list.tag}</p>
-                <p>{list.owner}</p>
+                <h3 className='infoHl mb-2'>{list.name}</h3>
+                <p className='font-bold justify-bottom'>{list.tag}</p>
+                <p className='mt-auto justify-bottom'>{list.owner}</p>
                 <p>{list.creation_date}</p>
             </div>
           ))}

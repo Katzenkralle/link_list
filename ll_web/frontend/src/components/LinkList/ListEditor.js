@@ -2,7 +2,8 @@ import React, { useEffect, useState, Component, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
 import renderByLine from './ContentRender';
 import ConfirmDialog from '../Other/ConfirmDialog'
-
+import '../../../static/LinkList/tailwindListEditor.css'
+import '../../../static/LinkList/ViewUserContent.css'
 
 function ListEditor(props) {
   //Presets all neaded useStates
@@ -264,7 +265,7 @@ function ListEditor(props) {
     } else {
       return (
         <select
-          className={htmlClassName}
+        className={`${htmlClassName} inputElementSlim`}
           onChange={(e) => { setTag(e.target.value) }}
           id="select_tag_editor"
           defaultValue={tag}>
@@ -290,7 +291,7 @@ function ListEditor(props) {
     } else {
       return (
         <input
-          className={htmlClassName}
+        className={`!p-[revert] h-[1.5em] ${htmlClassName} inputElementSlim`}
           onChange={(e) => { setColor(e.target.value) }}
           type="color"
           id="list_color_editor"
@@ -309,7 +310,7 @@ function ListEditor(props) {
     } else {
       return (
         <button
-          className={htmlClassName}
+          className={`${htmlClassName} inputElementSlim`}
           onClick={() => {
             if (document.getElementById('list_content').value.replace(/\r/g, '') === renderedContent.replace(/\r/g, '')) {
               exitEditor();
@@ -339,7 +340,8 @@ function ListEditor(props) {
     } else {
       return (
         <button
-          className={htmlClassName}
+        className={`${htmlClassName} inputElementSlim`}
+
           onClick={() => {
             ReactDOM.createRoot(
               document.getElementById('tagContainer')
@@ -363,7 +365,9 @@ function ListEditor(props) {
 
   const changeViewMode = () => {
     return (
-      <button onClick={async () => {
+      <button
+        className="inputElementSlim mx-1"
+        onClick={async () => {
         if (viewMode === 'view') {
           //If in view mode, check if any interactive elements have changed, if so, update data then change view mode
           const action = await interactiveElementsChangeHandler();
@@ -406,18 +410,18 @@ function ListEditor(props) {
         displayWidth > 600 ? (
           //>600px, show all buttons
           <div className='head'>
-            <h6 className='leftBlock' style={{ marginRight: '0' }}>Edit Mode</h6>
+            <h6 className='leftBlock mr-0 text-sm'>Edit Mode</h6>
             {deleteListButton('leftBlock')}
             {selectTag('centerBlock')}
-            <h3 className='centerBlock'>{name}</h3>
+            <h3 className='centerBlock infoHl mx-1'>{name}</h3>
             {selectColor('centerBlock')}
             {exitEditorButton('rightBlock')}
           </div>
         ) : (
           //show hamburger menu
           <div className='head'>
-            <h6 className='leftBlock' style={{ marginRight: 'auto' }}>Edit Mode</h6>
-            <h3 className='centerBlock' style={{ marginRight: 'auto' }}>{name}</h3>
+            <h6 className='leftBlock text-sm'>Edit Mode</h6>
+            <h3 className='centerBlock infoHl'>{name}</h3>
             {hamburgerIcon()}
             {showMenu && (
               <div className="hamburger-menu">
@@ -425,11 +429,11 @@ function ListEditor(props) {
                 <div className="menu-items">
                   <div className='blur_background' onClick={toggleMenu} />
                   {deleteListButton()}
-                  <div>
+                  <div className="my-1">
                     <p>Tag:</p>
                     {selectTag()}
                   </div>
-                  <div>
+                  <div className="my-1">
                     <p>Color:</p>
                     {selectColor()}
                   </div>
@@ -443,9 +447,9 @@ function ListEditor(props) {
       ) : (
         //Top bar in view mode
         <div className='head'>
-          <h6 className='leftBlock'>View Mode</h6>
-          <h3 className='centerBlock'>{name}</h3>
-          {calledFromLargeViewer ? <div></div> : <button className='rightBlock' onClick={() => exitEditor()}>Exit</button>}
+          <h6 className='leftBlock text-sm'>View Mode</h6>
+          <h3 className='centerBlock infoHl'>{name}</h3>
+          {calledFromLargeViewer ? <div></div> : <button className='ml-auto mr-1 inputElementSlim' onClick={() => exitEditor()}>Exit</button>}
         </div>
       )
 
@@ -456,14 +460,14 @@ function ListEditor(props) {
     return (
       viewMode == 'edit' ? (
         //If in edit mode, show all edit buttons
-        <div className='editButtons'>
-          <button onClick={() => { handleInsertion('#') }}>Headline</button>
-          <button onClick={() => { handleInsertion('[]()') }}>Link</button>
-          <button onClick={() => { handleInsertion('->. ') }}>List</button>
-          <button onClick={() => { handleInsertion('-x. ') }}>Orderd List</button>
-          <button onClick={() => { handleInsertion('[ ] ') }}>Checkbox</button>
-          <button onClick={() => { handleInsertion('---\n') }}>Seperator</button>
-          <button onClick={() => { handleInsertion('!x!') }}>Ignore</button>
+        <div className='editButtons flex flex-wrap justify-center overflow-scroll'>
+          <button className="inputElementSlim" onClick={() => { handleInsertion('#') }}>Headline</button>
+          <button className="inputElementSlim" onClick={() => { handleInsertion('[]()') }}>Link</button>
+          <button className="inputElementSlim" onClick={() => { handleInsertion('->. ') }}>List</button>
+          <button className="inputElementSlim" onClick={() => { handleInsertion('-x. ') }}>Orderd List</button>
+          <button className="inputElementSlim" onClick={() => { handleInsertion('[ ] ') }}>Checkbox</button>
+          <button className="inputElementSlim" onClick={() => { handleInsertion('---\n') }}>Seperator</button>
+          <button className="inputElementSlim" onClick={() => { handleInsertion('!x!') }}>Ignore</button>
         </div>
       ) : (
         //If in view mode, show no buttons
@@ -507,7 +511,7 @@ function ListEditor(props) {
 
   const fotter = () => {
     return (
-      <div className='footer'>
+      <div className='footer my-1'>
         <p id='list_edit_msg'></p>
         <div>
           {isEditable ? 
@@ -519,10 +523,10 @@ function ListEditor(props) {
 
           {viewMode == 'edit' ? (
             //If in edit mode, render a button to save
-            <button onClick={() => { saveList() }}>Save</button>
+            <button className="inputElementSlim mx-1" onClick={() => { saveList() }}>Save</button>
           ) : (
             //If in view mode, render a button to open all links
-            <button onClick={() => {
+            <button className="inputElementSlim" onClick={() => {
               renderByLine(content, 'links').forEach(link => {
                 window.open((link.startsWith('http')
                   ? link
@@ -538,7 +542,7 @@ function ListEditor(props) {
 
   return (
     <div className='overlay'>
-      <div className='editorBox'>
+      <div className='largeOverlayBox'>
 
         {topBar()}
 

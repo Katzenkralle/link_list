@@ -2,11 +2,18 @@
 module.exports = {
     content: [
     './templates/index.html',
+    './templates/login.html',
     './src/**/*.{js,jsx,ts,tsx}',],
     theme: {
       extend: {
         // Set dark mode as the default
         defaultMode: 'dark',
+          outlineWidth: {
+            5: '5px',
+          },
+          borderRadius: {
+            'eml': '1em',
+          }
       },
       screens: {
         'sm': {'max': '768px'},

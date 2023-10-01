@@ -45,7 +45,8 @@ export default class CreateList extends Component {
       //Arrow function just to simplify code
       //Option Create New Tag spawns CreateTags component in tagContainer (see HomePage)
       return (
-        <select id='select_tag'>
+        <select className='inputElement mx-1' 
+        id='select_tag'>
           <option value="Default" >Default</option>
           {this.props.tag_names.map((option) => (
             <option key={option} value={option}>{option}</option>
@@ -58,11 +59,11 @@ export default class CreateList extends Component {
     render() {
       return (
         <div>
-          <form onSubmit={(e) => {this.handleListSubmit(e)}}>
-            <input type="text" placeholder="Name..." id="list_name" name="list_name" />
-            <input type="color" id="list_color" name="list_color" />
+          <form onSubmit={(e) => {this.handleListSubmit(e)}} className='flex flex-wrap items-center justify-center'>
+            <input type="text" placeholder="Name..." id="list_name" name="list_name" className='inputElement mx-1 my-1' />
+            <input type="color" id="list_color" name="list_color" className='inputElement mx-1'/>
             {this.tagField()}
-            <button type="submit">Create List</button>
+            <button type="submit" className='inputElement mx-1'>Create List</button>
           </form>
           <div id="list_creation_msg"></div>
         </div>
