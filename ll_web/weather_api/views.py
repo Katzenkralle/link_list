@@ -144,7 +144,7 @@ class Data(View, SaveData):
             last_week = current_date - timedelta(days=5)
             
             # Check if the input date is within the last week or in the future
-            if input_date >= current_date or (last_week <= input_date <= current_date):
+            if input_date >= current_date: #or (last_week <= input_date <= current_date)
                 return True
             else:
                 return False

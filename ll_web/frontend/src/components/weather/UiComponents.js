@@ -1,7 +1,6 @@
 import React from "react";
-import { calculateForecastDate, ZipFindExtremeValues, colorByTemp } from "./FindDatapoints";
-
-
+import { calculateForecastDate, ZipFindExtremeValues, colorByTemp, dateToString } from "./FindDatapoints";
+import "../../../static/animations.css"
 
 export const formatTime = (time) => {
     time = time.toString();
@@ -35,7 +34,8 @@ export const DisplaySelectedDay = (props) => {
     }
     return (
         weather_info.main.temp == null && weather_info.main.sea_level == null && weather_info.main.temp_max == null ? <div className="infoContainer">Sadly, there seems to be no Data or an Error occurred</div> :
-        <div className="infoContainer">
+        <div key={`${props.selectedDay.time}${props.selectedDay.date}}`}
+         className="infoContainer fadeInRight">
             <h2 className="h-min ml-2 -mt-2">
                 Weather for{" "}
                 {formatDay(props.selectedDay.date)}{" "}
@@ -88,21 +88,22 @@ export const DisplayForecast = (props) => {
         return <div>Loading...</div>;
     }
     const unpackedForecast = props.forecastWeather.map((day) => {
-        return JSON.parse(day.forecast_weather);
+        return JSON.parse(day.hasOwnProperty("forecast_weather") ? day.forecast_weather : day.current_weather);
     });
 
     const unpackedCurrent = JSON.parse(props.currentWeather.current_weather);
    
     return(
-        <div className="flex flex-wrap lg:flex-row sm:flex-col w-full my-3 justify-evenly">
+        <div key={props.currentWeather.date} 
+        className="flex flex-wrap lg:flex-row sm:flex-col w-full my-3 justify-evenly scaleInVerBottom">
             <div className="lg:basis-1/5 bg-blue-950 shrink-0 m-1 p-2 rounded-lg">
-                <h3 className="infoHl">Today</h3>
+                <h3 className="infoHl">{props.currentWeather.date == dateToString(new Date()) ? "Today" : "Center Date"}</h3>
                 <p>Max {ZipFindExtremeValues([...props.forecastWeather, props.currentWeather], [...unpackedForecast, unpackedCurrent], "main.temp_max",
                     props.currentWeather.date)[0]}°C</p>
                 <p>Min {ZipFindExtremeValues([...props.forecastWeather, props.currentWeather], [...unpackedForecast, unpackedCurrent], "main.temp_min",
                     props.currentWeather.date)[1]}°C</p>
                 {props.forecastWeather.hasOwnProperty('pop') ? 
-                <p>Chance of Rain {(ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "pop",
+                <p>Max chance of Rain {(ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "pop",
                     props.currentWeather.date)[2]*100).toFixed(2)}%</p> : null}
             </div>
             {[1, 2, 3, 4].map((i) => {
@@ -115,8 +116,9 @@ export const DisplayForecast = (props) => {
                          date)[0]}°C</p>
                         <p>Min {ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "main.temp",
                          date)[1]}°C</p>
+                        {!unpackedForecast.every(element => element.pop == null) ?
                         <p>Average {(ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "pop",
-                            date)[0]*100).toFixed(2)} % Rain probability</p>
+                            date)[2]*100).toFixed(2)} % Rain probability</p> : null}
                     </div>
                 );
             })}
@@ -133,19 +135,20 @@ export const Bubbles = (props) => {
     let bubbels_exist = false;
 
     return (
-        <div>
-            <div className="flex flex-row flex-wrap justify-around" id="bubbles">
+        <div key={props.selectedDay.date}>
+            <div className="flex flex-row flex-wrap justify-around puffInVer" id="bubbles">
                 {props.forecastWeather.sort((a, b) => a.time - b.time)
                     .map((day, i) => {
                         let deepCpDay = JSON.parse(JSON.stringify(day))
-                        deepCpDay.forecast_weather = JSON.parse(day.forecast_weather)
+                        deepCpDay.forecast_weather = deepCpDay.hasOwnProperty("forecast_weather") ? JSON.parse(day.forecast_weather) : JSON.parse(day.current_weather)
                         if (day.date === props.selectedDay.date) {
                             bubbels_exist = true;
                             return (
                                 <div className="relative inline-block" key={i}>
                                     <button
                                         style={{backgroundColor: colorByTemp(deepCpDay.forecast_weather.main.temp), color: "black"}}
-                                        className="text-sm rounded-full m-1 px-2 py-1" onClick={() => {
+                                        className={`text-sm rounded-full m-1 px-2 py-1 ${day.time === props.selectedDay.time ? "isSelectedBoder" : ""}`} 
+                                        onClick={() => {
                                             props.setSelectedDay(deepCpDay)
                                         }}>{formatTime(day.time)}</button>
                                     {deepCpDay.forecast_weather.pop > 0 ? <img key={i+"a"} className="absolute top-0 left-0 w-full h-full bg-transparent bg-center bg-no-repeat bg-cover opacity-50 pointer-events-none" src="../../../static/media/raindrop.png"></img>
@@ -156,22 +159,25 @@ export const Bubbles = (props) => {
                         }
                         return null;
                     })}
+                
                 {props.backcastWeather.sort((a, b) => a.time - b.time)
+                //Backend sents divided in back, for and current weather, merging them into forecast_weather
                     .map((day, i) => {
                         let deepCpDayB = JSON.parse(JSON.stringify(day))
-
-                        deepCpDayB.backcastWeather = day.hasOwnProperty("forecast_weather") ? JSON.parse(day.forecast_weather) : JSON.parse(day.current_weather)
+                       
+                        deepCpDayB.forecast_weather = day.hasOwnProperty("forecast_weather") ? JSON.parse(day.forecast_weather) : JSON.parse(day.current_weather)
                         if (day.date === props.selectedDay.date) {
                             bubbels_exist = true;
                             return (
                                 <div className="relative inline-block" key={i}>
                                     <button
-                                        style={{backgroundColor: colorByTemp(deepCpDayB.backcastWeather.main.temp), color: "black"}}
-                                        className="text-sm rounded-full m-1 px-2 py-1" 
+                                        style={{backgroundColor: colorByTemp(deepCpDayB.forecast_weather.main.temp),
+                                             color: "black"}}
+                                        className={`text-sm rounded-full m-1 px-2 py-1 ${day.time === props.selectedDay.time ? "isSelectedBoder" : ""}`} 
                                         onClick={() => {
                                             props.setSelectedDay(deepCpDayB)
                                         }}>{formatTime(day.time)}</button>
-                                    {deepCpDayB.backcastWeather.pop > 0 ? <img key={i+"a"} className="absolute top-0 left-0 w-full h-full bg-transparent bg-center bg-no-repeat bg-cover opacity-50 pointer-events-none" src="../../../static/media/raindrop.png"></img>
+                                    {deepCpDayB.forecast_weather.pop > 0 ? <img key={i+"a"} className="absolute top-0 left-0 w-full h-full bg-transparent bg-center bg-no-repeat bg-cover opacity-50 pointer-events-none" src="../../../static/media/raindrop.png"></img>
                                     : null}
                                 </div>
 
@@ -188,13 +194,13 @@ export const Bubbles = (props) => {
 export const DateBubbles = (props) => {
     return(
     <div className='flex flex-row w-full inputElement mx-1 mb-2'>
-    {Array.from({ length: 9 }, (_, i) => (
+    {props.daysInRange.map((value, i) => (
         <button 
             key={i}
-            className='basis-1/9 ml-auto mr-auto pl-4 pr-4'
+            className={`basis-1/9 ml-auto mr-auto pl-4 pr-4 ${value === props.selectedDay.date.toString() ? "isSelectedBoder" : ""}`}
             value={i}
             onClick={(e) => props.changeSelectedDay(e.target.value)}>
-            {i-4 == 0 ? "Today" : i-4}</button>
+            {i-4 == 0 ? props.currentWeatherDate == dateToString(new Date()) ? "Today" : "Center Date" : i-4}</button>
     ))}
     </div>)
 }

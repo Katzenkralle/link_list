@@ -58,14 +58,14 @@ export default class CreateList extends Component {
   
     render() {
       return (
-        <div>
+        <div className='flex flex-col'>
           <form onSubmit={(e) => {this.handleListSubmit(e)}} className='flex flex-wrap items-center justify-center'>
             <input type="text" placeholder="Name..." id="list_name" name="list_name" className='inputElement mx-1 my-1' />
             <input type="color" id="list_color" name="list_color" className='inputElement mx-1'/>
             {this.tagField()}
             <button type="submit" className='inputElement mx-1'>Create List</button>
           </form>
-          <div id="list_creation_msg"></div>
+          <div id="list_creation_msg" className='text-purple-700 mx-auto mb-1'></div>
         </div>
       );
     }

@@ -169,7 +169,7 @@ def list_right_managment(request):
 
     #Check if passwd is set, if not, set it to the current passwd, can be none when updating readonly status
     db_entry = List.objects.get(name=list_name) 
-    list_public_passwd = sha256(request.POST['passwd']).hexdigest() if request.POST['passwd'] != 'undefined' else db_entry.public_list_passwd
+    list_public_passwd = sha256(request.POST["passwd"].encode('utf-8')).hexdigest() if request.POST['passwd'] != 'undefined' else db_entry.public_list_passwd
     list_readonly = request.POST['readonly']#Readonly functions a as thristat, it can be False=List not public, True=Public but Readonly and Reitable=Public and editable
     
     #save the changes to the database, create a url for the list and return 202
@@ -192,18 +192,28 @@ def get_large_viewer_data(request):
     #Get list id, passwd if set (default = ''), from url (because get request)
     user = request.user
     list_id = request.GET['li']
-    list_passwd = request.session.get('passwd', '')
+    list_passwd = request.GET.get('passwd', '')
+    list_passwd = sha256(list_passwd.encode('utf-8')).hexdigest()
 
     #Get requested list from the database, check if the user is the owner or the list is public then passwd must match, when non set '' in DB matches with default
     list_object = List.objects.get(id=list_id) 
     user_is_owner = True if list_object.user_id == user.id else False
     if list_object.public_list == 'False' and not user_is_owner:
         return HttpResponse("List not public", status=status.HTTP_403_FORBIDDEN)
-    if not user_is_owner and list_object.public_list_passwd != sha256(list_passwd.encode('utf-8')).hexdigest() and not request.session.get('auth', False) == user.username + list_id:
+    
+    #Check if the user is authed by get_data_for_home, if not, check if the passwd is correct
+    #If passwd change but user is authed, but the auth is removed and the user must reenter the passwd
+    auth_info = request.session.get('auth', [])
+    if type(auth_info) != list:
+        auth_info = []
+
+    if not user_is_owner and list_object.public_list_passwd != list_passwd and f"{list_id}{list_object.public_list_passwd}" not in auth_info:
+        request.session['auth'] = []
         return JsonResponse({'passwd_needed': True}, status=status.HTTP_100_CONTINUE)
     
     #Set auth for this session to the username and list id, so the user can view the list without reentering passwd
-    request.session['auth'] = user.username + list_id
+    auth_info.append(f"{list_id}{list_passwd}")
+    request.session['auth'] = auth_info
 
     #Return the data of the list, with the rights the user has
     list_data = {

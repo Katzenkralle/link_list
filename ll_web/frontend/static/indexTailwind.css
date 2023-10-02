@@ -24,6 +24,10 @@ body {
   @apply text-3xl font-bold mt-2
 }
 
+.maxHl {
+  @apply text-6xl font-bold
+}
+
 .infoBox {
   @apply mx-5 shrink-0 mt-3
 }
@@ -40,6 +44,15 @@ body {
   @apply border-dashed border-x-2 border-gray-500 px-2
 }
 
+.interactiveContainer {
+  @apply m-3 p-2 rounded-eml overflow-hidden flex flex-col hover:outline hover:outline-gray-500 hover:outline-5 hover:cursor-pointer;
+  @apply lg:w-[20vw] lg:h-[20vw] lg:min-w-[150px] lg:min-h-[150px] lg:max-w-[240px] lg:max-h-[240px];
+  @apply sm:w-[80vw];
+}
+
+.isSelectedBoder{
+  @apply outline outline-4 outline-violet-500
+}
 
 .overlay {
   position: fixed;
@@ -86,4 +99,16 @@ body {
       flex-direction: column;
       overflow: scroll;
     }
+}
+.largeViewerLargeOverlayBox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: scroll;
+  color: white;
+  background-color: #787878;
+  display: flex;
+  flex-direction: column;
 }

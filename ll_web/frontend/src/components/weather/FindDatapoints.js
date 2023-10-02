@@ -125,3 +125,19 @@ export const colorByTemp = (temp) => {
 
     return `rgb(${r}, ${g}, ${b})`
     }
+
+    
+export const strToDate = (new_date) => {
+        new_date = new_date.toString();
+        const year = new_date.slice(0, 4);
+        const month = new_date.slice(4, 6) - 1; // Months are zero-based (0 = January)
+        const day = new_date.slice(6, 8);
+        return new Date(year, month, day);
+    }
+
+export const dateToString = (new_date) => {
+        const year = new_date.getFullYear();
+        const month = (new_date.getMonth() + 1).toString().padStart(2, '0'); // Add 1 and pad with leading zero if needed
+        const day = new_date.getDate().toString().padStart(2, '0'); // Pad with leading zero if needed
+        return `${year}${month}${day}`;
+    }

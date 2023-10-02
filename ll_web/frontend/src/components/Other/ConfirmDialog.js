@@ -22,10 +22,10 @@ function ConfirmDialog(props){
   
     return (
       <div class='overlay'>
-      <div class='absolute top-1/2 left-1/2 text-white transform -translate-x-1/2 -translate-y-1/2 dialog_box bg-gray-700 h-40 w-80 justify-center flex rounded-lg'>
-          <div class='flex flex-col items-center'>
-              <h3 class='mt-1 infoHl text-center'>{props.question}</h3>
-              <div class='mt-auto mb-2'>
+      <div class='absolute top-1/2 left-1/2 text-white transform -translate-x-1/2 -translate-y-1/2 dialog_box h-auto w-1/4 bg-gray-700 justify-center flex rounded-lg'>
+          <div class='flex flex-col items-center p-3'>
+              <h3 class='mt-1 infoHl text-center mb-8'>{props.question}</h3>
+              <div class='mt-auto'>
                   <button onClick={handleTrueClick} class='mr-2 inputElement'>{props.trueBtnText}</button>
                   <button onClick={handleFalseClick} className='inputElement'>{props.falseBtnText}</button>
               </div>

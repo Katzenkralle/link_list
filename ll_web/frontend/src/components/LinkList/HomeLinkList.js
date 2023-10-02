@@ -109,7 +109,7 @@ function HomePage() {
   return (
     <div className='dark:text-white'>
       {TopBar()}
-      <h1 id="headline" className='mainHl text-center'>Link List</h1>
+      <h1 id="headline" className='maxHl text-center mt-5 mb-3'>Link List</h1>
 
       <div className="flex flex-wrap justify-center">
         <CreateList tag_names={metaTags} update_data={fetchData}></CreateList>

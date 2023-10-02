@@ -261,7 +261,7 @@ function ListEditor(props) {
     //HTML select tag element, with options from props.tag_names
     //If called from large viewer it can be undefined, then return empty div
     if (props.tag_names == undefined) {
-      return (<div></div>)
+      return (<div className={`${htmlClassName}`}>&nbsp;</div>)
     } else {
       return (
         <select
@@ -287,7 +287,7 @@ function ListEditor(props) {
     //dosnt nead useState color, because it is only used to set the default value, props will change on save
     //If called from large viewer it can be undefined, then return empty div
     if (props.color == undefined) {
-      return (<div></div>)
+      return (<div className={`${htmlClassName}`}>&nbsp;</div>)
     } else {
       return (
         <input
@@ -306,7 +306,7 @@ function ListEditor(props) {
     //HTML exit button, if called from large viewer, return empty button
     //Displays a confirmation dialog if content has changed
     if (calledFromLargeViewer == true) {
-      return (<button hidden />)
+      return (<div className={`${htmlClassName}`}>&nbsp;</div>)
     } else {
       return (
         <button
@@ -336,7 +336,7 @@ function ListEditor(props) {
     //HTML delete button, if called from large viewer, return empty div
     //Displays a confirmation dialog bevor making the request
     if (calledFromLargeViewer == true) {
-      return (<div></div>)
+      return (<div className={`${htmlClassName}`}>&nbsp;</div>)
     } else {
       return (
         <button
@@ -449,7 +449,7 @@ function ListEditor(props) {
         <div className='head'>
           <h6 className='leftBlock text-sm'>View Mode</h6>
           <h3 className='centerBlock infoHl'>{name}</h3>
-          {calledFromLargeViewer ? <div></div> : <button className='ml-auto mr-1 inputElementSlim' onClick={() => exitEditor()}>Exit</button>}
+          {calledFromLargeViewer ? <div className='ml-auto mr-1'>&nbsp;</div> : <button className='ml-auto mr-1 inputElementSlim' onClick={() => exitEditor()}>Exit</button>}
         </div>
       )
 
@@ -511,8 +511,8 @@ function ListEditor(props) {
 
   const fotter = () => {
     return (
-      <div className='footer my-1'>
-        <p id='list_edit_msg'></p>
+      <div className='footer my-1 flex flex-col'>
+        <p id='list_edit_msg' className='text-purple-800 mx-auto mb-1'></p>
         <div>
           {isEditable ? 
             //If edit premission, render a button to change view mode
@@ -542,7 +542,7 @@ function ListEditor(props) {
 
   return (
     <div className='overlay'>
-      <div className='largeOverlayBox'>
+      <div className={`${calledFromLargeViewer ? "largeViewerLargeOverlayBox" : "largeOverlayBox"}`}>
 
         {topBar()}
 

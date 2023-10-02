@@ -23,9 +23,9 @@ function LargeViewer() {
     return (
       //when password is not needed, show the list editor, otherwise show a password input
       //password needet until list backend returns a list
-        <div>
+        <div className='dark:text-white'>
           {listData.passwd_needed === false ? (
-            <ListEditor update_data={fetchData}
+            <ListEditor update_data={() => fetchData()}
             name={listData.name}
             id = {listData.id}
             color={('color' in listData ? listData.color : undefined)} 
@@ -36,10 +36,15 @@ function LargeViewer() {
             called_from_large_viewer={true}
             />
           ) : (
-            <div>
-                <p>Password needed...</p>
-                <input type='password' onChange={e => setPasswdForList(e.target.value)}/>
-                <button onClick={fetchData}>Submit</button>
+            <div className='flex flex-col'>
+                <h1 className='maxHl mx-auto mt-8'>Somnia Notas</h1>
+                <h3 className='mainHl mx-auto my-5'>Guest Viewer</h3>
+                <p className='mx-auto infoHl mx-auto mb-2'>Password needed!</p>
+
+                <div className='mx-auto mx-auto'>
+                  <input className='inputElement' type='password' onChange={e => setPasswdForList(e.target.value)}/>
+                  <button className='inputElement ml-1' onClick={() => fetchData()}>Submit</button>
+                </div>
             </div>
           )}
         </div>

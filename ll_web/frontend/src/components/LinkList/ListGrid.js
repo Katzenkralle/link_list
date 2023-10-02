@@ -16,9 +16,7 @@ function ListGrid (props){
       //for that create a new root and render the list editor in listEditor div (see HomePage)
         <div className='flex flex-wrap justify-center align-center'>
             {lists.map((list) => (
-            <div className='m-3 p-2 rounded-eml overflow-hidden flex flex-col hover:outline hover:outline-gray-500 hover:outline-5 hover:cursor-pointer
-            lg:w-[20vw] lg:h-[20vw] lg:min-w-[150px] lg:min-h-[150px] lg:max-w-[240px] lg:max-h-[240px] 
-            sm:w-[80vw]'
+            <div className='interactiveContainer'
             key={list.name} 
             style={{backgroundColor: list.color}}  
             onClick={(e) => {

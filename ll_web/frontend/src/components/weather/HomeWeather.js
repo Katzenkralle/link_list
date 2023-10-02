@@ -1,12 +1,14 @@
 import React, { useEffect, useState, Component} from 'react';
 import '../../../static/indexTailwind.css'
-import { calculateBackcastDate, calculateForecastDate, findNearestDataPoints } from './FindDatapoints';
+import { calculateBackcastDate, calculateForecastDate, findNearestDataPoints, strToDate, dateToString } from './FindDatapoints';
 import { minMaxLineChart } from './Graph';
-import { Chart } from 'chart.js/auto';
+import { Chart, elements } from 'chart.js/auto';
 import { DisplaySelectedDay, DisplayForecast, Bubbles, formatDay, formatTime, DateBubbles } from './UiComponents';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'; // Import the CSS for styling
+import ReactDOM from 'react-dom/client';
 import TopBar, { topBar } from '../Other/TopBar';
+import ConfirmDialog from '../Other/ConfirmDialog';
 
 function HomeWeather(){
     const [currentWeather, setCurrentWeather] = useState({});
@@ -14,11 +16,10 @@ function HomeWeather(){
     const [backcastWeather, setBackcastWeather] = useState({});
     const [curerntLocation, setCurrentLocation] = useState("");
     const [basicGraphData, setBasicGraphData] = useState({"x": [], "y": []});
-    const [date, setDate] = useState("");
-    const [selectedCenterDate, setSelectedCenterDate] = useState("overview"); // [date, setDate
-    const [time, setTime] = useState("");
-    const [selectedDay, setSelectedDay] = useState(undefined);
-    const [daysInRange, setDaysInRange] = useState([]);
+    const [date, setDate] = useState(""); //selected day in obj as center date for and from datepicker
+    const [selectedCenterDate, setSelectedCenterDate] = useState("overview"); // unsed for the graph
+    const [selectedDay, setSelectedDay] = useState(undefined);  // Selected day and Time from Bubbles for DisplaySelectedDay in obj.forecast_weather.obj
+    const [daysInRange, setDaysInRange] = useState([]); //  -4 str Dates from str date, to +4 str Dates
 
     const [profile, setProfile] = useState({});
 
@@ -42,21 +43,6 @@ function HomeWeather(){
     useEffect(() => {
         findBasicGraphData('overwiew');
     }, [currentWeather, forecastWeather, backcastWeather]);
-    
-    const strToDate = (new_date) => {
-        new_date = new_date.toString();
-        const year = new_date.slice(0, 4);
-        const month = new_date.slice(4, 6) - 1; // Months are zero-based (0 = January)
-        const day = new_date.slice(6, 8);
-        return new Date(year, month, day);
-    }
-
-    const dateToString = (new_date) => {
-        const year = new_date.getFullYear();
-        const month = (new_date.getMonth() + 1).toString().padStart(2, '0'); // Add 1 and pad with leading zero if needed
-        const day = new_date.getDate().toString().padStart(2, '0'); // Pad with leading zero if needed
-        return `${year}${month}${day}`;
-    }
 
     const findBasicGraphData = (centerDate) => {
         let workingData = [];
@@ -82,7 +68,7 @@ function HomeWeather(){
                 workingdaysInRange.splice(4, 0, currentWeatherDate.toString());
                 //console.log(workingData)
                 setDaysInRange(workingdaysInRange);
-                scope = ["-4", "-3", "-2", "-1", "Today", "+1", "+2", "+3", "+4"]
+                scope = ["-4", "-3", "-2", "-1", currentWeather.date == dateToString(new Date()) ? "Today" : "Center Date", "+1", "+2", "+3", "+4"]
         }} else {
             if (currentWeather.date <= centerDate) {
                  workingData = forecastWeather.filter((data) => data.date == centerDate).sort((a, b) => a.time - b.time);
@@ -96,22 +82,29 @@ function HomeWeather(){
         
     }
 
-    const getWeather = () => {
+    const getWeather = (forceNow) => {
         
         let location = curerntLocation != "" ? curerntLocation : "default";
         let dateTmp = date != "" ? dateToString(date) : "now"; 
-        let timeTmp = time != "" ? time : "now"; 
+        forceNow ? dateTmp = dateToString(new Date()) : null;
         if (dateTmp == currentWeather.date && curerntLocation == currentWeather.loc_name) {
-            return
+            return;
         }
-        fetch(`weatherApi/data?loc=${location}&date=${dateTmp}&time=${timeTmp}`)
-            .then(response => response.json())
+        fetch(`weatherApi/data?loc=${location}&date=${dateTmp}&time=now`)
+            .then(response => {
+                if (response.status == 500) {
+                    return {error: "internal server error"};
+                }
+                return response.json();
+            })
             .then(data => {
-                if (data.hasOwnProperty('error')) {
+                if (data == undefined || data.hasOwnProperty('error')) {
                     setCurrentLocation("");
                     setDate("");
-                    document.getElementById('errorMSG').innerHTML = data.error;
-                    return
+                    ReactDOM.createRoot(document.getElementById("errorMSG")).render(<ConfirmDialog falseBtnText={"Ok."}
+                    trueBtnText={"Reload Page!"} question={"An Fatal error occurred (probaply corupted wether data for te selected Date)."}
+                    onConfirmation={(userResponce) => userResponce ? window.location.reload() : setDate(strToDate("19700101"))} ></ConfirmDialog>)
+                    return;
                 }
 
                 setCurrentWeather(data.current);
@@ -124,12 +117,12 @@ function HomeWeather(){
                 setSelectedDay(deepCpCurrent);
 
                 setDate(strToDate(data.current.date));
-                setCurrentLocation(data.current.loc_name)
+                setCurrentLocation(data.current.loc_name);
 
-                console.log("Current:", data.current)
-                console.log("Forecast:", data.forecast)
-                console.log("Backcast:", data.backcast)
-                console.log(data.current.loc_name)
+                console.log("Current:", data.current);
+                console.log("Forecast:", data.forecast);
+                console.log("Backcast:", data.backcast);
+                console.log(data.current.loc_name);
 
                 document.getElementById('errorMSG').innerHTML = "";
             })
@@ -147,6 +140,7 @@ function HomeWeather(){
         let max_temperatur = [];
         let feels_like = []; 
         let rain_prop = [];
+        let rain = [];
 
         basicGraphData.y.forEach(day => {
             let weatherData; // Declare weatherData here
@@ -169,46 +163,80 @@ function HomeWeather(){
                 weatherData.main.feels_like :
                 (weatherData.main.temp_min+weatherData.main.temp_max)/2);
             rain_prop.push(weatherData.pop != null ? weatherData.pop*100 : null)
+                         
+            let tempRainSum = 0;
+            for (let [key, value] of Object.entries(weatherData).filter(([key, value]) => key === "rain" || key === "snow")) {
+                if (value === null) {
+                    tempRainSum = null;
+                    break;
+                } else {
+                    for (let val of Object.values(value)) {
+                        if (val === null) {
+                            tempRainSum = null;
+                            break;
+                        } else {
+                            tempRainSum += val;
+                        }
+                    }
+                    if (tempRainSum === null) {
+                        break;
+                    }
+                }
+            }
+            rain.push(tempRainSum);
         });
+            
         let datasets = [
             {
-                label: "Absolut temperatur",
+                label: "Absolut temperatur in °C",
                 data: absolut_temperatur,
-                borderColor: "purple",
-                backgroundColor: "purple",
+                borderColor: "#ae00be",
+                backgroundColor: "#ae00be",
                 tension: 0.3,
             },
             {
-                label: "Min temperatur",
+                label: "Min temperatur in °C",
                 data: min_temperatur,
-                borderColor: "blue",
-                backgroundColor: "blue",
+                borderColor: "#2a87d9",
+                backgroundColor: "#2a87d9",
                 tension: 0.3,
                 hidden: true,
             },
             {
-                label: "Max temperatur",
+                label: "Max temperatur in °C",
                 data: max_temperatur,
-                borderColor: "red",
-                backgroundColor: "red",
+                borderColor: "#e2329b",
+                backgroundColor: "#e2329b",
                 tension: 0.3,
                 hidden: true,
             },
             {
-                label: "Feels like",
+                label: "Feels like in °C",
                 data: feels_like,
-                borderColor: "green",
-                backgroundColor: "green",
+                borderColor: "#4abe7a",
+                backgroundColor: "#4abe7a",
                 tension: 0.3,
             }
         ];
-            if (basicGraphData.x[4] !== "Today" && !rain_prop.every(element => element == null)) {
+            //If not in overview and rain data is available --> basicGraphData.x[4] !== "Today" && 
+            if (!rain_prop.every(element => element == null)) {
                  datasets.push({
-                        label: "Rain Probability",
+                        label: "Rain Probability in %",
                         data: rain_prop,
-                        borderColor: "white",
-                        backgroundColor: "white",
+                        borderColor: "#8673c8",
+                        backgroundColor: "#8673c8",
                         tension: 0.3,
+                        hidden: basicGraphData.x[4] == "Today" || basicGraphData.x[4] == "Center Date" ? true : false,
+                })
+            }
+            if (!rain.every(element => element == null)) {
+                datasets.push({
+                    label: "Rain in l/m²",
+                    data: rain,
+                    borderColor: "#79d1f0",
+                    backgroundColor: "#79d1f0",
+                    tension: 0.3,
+                    hidden: true,
                 })
             }
         
@@ -264,10 +292,15 @@ function HomeWeather(){
                     <h1 className='text-3xl'>WeeWee</h1>
                 </div>
                 <div className='my-auto'>
+
+                    <button className='inputElement'
+                        onClick={() =>{getWeather(true)}}
+                    >{formatDay(dateToString(new Date()))}</button>
+
                     <DatePicker
-                        className='inputElement mr-3'
+                        className='inputElement mr-3 ml-1'
                         selected={date}
-                        onChange={(new_date) => setDate(new_date)}
+                        onChange={(newDate) => setDate(newDate)}
                         style={customStyleDatePicker}/>
                 </div>
             </div>
@@ -282,7 +315,7 @@ function HomeWeather(){
                         className='inputElement'>
                         <option value="overwiew">Overview</option>
                         {daysInRange.map((day, index) => (
-                            <option key={index} value={day} >{currentWeather.date == day ? "Today" : formatDay(day) }</option>
+                            <option key={index} value={day} >{currentWeather.date == day ? currentWeather.date == dateToString(new Date()) ? "Today" : "Center Date" : formatDay(day) }</option>
                         ))
                         }
                     </select>
@@ -290,7 +323,7 @@ function HomeWeather(){
                     {drawGraph()}
                     
                     {window.window.screen.width > 768 ?
-                        <DateBubbles changeSelectedDay={changeSelectedDay}/>
+                        <DateBubbles currentWeatherDate={currentWeather.date} daysInRange={daysInRange} selectedDay={selectedDay} changeSelectedDay={changeSelectedDay}/>
                         : null
                     }
                     
@@ -301,7 +334,7 @@ function HomeWeather(){
             </div>
 
             {window.window.screen.width < 768 ?
-                        <DateBubbles changeSelectedDay={changeSelectedDay}/>
+                        <DateBubbles currentWeatherDate={currentWeather.date} daysInRange={daysInRange} selectedDay={selectedDay} changeSelectedDay={changeSelectedDay}/>
                         : null
                     }
 
@@ -318,7 +351,7 @@ function HomeWeather(){
             <div>
                 <DisplayForecast forecastWeather={forecastWeather} currentWeather={currentWeather}></DisplayForecast>
             </div>
-            <div id='errorMSG' style={{'color': "red"}}></div>
+            <div id='errorMSG'></div>
         </div>
     )
 }
