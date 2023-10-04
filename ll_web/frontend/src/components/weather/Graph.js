@@ -154,6 +154,8 @@ const provideGraphData = (basicGraphData) => {
   const data = {
     labels: graphData.xAchses,
     datasets: graphData.dataset,
+    labels: graphData.xAchses,
+    datasets: graphData.dataset,
   };
 
   const config = {
@@ -184,6 +186,7 @@ const provideGraphData = (basicGraphData) => {
       }
     },
   };
+
 
   ChartJS.register(ArcElement, Tooltip, Legend,);
   ChartJS.defaults.plugins.tooltip.enabled = false;

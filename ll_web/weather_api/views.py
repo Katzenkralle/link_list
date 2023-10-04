@@ -70,6 +70,7 @@ class SaveData():
 
     def save_forecast(self):
         #Exreacts, deleats and saves the forecast data to the database similar to the current weather data
+        #Exreacts, deleats and saves the forecast data to the database similar to the current weather data
         for entry in self.forcast_weather['list']:
             date, time = datetime.utcfromtimestamp(entry['dt']).strftime('%Y%m%d-%H%M').split("-")
             source = entry.get('source', 'openweather')
@@ -80,12 +81,14 @@ class SaveData():
                 source = source,
                 forecast_weather=dumps(entry),
                 associated_data=self.createdWeatherObject    
+                associated_data=self.createdWeatherObject    
             )
             print(f"Saved Forecast for {date, time, self.createdWeatherObject.id}!")
         return
     
     @staticmethod
     def remove_keys(dictionary, keys):
+        #Removes the provided keys from the dictionary
         #Removes the provided keys from the dictionary
         for key in keys:
             if key in dictionary:
@@ -313,7 +316,10 @@ class Data(View, SaveData):
         location_name = request.GET['loc']
         date = request.GET['date']
         
+        
         self.user_settings = WeatherProfile.objects.get(user=request.user)
+
+        user_locations = loads(self.user_settings.custom_coordinates)
 
         user_locations = loads(self.user_settings.custom_coordinates)
 
@@ -331,10 +337,24 @@ class Data(View, SaveData):
 
         #Adds the location name to the current weather data, front end needs it
         current_weather['loc_name'] = location_name 
+            date = datetime.now().strftime('%Y%m%d') if date == "now" else date
 
+        if location_name == "default":
+            location_name = self.user_settings.default_location
+        
+
+        current_weather, forecast, backcast = WetherCollector(date, location_name, self.user_settings.api_key,\
+                                                           user_locations).with_center_date()
+
+        #Adds the location name to the current weather data, front end needs it
+        current_weather['loc_name'] = location_name 
+
+        profile = {"locations": {**Settings.default_location, **user_locations}}
         profile = {"locations": {**Settings.default_location, **user_locations}}
         return JsonResponse({"current": current_weather, "forecast": forecast, "backcast": backcast, "profile": profile})
 
     def post(self, request):
+        return JsonResponse({"error": "not implemented"})
+
         return JsonResponse({"error": "not implemented"})
 
