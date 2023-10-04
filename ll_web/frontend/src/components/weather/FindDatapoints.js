@@ -1,4 +1,6 @@
 export const calculateForecastDate = (currentDate, daysAhead) => {
+    // Helper function to calculate the forecast date, meaning currentDate + daysAhead
+    // Returns a string in the format YYYYMMDD
     // Convert the currentDate from YYYYMMDD to a Date object
     let dateObj = new Date(
         currentDate.toString().substring(0, 4), // Year
@@ -16,8 +18,11 @@ export const calculateForecastDate = (currentDate, daysAhead) => {
 
     return `${year}${month}${day}`;
 }
-// Helper function to calculate the backcast date
+
 export const calculateBackcastDate = (currentDate, daysBehind) => {
+    // Helper function to calculate the backcast date, meaning currentDate - daysBehind
+    // Returns a string in the format YYYYMMDD
+
     // Convert the currentDate from YYYYMMDD to a Date object
     let dateObj = new Date(
         currentDate.toString().substring(0, 4), // Year
@@ -37,10 +42,13 @@ export const calculateBackcastDate = (currentDate, daysBehind) => {
 }
 
 export const findNearestDataPoints = (targetDate, targetTime, dataset) => {
-    // Sort the dataset by the absolute date difference from the target date
+    // Helper function to find the nearest data points to a target date and time
+    // Returns only the nearest data points
+
+    // Sort the dataset by the absolute date difference from the target date   
     dataset.sort((a, b) => {
         const dateDiffA = Math.abs(a.date - targetDate);
-        const dateDiffB = Math.abs(b.date - targetDate);
+        const dateDiffB = Math.abs(b.date - targetDate);// Math.abs() is used to get the absolute value of the difference, always positive
 
         if (dateDiffA !== dateDiffB) {
             // If date differences are not equal, prioritize date
@@ -55,12 +63,15 @@ export const findNearestDataPoints = (targetDate, targetTime, dataset) => {
 
     // The first element of the sorted dataset will be the nearest data point
     const nearestDataPoint = dataset[0];
-
     return nearestDataPoint;
 };
 
 export const ZipFindExtremeValues = (dataset, datasetb, entry, date) => {
+    // Helper function to find the highest and lowest value to datasets one used as iterator (must have .date)
+    // and the other one used to extract the value from (must have path to value)
+
     const getValueByPath = (obj, path) => {
+        // Helper function to get a value from an object by a path string (e.g. "temperature.value")
         const pathArray = path.split(".");
         let value = obj;
         for (let i = 0; i < pathArray.length; i++) {
@@ -68,11 +79,14 @@ export const ZipFindExtremeValues = (dataset, datasetb, entry, date) => {
         };
         return value;
     }
+    // Helper function to find the highest and lowest value of a dataset
     let average = [0, 0];
     let highest = Number.NEGATIVE_INFINITY; // Initialize with the lowest possible value
     let lowest = Number.POSITIVE_INFINITY; // Initialize with the highest possible value
     for (let i = 0; i < dataset.length; i++) {
         if (dataset[i].date.toString() == date) {
+            // If the date of the current data point matches the target date, get the value of the entry
+            // from datasetb and compare it to the current highest and lowest values
             let value = getValueByPath(datasetb[i], entry);
             if (value > highest) {
                 highest = value;
@@ -90,6 +104,10 @@ export const ZipFindExtremeValues = (dataset, datasetb, entry, date) => {
 }
 
 export const colorByTemp = (temp) => {
+    // Helper function to color the temperature by value
+    // Color changes in range of -15 to 40
+    // Returns a string in the format rgb(r, g, b) css ready
+
     temp += 15 //to set refrenzpoint to 0
 
     if (temp < 0) {
@@ -128,6 +146,7 @@ export const colorByTemp = (temp) => {
 
     
 export const strToDate = (new_date) => {
+        // Helper function to convert a string in the format YYYYMMDD to a Date object
         new_date = new_date.toString();
         const year = new_date.slice(0, 4);
         const month = new_date.slice(4, 6) - 1; // Months are zero-based (0 = January)
@@ -136,6 +155,7 @@ export const strToDate = (new_date) => {
     }
 
 export const dateToString = (new_date) => {
+        // Helper function to convert a Date object to a string in the format YYYYMMDD
         const year = new_date.getFullYear();
         const month = (new_date.getMonth() + 1).toString().padStart(2, '0'); // Add 1 and pad with leading zero if needed
         const day = new_date.getDate().toString().padStart(2, '0'); // Pad with leading zero if needed

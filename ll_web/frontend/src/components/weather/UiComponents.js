@@ -137,7 +137,7 @@ export const Bubbles = (props) => {
     return (
         <div key={props.selectedDay.date}>
             <div className="flex flex-row flex-wrap justify-around puffInVer" id="bubbles">
-                {props.forecastWeather.sort((a, b) => a.time - b.time)
+                {props.forecastWeather.concat(props.backcastWeather).sort((a, b) => a.time - b.time)
                     .map((day, i) => {
                         let deepCpDay = JSON.parse(JSON.stringify(day))
                         deepCpDay.forecast_weather = deepCpDay.hasOwnProperty("forecast_weather") ? JSON.parse(day.forecast_weather) : JSON.parse(day.current_weather)
@@ -160,31 +160,6 @@ export const Bubbles = (props) => {
                         return null;
                     })}
                 
-                {props.backcastWeather.sort((a, b) => a.time - b.time)
-                //Backend sents divided in back, for and current weather, merging them into forecast_weather
-                    .map((day, i) => {
-                        let deepCpDayB = JSON.parse(JSON.stringify(day))
-                       
-                        deepCpDayB.forecast_weather = day.hasOwnProperty("forecast_weather") ? JSON.parse(day.forecast_weather) : JSON.parse(day.current_weather)
-                        if (day.date === props.selectedDay.date) {
-                            bubbels_exist = true;
-                            return (
-                                <div className="relative inline-block" key={i}>
-                                    <button
-                                        style={{backgroundColor: colorByTemp(deepCpDayB.forecast_weather.main.temp),
-                                             color: "black"}}
-                                        className={`text-sm rounded-full m-1 px-2 py-1 ${day.time === props.selectedDay.time ? "isSelectedBoder" : ""}`} 
-                                        onClick={() => {
-                                            props.setSelectedDay(deepCpDayB)
-                                        }}>{formatTime(day.time)}</button>
-                                    {deepCpDayB.forecast_weather.pop > 0 ? <img key={i+"a"} className="absolute top-0 left-0 w-full h-full bg-transparent bg-center bg-no-repeat bg-cover opacity-50 pointer-events-none" src="../../../static/media/raindrop.png"></img>
-                                    : null}
-                                </div>
-
-                            );
-                        }
-                        return null;
-                    })}
             </div>
             {!bubbels_exist ? <p className="bg-gray-600 flex justify-center mx-1 rounded-lg">No timebubbles for today!</p> : null}
         </div>
@@ -193,7 +168,7 @@ export const Bubbles = (props) => {
 
 export const DateBubbles = (props) => {
     return(
-    <div className='flex flex-row w-full inputElement mx-1 mb-2'>
+    <div className='flex flex-wrap w-full inputElement mx-1 mb-2'>
     {props.daysInRange.map((value, i) => (
         <button 
             key={i}

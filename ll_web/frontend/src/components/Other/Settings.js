@@ -144,8 +144,6 @@ function Settings() {
       });
   }
 
-
-
   const weatherFetchData = () => {
     //get data about the tags and lists from api
 
@@ -157,23 +155,13 @@ function Settings() {
       .catch(error => console.error(error));
   };
 
-
-
+const tagManagmet = () => {
   return (
-    <div className='flex flex-col dark:text-white'>
+    <div className='m-auto'>
+          <h3 className='infoHl'>Tag management:</h3>
 
-      {TopBar()}
-      <div className='m-auto'>
-        <h1 className='maxHl'>Settings</h1>
-      </div>
-
-
-      <div className='flex flex-col'>
-        <h1 className='mainHl mx-auto !mt-5'>Link Lists</h1>
-        <div className='m-auto'>
-        <h3 className='infoHl'>Tag management:</h3>
           <form className='flex flex-wrap mt-1' onSubmit={(e) => deleteTag(e)}>
-            <label htmlFor="select_tag">Delete Tag:</label>
+  
             <select className='inputElement mx-1' id='select_tag'>
               <option value="default">None</option>
               {metaTags.map((option) => (
@@ -191,12 +179,18 @@ function Settings() {
             }}>New Tag</button>
 
           </form>
-   
+        </div>
+  )
+}
 
-
-          <h3 className='infoHl mt-2'>Publicate a List</h3>
-          <div className='overflow-scroll'>
-            <table className='table-auto w-full bg-gray-700 border-2 border-gray-500 mt-1'>
+const listPublicationTable = () => {
+  return (
+    <div className='m-auto'>
+      <h3 className='infoHl mt-2'>Publicate a List</h3>
+      <div className='overflow-x-auto'>
+        <table className='table-auto min-w-full bg-gray-700 border-2 border-gray-500 mt-1 overflow-scroll'>
+          {window.window.screen.width > 768 ? (
+            <>
               <thead>
                 <tr className='border-solid border-b-2 border-gray-500'>
                   <th className='tableElement'>List Name</th>
@@ -209,14 +203,18 @@ function Settings() {
               <tbody>
                 {metaLists.map((list) =>
                   list.is_public !== "False" ? (
-                    <tr>
+                    <tr key={list.name}>
                       <th className='tableElement'>{list.name}</th>
                       <th className='tableElement'>{(window.location.origin + list.url)}</th>
                       <th className='tableElement'>
                         <input
                           className='inputElement'
-                          id={`${list.name}_cb`} type="checkbox" defaultChecked={list.is_public === 'r'}
-                          onChange={(e) => { handelListPublication({ 'name': list.name, 'isReadonly': e.target.checked }) }} /></th>
+                          id={`${list.name}_cb`}
+                          type="checkbox"
+                          defaultChecked={list.is_public === 'r'}
+                          onChange={(e) => { handelListPublication({ 'name': list.name, 'isReadonly': e.target.checked }) }}
+                        />
+                      </th>
                       <th className='tableElement'>{list.has_passwd ? 'Password protected.' : 'No Password set!'}</th>
                       <th className='tableElement'>
                         <button
@@ -226,17 +224,71 @@ function Settings() {
                             await handelListPublication({ name: list.name, isReadonly: 'del' });
                             linkListFetchData();
                           }}
-                        >Make private</button></th>
+                        >Make private</button>
+                      </th>
                     </tr>
                   ) : null
                 )}
-
               </tbody>
-            </table>
-          </div>
+            </>
+          ) : (
+            <>
+              <thead>
+                <tr className='border-solid border-b-2 border-gray-500'>
+                  <th className='tableElement'>Name/Info</th>
+                  <th className='tableElement'>Readonly?</th>
+                </tr>
+              </thead>
+              <tbody>
+                {metaLists.map((list) =>
+                  list.is_public !== "False" ? (
+                    <tr key={list.name}>
+                      <th className='tableElement'>
+                        <button
+                          className='inputElement mx-1 mt-1'
+                          onClick={() => {
+                            ReactDOM.createRoot(document.getElementById("tagContainer")).render(
+                              <ConfirmDialog
+                                onConfirmation={async (user_input) => {if (user_input) {
+                                  await handelListPublication({ name: list.name, isReadonly: 'del' });
+                                  linkListFetchData();
+                                }}
+                                }
+                                question={window.location.origin + list.url}
+                                trueBtnText="Make Private"
+                                falseBtnText={list.has_passwd ? 'Password protected. (Sorry, this is a bodge!)' : 'No Password set! (Sorry, this is a bodge!)'}
+                              />
+                            )
+                          }}
+                        >
+                          {list.name}
+                        </button>
+                      </th>
+                      <th className='tableElement'>
+                        <input
+                          className='inputElement'
+                          id={`${list.name}_cb`}
+                          type="checkbox"
+                          defaultChecked={list.is_public === 'r'}
+                          onChange={(e) => { handelListPublication({ 'name': list.name, 'isReadonly': e.target.checked }) }}
+                        />
+                      </th>
+                    </tr>
+                  ) : null
+                )}
+              </tbody>
+            </>
+          )}
+        </table>
+      </div>
+    </div>
+  )
+}
 
-          <form my-1 flex justify-center flex-wrap>
-            <label htmlFor='selectPublishList' className='mt-1'>Select a list to Publish:</label>
+const listSelectToPublicate = () => {
+  return (
+    <div className='my-1 flex flex-wrap mx-auto'>
+            
             <select className='max-w-[10em] inputElement mx-1 mt-1'
               id='selectPublishList'>
               {metaLists.map((list) =>
@@ -247,7 +299,7 @@ function Settings() {
                 ) : null
               )}
             </select>
-            <label htmlFor='publishListMode' className='mx-1 mt-1'>Readonly?</label>
+            
             <input className='mx-1' type="checkbox" id='publishListMode' defaultChecked />
             <input className='inputElement mx-1 mt-1' type='password' id='publishListPasswd' placeholder='Password (optional)' />
             <button className='inputElement mx-1 mt-1'
@@ -260,22 +312,15 @@ function Settings() {
                 })
                 linkListFetchData()
               }}>Submit</button>
-          </form>
-
-        </div>
+          </div>
         
+  )
+}
 
-
-
-
-      </div>
-
-      <div className='flex flex-col'>
-      <h3 className='mainHl mx-auto !mt-5'>Wee-Wee</h3>
-        <div className='m-auto'>
-          
-
-          <table className='table-auto w-full bg-gray-700 border-2 border-gray-500 mt-1 overflow-scroll'>
+const locationsTable = () => {
+  return (
+    <div className='overflow-x'>
+    <table className='table-auto w-full bg-gray-700 border-2 border-gray-500 mt-1 overflow-scroll'>
             <thead>
               <tr className='border-solid border-b-2 border-gray-500'>
                 <th className='tableElement'>Location Name</th>
@@ -305,8 +350,13 @@ function Settings() {
 
             </tbody>
           </table>
+          </div>
+  )
+}
 
-          <div className='flex flex-wrap justify-center'>
+const addLocation = () => {
+  return (
+    <div className='flex flex-wrap justify-center'>
             <input type="text" id="newLocationName" className='inputElement my-1 mx-1' placeholder='New Location..' />
             <input type="text" id="newLocationLat" className='inputElement my-1 mx-1' placeholder='Latitude..' />
             <input type="text" id="newLocationLon" className='inputElement my-1 mx-1' placeholder='Longitude..' />
@@ -318,38 +368,73 @@ function Settings() {
                   document.getElementById('newLocationLat').value, document.getElementById('newLocationLon').value)
               }}>Add</button>
           </div>
+  )
+}
 
+const AddWeatherApiKey = () => {
+  return (
+    weatherProfile.has_api_key ?
+      <button className='inputElement'
+        onClick={() => weatherProfileSetLocations("set_api_key")}>Unset Api Key</button>
+      : <div className='flex flex-wrap'>
+        <input className='inputElement' id="weatherApiKey" placeholder='Api Key..' />
+        <button className='inputElement'
+          onClick={() => { weatherProfileSetLocations('set_api_key', undefined, undefined, undefined, document.getElementById('weatherApiKey').value) }}
+        >Set</button>
+        <a href="https://home.openweathermap.org/api_keys" className='text-blue-600 ml-4'>Get an API Key -&gt;</a>
+      </div>
+    
+  )
+}
+
+const removeAccount = () => {
+  return (<div className='m-auto'>
+          
+  <button
+    className='inputElement'
+    onClick={() => {
+      {
+        ReactDOM.createRoot(document.getElementById("tagContainer")).render(<ConfirmDialog
+          onConfirmation={(e) => { deleteAccount(e) }} question="Do you realy want to delete your Account?" trueBtnText="Delete!" falseBtnText="Go Back!" />)
+      }
+    }}>Delead Account</button>
+
+</div>)
+}
+
+
+  return (
+    <div className='flex flex-col dark:text-white'>
+      {TopBar()}
+      <div className='m-auto'>
+        <h1 className='maxHl'>Settings</h1>
+      </div>
+
+        
+        <h1 className='mainHl mx-auto !mt-5'>Link Lists</h1>
+        {tagManagmet()}
+
+        {listPublicationTable()}
+
+        {listSelectToPublicate()}
+      
+    
+      <div className='flex flex-col'>
+      <h3 className='mainHl mx-auto !mt-5'>Wee-Wee</h3>
+        <div className='m-auto'>
+          {locationsTable()}
+
+          {addLocation()}
 
 
           <h3 className='infoHl mt-2'>Weather API Key:</h3>
-          {weatherProfile.has_api_key ?
-            <button className='inputElement'
-              onClick={() => weatherProfileSetLocations("set_api_key")}>Unset Api Key</button>
-            : <div className='flex flex-wrap'>
-              <input className='inputElement' id="weatherApiKey" placeholder='Api Key..' />
-              <button className='inputElement'
-                onClick={() => { weatherProfileSetLocations('set_api_key', undefined, undefined, undefined, document.getElementById('weatherApiKey').value) }}
-              >Set</button>
-              <a href="https://home.openweathermap.org/api_keys" className='text-blue-600 ml-4'>Get an API Key -&gt;</a>
-            </div>
-          }
+          {AddWeatherApiKey()}
         </div>
       </div>
 
       <div className='flex flex-col'>
         <h3 className='mainHl mx-auto !mt-5'>Other:</h3>
-        <div className='m-auto'>
-          
-            <button
-              className='inputElement'
-              onClick={() => {
-                {
-                  ReactDOM.createRoot(document.getElementById("tagContainer")).render(<ConfirmDialog
-                    onConfirmation={(e) => { deleteAccount(e) }} question="Do you realy want to delete your Account?" trueBtnText="Delete!" falseBtnText="Go Back!" />)
-                }
-              }}>Delead Account</button>
-        
-        </div>
+        {removeAccount()}
       
       </div>
       <div id='tagContainer'></div>

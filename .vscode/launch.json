@@ -42,17 +42,31 @@
                     "RUN_IN_DEBUG": "1"}
         },
         {
+            "name": "Django: Cron",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/ll_web/manage.py",
+            "args": ["runcrons", "--force", "crontabs.CurrentWeatherCron"],
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {"SECRET_KEY": "devsecretkey0346541",
+                    "ALLOWED_HOSTS": "127.0.0.1;",
+                    "CSRF_TRUSTED_ORIGINS": "http://127.0.0.1",
+                    "RUN_IN_DEBUG": "1"}
+        },
+        {
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "justMyCode": true
+            "justMyCode": true,
+            "env": {"SECRET_KEY": "devsecretkey0346541",
+                    "ALLOWED_HOSTS": "127.0.0.1;",
+                    "CSRF_TRUSTED_ORIGINS": "http://127.0.0.1",
+                    "RUN_IN_DEBUG": "1"}
         },
     ]
-    //npm run dev in frontend   
+    
 }
-//            "env": {"SECRET_KEY": "desdgsgdvsecretkey0346541",
-//"ALLOWED_HOSTS": "127.0.0.1;192.168.2.209;development.urmel.duckdns.org",
-//"CSRF_TRUSTED_ORIGINS": "http://127.0.0.1;https://development.urmel.duckdns.org;http://192.168.2.209;http://development.urmel.duckdns.org",
-//"RUN_IN_DEBUG": "False"}
+//Start aps from /home/someone/Code/python/link_list

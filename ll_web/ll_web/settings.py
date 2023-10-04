@@ -48,7 +48,12 @@ INSTALLED_APPS = [
     'weather_api',
     'other_api',
     'frontend',
-    'rest_framework'
+    'rest_framework',
+    'django_cron'
+]
+
+CRON_CLASSES = [
+    'crontabs.CurrentWeatherCron',
 ]
 
 MIDDLEWARE = [
