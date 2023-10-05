@@ -161,3 +161,45 @@ export const dateToString = (new_date) => {
         const day = new_date.getDate().toString().padStart(2, '0'); // Pad with leading zero if needed
         return `${year}${month}${day}`;
     }
+
+export const getSumOfDownfall = (dataset) => {
+    let tempRainSum = 0;
+      for (let [key, value] of Object.entries(dataset).filter(([key, value]) => key === "rain" || key === "snow")) {
+          if (value === null) {
+              tempRainSum = null;
+              break;
+          } else {
+              for (let val of Object.values(value)) {
+                  if (val === null) {
+                      tempRainSum = null;
+                      break;
+                  } else {
+                      tempRainSum += val;
+                  }
+              }
+              if (tempRainSum === null) {
+                  break;
+              }
+          }
+        }
+        return tempRainSum;
+    }
+
+// Function to get the weekday from a date string
+export const getWeekdayFromDate = (dateString) => {
+    const year = parseInt(dateString.substring(0, 4));
+    const month = parseInt(dateString.substring(4, 6)) - 1; // Months are 0-indexed
+    const day = parseInt(dateString.substring(6, 8));
+  
+    // Create a Date object
+    const date = new Date(year, month, day);
+  
+    // Get the numeric day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+    const dayOfWeek = date.getDay();
+  
+    // Array of weekday names
+    const weekdays = ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat'];
+  
+    // Return the weekday as a string
+    return weekdays[dayOfWeek];
+  }

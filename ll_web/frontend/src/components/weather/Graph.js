@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Line, BaseChartComponent } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend} from "chart.js";
 
-import { calculateBackcastDate, calculateForecastDate, findNearestDataPoints, strToDate, dateToString } from './FindDatapoints';
+import { ZipFindExtremeValues, getSumOfDownfall, calculateBackcastDate, calculateForecastDate, findNearestDataPoints, strToDate, dateToString } from './FindDatapoints';
 import { formatTime } from './UiComponents';
 
 export default function LineChart(forecastWeather, backcastWeather, currentWeather, selectedCenterDate, setDaysInRange) {
@@ -24,7 +24,8 @@ export default function LineChart(forecastWeather, backcastWeather, currentWeath
                 IDate = calculateBackcastDate(currentWeatherDate, i);
                 workingData.unshift(findNearestDataPoints(IDate, currentWeatherTime, backcastWeather));
             }
-            workingData.splice(4, 0, currentWeather);            //console.log(workingData)
+            //workingData.splice(4, 0, currentWeather);            //console.log(workingData)        
+            workingData.splice(4, 0, findNearestDataPoints(currentWeatherDate, currentWeatherTime, forecastWeather.concat(backcastWeather)));
             scope = ["-4", "-3", "-2", "-1", currentWeather.date == dateToString(new Date()) ? "Today" : "Center Date", "+1", "+2", "+3", "+4"]
     }} else {
 
@@ -49,6 +50,7 @@ const provideGraphData = (basicGraphData) => {
   let feels_like = []; 
   let rain_prop = [];
   let rain = [];
+  let wind_speed = [];
 
   basicGraphData.y.forEach(day => {
       let weatherData; // Declare weatherData here
@@ -71,29 +73,24 @@ const provideGraphData = (basicGraphData) => {
           weatherData.main.feels_like :
           (weatherData.main.temp_min+weatherData.main.temp_max)/2);
       rain_prop.push(weatherData.pop != null ? weatherData.pop*100 : null)
+      wind_speed.push(weatherData.wind.speed);
                    
-      let tempRainSum = 0;
-      for (let [key, value] of Object.entries(weatherData).filter(([key, value]) => key === "rain" || key === "snow")) {
-          if (value === null) {
-              tempRainSum = null;
-              break;
-          } else {
-              for (let val of Object.values(value)) {
-                  if (val === null) {
-                      tempRainSum = null;
-                      break;
-                  } else {
-                      tempRainSum += val;
-                  }
-              }
-              if (tempRainSum === null) {
-                  break;
-              }
-          }
-      }
-      rain.push(tempRainSum);
-  });
       
+      rain.push(getSumOfDownfall(weatherData));
+  })
+
+  if (selectedCenterDate == "overview") {
+    rain = {} 
+    forecastWeather.concat(backcastWeather).forEach((day) => {
+      if (!rain.hasOwnProperty(day.date)) {
+        rain[day.date] = 0
+      }
+      rain[day.date] += day.hasOwnProperty("forecast_weather") ?getSumOfDownfall(JSON.parse(day.forecast_weather)): null;
+    })
+    rain = Object.values(rain);
+  }
+ 
+
   let datasets = [
       {
           label: "Absolut temperatur in °C",
@@ -103,28 +100,20 @@ const provideGraphData = (basicGraphData) => {
           tension: 0.3,
       },
       {
-          label: "Min temperatur in °C",
-          data: min_temperatur,
-          borderColor: "#2a87d9",
-          backgroundColor: "#2a87d9",
-          tension: 0.3,
-          hidden: true,
-      },
-      {
-          label: "Max temperatur in °C",
-          data: max_temperatur,
-          borderColor: "#e2329b",
-          backgroundColor: "#e2329b",
-          tension: 0.3,
-          hidden: true,
-      },
-      {
           label: "Feels like in °C",
           data: feels_like,
           borderColor: "#4abe7a",
           backgroundColor: "#4abe7a",
           tension: 0.3,
-      }
+      },
+      {
+          label: "Wind speed in m/s",
+          data: wind_speed,
+          borderColor: "#e2a232",
+          backgroundColor: "#e2a232",
+          tension: 0.3,
+          hidden: true,
+      },
   ];
       //If not in overview and rain data is available --> basicGraphData.x[4] !== "Today" && 
       if (!rain_prop.every(element => element == null)) {
@@ -146,6 +135,25 @@ const provideGraphData = (basicGraphData) => {
               tension: 0.3,
               hidden: true,
           })
+      }
+      if (min_temperatur.filter((value) => value != null || value != undefined).length > 1){
+        datasets.push({
+            label: "Min temperatur in °C",
+            data: min_temperatur,
+            borderColor: "#2a87d9",
+            backgroundColor: "#2a87d9",
+            tension: 0.3,
+            hidden: true,
+        },
+        {
+            label: "Max temperatur in °C",
+            data: max_temperatur,
+            borderColor: "#e2329b",
+            backgroundColor: "#e2329b",
+            tension: 0.3,
+            hidden: true,
+        }
+        )
       }
   return {"dataset": datasets, "xAchses": basicGraphData.x};
 }
@@ -191,9 +199,13 @@ const provideGraphData = (basicGraphData) => {
   ChartJS.register(ArcElement, Tooltip, Legend,);
   ChartJS.defaults.plugins.tooltip.enabled = false;
   ChartJS.defaults.plugins.legend.display = true;
-  
+  ChartJS.defaults.color = "#FFFFFF"
+  ChartJS.defaults.font.family = "sans-serif"
+  ChartJS.defaults.font.size = 12
+  ChartJS.defaults.maintainAspectRatio = false
+
   return (
-    <Line data={data} options={config} />
+    <Line data={data} options={config} className='max-h-[400px]' />
   );
 };
 /*

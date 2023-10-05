@@ -45,7 +45,10 @@ class SaveData():
         lat, lon = (round(self.current_weather['coord']['lat'], 1), round(self.current_weather['coord']['lon'], 1))
         alert = self.current_weather.get('alerts', None)
         souce = self.current_weather.get('source', 'openweather')
+
         self.current_weather = SaveData.remove_keys(self.current_weather, ['coord', 'dt', 'timezone', 'source', 'alerts'])
+        self.current_weather["sys"]["sunrise"] = SaveData.unix_timestamp_to_german_time(self.current_weather["sys"]["sunrise"]).split("-")[1]
+        self.current_weather["sys"]["sunset"] = SaveData.unix_timestamp_to_german_time(self.current_weather["sys"]["sunset"]).split("-")[1]
 
         #Checks if the data already exists in the database, if so, abort
         if WeatherData.objects.filter(lat=lat, lon=lon, date=date, time=time).exists() and not self.force_save:
@@ -74,14 +77,16 @@ class SaveData():
         for entry in self.forcast_weather['list']:
             date, time = datetime.utcfromtimestamp(entry['dt']).strftime('%Y%m%d-%H%M').split("-")
             source = entry.get('source', 'openweather')
-            entry = SaveData.remove_keys(entry, ['dt', 'dt_txt', 'sys', 'source'])
+            entry = SaveData.remove_keys(entry, ['dt', 'dt_txt', 'source'])
+            if entry.get("sys", None) !=None and entry["sys"].get("sunrise", None) != None:
+                entry["sys"]["sunrise"] = SaveData.unix_timestamp_to_german_time(entry["sys"]["sunrise"]).split("-")[1]
+                entry["sys"]["sunset"] = SaveData.unix_timestamp_to_german_time(entry["sys"]["sunset"]).split("-")[1]
             ForecastWeatherData.objects.create(
                 date=date,
                 time=time,
                 source = source,
                 forecast_weather=dumps(entry),
-                associated_data=self.createdWeatherObject    
-                associated_data=self.createdWeatherObject    
+                associated_data=self.createdWeatherObject   
             )
             print(f"Saved Forecast for {date, time, self.createdWeatherObject.id}!")
         return
@@ -316,12 +321,10 @@ class Data(View, SaveData):
         location_name = request.GET['loc']
         date = request.GET['date']
         
-        
         self.user_settings = WeatherProfile.objects.get(user=request.user)
 
         user_locations = loads(self.user_settings.custom_coordinates)
 
-        user_locations = loads(self.user_settings.custom_coordinates)
 
         if Data.is_last_week_or_future(date) and date != datetime.now().strftime('%Y%m%d'):
             return JsonResponse({"error": "date out of range"})
@@ -335,26 +338,13 @@ class Data(View, SaveData):
         current_weather, forecast, backcast = WetherCollector(date, location_name, self.user_settings.api_key,\
                                                            user_locations).with_center_date()
 
-        #Adds the location name to the current weather data, front end needs it
-        current_weather['loc_name'] = location_name 
-            date = datetime.now().strftime('%Y%m%d') if date == "now" else date
-
-        if location_name == "default":
-            location_name = self.user_settings.default_location
-        
-
-        current_weather, forecast, backcast = WetherCollector(date, location_name, self.user_settings.api_key,\
-                                                           user_locations).with_center_date()
 
         #Adds the location name to the current weather data, front end needs it
         current_weather['loc_name'] = location_name 
 
-        profile = {"locations": {**Settings.default_location, **user_locations}}
         profile = {"locations": {**Settings.default_location, **user_locations}}
         return JsonResponse({"current": current_weather, "forecast": forecast, "backcast": backcast, "profile": profile})
 
     def post(self, request):
-        return JsonResponse({"error": "not implemented"})
-
         return JsonResponse({"error": "not implemented"})
 

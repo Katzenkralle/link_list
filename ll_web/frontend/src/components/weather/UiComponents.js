@@ -1,5 +1,5 @@
 import React from "react";
-import { calculateForecastDate, ZipFindExtremeValues, colorByTemp, dateToString } from "./FindDatapoints";
+import { getWeekdayFromDate, getSumOfDownfall, calculateForecastDate, ZipFindExtremeValues, colorByTemp, dateToString } from "./FindDatapoints";
 import "../../../static/animations.css"
 
 export const formatTime = (time) => {
@@ -14,6 +14,7 @@ export const formatDay = (date) => {
     date = date.toString();
     return `${date.substring(6, 8)}.${date.substring(4,6)}.${date.substring(0, 4)}`
 }
+
 
 export const DisplaySelectedDay = (props) => {
     if (props.selectedDay === undefined) {
@@ -42,7 +43,7 @@ export const DisplaySelectedDay = (props) => {
                 at {formatTime(props.selectedDay.time)}
             </h2>
 
-            <div className="flex flex-wrap justify-evenly">
+            <div className="flex flex-wrap justify-evenly mb-2 overflow-scroll">
                 <div className="infoBox">
                     <h3 className="infoHl">Temperature</h3>
                     {weather_info.main.hasOwnProperty("temp") ? (
@@ -69,15 +70,41 @@ export const DisplaySelectedDay = (props) => {
                 
                 {weather_info.wind.hasOwnProperty("speed") ? (
                 <div className="infoBox">
-                    <h3 className="infoHl">Weather</h3>
+                    <h3 className="infoHl">Wind</h3>
                     <p>Wind Speed: {weather_info.wind.speed}m/s</p>
                     <p>Wind Direction: {weather_info.wind.deg}°</p>
-                    {weather_info.pop >=0 && weather_info.pop != null ? <p>Rain probability: {(weather_info.pop*100).toFixed(2)}%</p> : undefined}
+                    <p>Gust: {weather_info.wind.gust}m/s</p>
                     {weather_info.weather.map((weather, index) => (
                         weather.description != null ?
                         <p key={index}>→ {weather.description}</p> : null
                     ))}
                 </div>) : <div></div>}
+                
+                {weather_info.hasOwnProperty("rain") || weather_info.hasOwnProperty("snow") || (weather_info.pop >= 0 && weather_info.pop != null) ? (
+                    <div className="infoBox">
+                        <h3 className="infoHl">Precipitation</h3>
+                        {weather_info.hasOwnProperty("rain") && weather_info.rain !== null  ? (
+                           <p>Rain: {weather_info.rain.hasOwnProperty("1h") ? `${weather_info.rain["1h"]}mm (1h)` :
+                           `${weather_info.rain["3h"]}mm (3h)`}</p>
+                        ) : <div></div>}
+                        {weather_info.hasOwnProperty("snow") && weather_info.snow !== null ? (
+                            <p>Snow: {weather_info.snow.hasOwnProperty("1h") ? `${weather_info.snow["1h"]}mm (1h)` :
+                            `${weather_info.snow["3h"]}mm (3h)}`}</p>
+                        ) : <div></div>}
+                        {weather_info.pop >= 0 && weather_info.pop != null ? (
+                            <p>Rain probability: {(weather_info.pop * 100).toFixed(2)}%</p>
+                        ) : undefined}
+                    </div>
+                   
+                ) : <div></div>}
+
+                {weather_info.hasOwnProperty("sys") && weather_info.sys.hasOwnProperty("sunrise") ? (
+                <div className="infoBox">
+                    <h3 className="infoHl">General</h3>
+                    <p>Sunrise: {formatTime(weather_info.sys.sunrise)}</p>
+                    <p>Sunset: {formatTime(weather_info.sys.sunset)}</p>
+                </div>) : <div></div>    
+                }
             </div>
         </div>
     );
@@ -133,7 +160,6 @@ export const Bubbles = (props) => {
         return <div>Loading...</div>;
     }
     let bubbels_exist = false;
-
     return (
         <div key={props.selectedDay.date}>
             <div className="flex flex-row flex-wrap justify-around puffInVer" id="bubbles">
@@ -151,7 +177,8 @@ export const Bubbles = (props) => {
                                         onClick={() => {
                                             props.setSelectedDay(deepCpDay)
                                         }}>{formatTime(day.time)}</button>
-                                    {deepCpDay.forecast_weather.pop > 0 ? <img key={i+"a"} className="absolute top-0 left-0 w-full h-full bg-transparent bg-center bg-no-repeat bg-cover opacity-50 pointer-events-none" src="../../../static/media/raindrop.png"></img>
+                                    {deepCpDay.forecast_weather.pop > 0.5  || getSumOfDownfall(deepCpDay.forecast_weather) > 0 ?
+                                     <img key={i+"a"} className="absolute top-0 left-0 w-full h-full bg-transparent bg-center bg-no-repeat bg-cover opacity-50 pointer-events-none" src="../../../static/media/raindrop.png"></img>
                                     : null}
                                 </div>
 
@@ -168,14 +195,14 @@ export const Bubbles = (props) => {
 
 export const DateBubbles = (props) => {
     return(
-    <div className='flex flex-wrap w-full inputElement mx-1 mb-2'>
+    <div className='flex flex-wrap w-full inputElement mx-1 mb-2 mt-1'>
     {props.daysInRange.map((value, i) => (
         <button 
             key={i}
-            className={`basis-1/9 ml-auto mr-auto pl-4 pr-4 ${value === props.selectedDay.date.toString() ? "isSelectedBoder" : ""}`}
+            className={`basis-1/9 ml-auto my-1 mr-auto pl-4 pr-4 ${value === props.selectedDay.date.toString() ? "isSelectedBoder" : ""}`}
             value={i}
             onClick={(e) => props.changeSelectedDay(e.target.value)}>
-            {i-4 == 0 ? props.currentWeatherDate == dateToString(new Date()) ? "Today" : "Center Date" : i-4}</button>
+            {i-4 == 0 ? props.currentWeatherDate == dateToString(new Date()) ? "Today" : "Center Date" : getWeekdayFromDate(value)}</button>
     ))}
     </div>)
 }

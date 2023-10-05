@@ -7,7 +7,6 @@ from json import loads
 #https://openweathermap.org/forecast5
 #https://open-meteo.com/en/docs/historical-weather-api
 #https://openweathermap.org/api/geocoding-api
-
 class OpenWeatherCaller:
     try:
         with open("ll_web/weather_api/default_key.json", "r") as f:
@@ -76,6 +75,7 @@ class OpenWeatherCaller:
             
             if not len(formatted_days) ==  day+1 and time >= formatted_days[day +1]['dt']:
                 day += 1
+            
             formatted_hours[day]['list'].append(
                 {
                     'dt': time,
@@ -104,6 +104,10 @@ class OpenWeatherCaller:
                     },
                     "snow": {
                         "1h": snowfall,
+                    },
+                    "sys": {
+                        "sunrise": formatted_days[day]["sys"]["sunrise"],
+                        "sunset": formatted_days[day]["sys"]["sunset"],
                     },
                     "source": "open-meteo",
                 }
