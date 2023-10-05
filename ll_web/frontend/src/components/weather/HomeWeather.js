@@ -173,7 +173,7 @@ function HomeWeather() {
 
                         
                         {Object.keys(backcastWeather).length == 0 || Object.keys(forecastWeather).length == 0 ? <div></div> :
-                            LineChart(forecastWeather, backcastWeather, currentWeather, selectedCenterDate)
+                            LineChart(forecastWeather, backcastWeather, currentWeather, selectedCenterDate, daysInRange)
                         }
                         
 

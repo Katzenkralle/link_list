@@ -5,7 +5,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend} from "chart.js";
 import { ZipFindExtremeValues, getSumOfDownfall, calculateBackcastDate, calculateForecastDate, findNearestDataPoints, strToDate, dateToString } from './FindDatapoints';
 import { formatTime } from './UiComponents';
 
-export default function LineChart(forecastWeather, backcastWeather, currentWeather, selectedCenterDate, setDaysInRange) {
+export default function LineChart(forecastWeather, backcastWeather, currentWeather, selectedCenterDate, daysInRange) {
 
   const findGraphData = (centerDate) => {
     let workingData = [];
@@ -80,7 +80,11 @@ const provideGraphData = (basicGraphData) => {
   })
 
   if (selectedCenterDate == "overview") {
+    let date;
     rain = {} 
+    absolut_temperatur = [];
+    feels_like = [];
+
     forecastWeather.concat(backcastWeather).forEach((day) => {
       if (!rain.hasOwnProperty(day.date)) {
         rain[day.date] = 0
@@ -88,8 +92,25 @@ const provideGraphData = (basicGraphData) => {
       rain[day.date] += day.hasOwnProperty("forecast_weather") ?getSumOfDownfall(JSON.parse(day.forecast_weather)): null;
     })
     rain = Object.values(rain);
+
+
+
+  const unpackedForecast = forecastWeather.map((day) => {
+      return JSON.parse(day.hasOwnProperty("forecast_weather") ? day.forecast_weather : day.current_weather);
+      }).concat(backcastWeather.map((day) => {
+          return JSON.parse(day.hasOwnProperty("forecast_weather") ? day.forecast_weather : day.current_weather);
+      }));
+
+    daysInRange.forEach((index) => {
+      absolut_temperatur.push(ZipFindExtremeValues(forecastWeather.concat(backcastWeather), unpackedForecast, "main.temp", index)[2]);
+      feels_like.push(ZipFindExtremeValues(forecastWeather.concat(backcastWeather), unpackedForecast, "main.feels_like", index)[2]);
+    });
+
+    console.log("B", absolut_temperatur)
+
   }
- 
+
+  
 
   let datasets = [
       {
@@ -197,7 +218,7 @@ const provideGraphData = (basicGraphData) => {
 
 
   ChartJS.register(ArcElement, Tooltip, Legend,);
-  ChartJS.defaults.plugins.tooltip.enabled = false;
+  //ChartJS.defaults.plugins.tooltip.enabled = false;
   ChartJS.defaults.plugins.legend.display = true;
   ChartJS.defaults.color = "#FFFFFF"
   ChartJS.defaults.font.family = "sans-serif"
