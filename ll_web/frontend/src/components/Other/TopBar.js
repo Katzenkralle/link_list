@@ -4,7 +4,9 @@ function TopBar(){
 
     return(
         <div className="flex flex-row justify-between bg-zinc-800 mb-1">
-            <a className="mx-1 font-bold" href="/settings">Settings</a>
+            {window.location.pathname === '/settings' ? 
+                <a className="mx-1 font-bold" href="/logout">Logout</a> : 
+                <a className="mx-1 font-bold" href="/settings">Settings</a>}
             <a className="mx-1 font-bold" href="/">Home</a>
         </div>
     )

@@ -1,25 +1,25 @@
 FROM python:latest
 
 #Copy App:
-RUN mkdir /LinkList
-COPY ll_web /LinkList
+RUN mkdir /ll_web
+COPY ll_web /ll_web
 
 #Installing dependencys ||: for ignoring any errors
-RUN apt-get update || : && apt install npm nginx -y
+RUN apt-get update || : && apt install npm nginx cron -y
 
-COPY nginx.conf /etc/nginx/nginx.conf
-
-WORKDIR /LinkList/frontend
+WORKDIR /ll_web/frontend
 RUN npm i
-WORKDIR /LinkList
+WORKDIR /ll_web
 RUN pip install -r requirements.txt
 
-
-#Setup
-VOLUME /LinkList/data
+#Setup LL_WEB
+VOLUME /ll_web/data
+ENV RUN_IN_DEBUG="0"
 RUN python3 migrate_changes.py
 
-
+#Setup Nginx
+COPY nginx.conf /etc/nginx/nginx.conf
+RUN chmod -R o+rx /ll_web/ && chmod -R o+rx /ll_web/frontend/ && chmod -R o+rx /ll_web/frontend/static/
 
 #Start App
 CMD ["bash","kickoff.sh"]

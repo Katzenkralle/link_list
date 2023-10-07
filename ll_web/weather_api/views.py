@@ -1,5 +1,6 @@
 from django.shortcuts import render
-
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.http import HttpResponse, JsonResponse
 from weather_api.models import WeatherData, WeatherProfile, ForecastWeatherData
 from django.views import View
@@ -100,7 +101,7 @@ class SaveData():
                 del dictionary[key]
         return dictionary
 
-
+@method_decorator(login_required, name='dispatch')
 class Settings(View):
     try:
         with open("ll_web/weather_api/default_location.json", "r") as f: 
@@ -153,6 +154,8 @@ class Settings(View):
             case "del":
                 if not location_exists:
                     return JsonResponse({"error": "location does not exist"})
+                if location_name == user_settings.default_location:
+                    user_settings.default_location = Settings.default_location.keys()[0]
                 del user_coordinates[location_name]
             case "set_default":
                 if not location_exists:
@@ -293,7 +296,7 @@ class WetherCollector(SaveData):
 
         return (center_date, forecast, backcast)
         
-
+@method_decorator(login_required, name='dispatch')
 class Data(View, SaveData):
    
     @staticmethod

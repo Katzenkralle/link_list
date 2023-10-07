@@ -1,4 +1,7 @@
 node_modules
 __pycache__
 migrations
-db.sqlite3
+data
+linux
+.vscode
+.git

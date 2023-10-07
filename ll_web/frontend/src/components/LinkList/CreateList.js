@@ -51,7 +51,7 @@ export default class CreateList extends Component {
           {this.props.tag_names.map((option) => (
             <option key={option} value={option}>{option}</option>
           ))}
-           <option onClick={() => {ReactDOM.createRoot(document.getElementById("tagContainer")).render(<CreateTags mode='create' update_data={this.props.update_data}/>)}}>Create New Tag</option>
+           <option onClick={() => {ReactDOM.createRoot(document.getElementById("tagContainer")).render(<CreateTags mode='create' update_data={this.props.update_data}/>)}}>Create new Tag</option>
         </select>
       );
     };

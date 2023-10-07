@@ -4,9 +4,9 @@ from .views import index, login_page, logout_page, index_no_login, large_viewer
 
 urlpatterns = [
     #Path to the frontend, frontend/ is the root
-    path('linkList', index, name='index'),
+    path('linkList', index),
     path('view', index),
-    path('', index),
+    path('', index, name='index'),
     path('qLinkList', large_viewer),
     path('settings', index),
     path('account-creation', index_no_login),

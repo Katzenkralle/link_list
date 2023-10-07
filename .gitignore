@@ -7,3 +7,5 @@ default_key.json
 .gitignore
 default_location.json
 linux
+.vscode/launch.json
+.vscode/launch.json

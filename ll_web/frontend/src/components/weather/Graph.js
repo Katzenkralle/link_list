@@ -114,7 +114,7 @@ const provideGraphData = (basicGraphData) => {
 
   let datasets = [
       {
-          label: "Absolut temperatur in °C",
+          label: "Absolute temperature in °C",
           data: absolut_temperatur,
           borderColor: "#ae00be",
           backgroundColor: "#ae00be",
@@ -149,7 +149,7 @@ const provideGraphData = (basicGraphData) => {
       }
       if (!rain.every(element => element == null)) {
           datasets.push({
-              label: "Rain in l/m²",
+              label: "Rain in mm",
               data: rain,
               borderColor: "#79d1f0",
               backgroundColor: "#79d1f0",
@@ -159,7 +159,7 @@ const provideGraphData = (basicGraphData) => {
       }
       if (min_temperatur.filter((value) => value != null || value != undefined).length > 1){
         datasets.push({
-            label: "Min temperatur in °C",
+            label: "Min-temperature in °C",
             data: min_temperatur,
             borderColor: "#2a87d9",
             backgroundColor: "#2a87d9",
@@ -167,7 +167,7 @@ const provideGraphData = (basicGraphData) => {
             hidden: true,
         },
         {
-            label: "Max temperatur in °C",
+            label: "Max-temperature in °C",
             data: max_temperatur,
             borderColor: "#e2329b",
             backgroundColor: "#e2329b",
@@ -225,6 +225,12 @@ const provideGraphData = (basicGraphData) => {
   ChartJS.defaults.font.size = 12
   ChartJS.defaults.maintainAspectRatio = false
 
+  ChartJS.defaults.plugins.tooltip.mode = "x"
+  ChartJS.defaults.plugins.tooltip.backgroundColor = "#172554"
+  ChartJS.defaults.plugins.tooltip.font = {"family": "sans-serif"}
+  ChartJS.defaults.plugins.tooltip.usePointStyle = true
+
+  
   return (
     <Line data={data} options={config} className='max-h-[400px]' />
   );

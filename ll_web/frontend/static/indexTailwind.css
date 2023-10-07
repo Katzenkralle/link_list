@@ -33,7 +33,7 @@ body {
 }
 
 .infoContainer {
-  @apply bg-blue-950 rounded-md min-h-full max-h-screen pt-3 sm:pb-3
+  @apply bg-blue-950 rounded-md min-h-full pt-3 sm:pb-3
 }
 
 .centerRow {
@@ -67,6 +67,16 @@ body {
   z-index: 2;
 }
 
+.symbole{
+  @apply max-h-[50px]
+}
+
+.infoRow {
+  @apply flex flex-row my-1 items-center
+}
+.infoRow p {
+  @apply ml-1
+}
 
 @media (max-width: 600px) {
   .largeOverlayBox{ 

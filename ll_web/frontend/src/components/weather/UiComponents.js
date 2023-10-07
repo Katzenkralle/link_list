@@ -36,7 +36,7 @@ export const DisplaySelectedDay = (props) => {
     return (
         weather_info.main.temp == null && weather_info.main.sea_level == null && weather_info.main.temp_max == null ? <div className="infoContainer">Sadly, there seems to be no Data or an Error occurred</div> :
         <div key={`${props.selectedDay.time}${props.selectedDay.date}}`}
-         className="infoContainer fadeInRight">
+         className="infoContainer fadeInRight !max-h-auto">
             <h2 className="h-min ml-2 -mt-2">
                 Weather for{" "}
                 {formatDay(props.selectedDay.date)}{" "}
@@ -48,61 +48,107 @@ export const DisplaySelectedDay = (props) => {
                     <h3 className="infoHl">Temperature</h3>
                     {weather_info.main.hasOwnProperty("temp") ? (
                     <div>
-                    <p>Feels like: {weather_info.main.feels_like}°C</p>
-                    <p>Absolut: {weather_info.main.temp}°C</p>
-                    </div>) : <div></div>}
-                    {weather_info.main.temp_min !== weather_info.main.temp_max ? (
-                        <div>
-                            <p>Min: {weather_info.main.temp_min}°C</p>
-                            <p>Max: {weather_info.main.temp_max}°C</p>
+                        <div className="infoRow">
+                            <img src="../../../static/media/temp.png" className="symbole"></img>
+                            <p>Feels like: {weather_info.main.feels_like}°C</p>
                         </div>
+                        <div className="infoRow">
+                            <img src="../../../static/media/abs_temp.png" className="symbole"></img>
+                            <p>Absolute: {weather_info.main.temp}°C</p>
+                        </div>
+
+                        </div>) : null}
+                        {weather_info.main.temp_min !== weather_info.main.temp_max ? (
+                            <div>
+                                <div className="infoRow">
+                                    <img src="../../../static/media/min_temp.png" className="symbole"></img>
+                                    <p>Min: {weather_info.main.temp_min}°C</p>
+                                </div>
+                                <div className="infoRow">
+                                    <img src="../../../static/media/max_temp.png" className="symbole"></img>
+                                    <p>Max: {weather_info.main.temp_max}°C</p>
+                                </div>
+                            </div>
                     ) : (
-                        <div></div>
+                        null
                     )}
                 </div>
 
                 {weather_info.main.hasOwnProperty("humidity") ? (
                 <div className="infoBox">
                     <h3 className="infoHl">Climates</h3>
-                    <p>Humidity: {weather_info.main.humidity}%</p>
-                    <p>Pressure: {weather_info.main.pressure ? weather_info.main.pressure : weather_info.main.sea_level}pHa</p>
-                </div>) : <div></div>}
+                    <div className="infoRow">
+                        <img src="../../../static/media/humidity.png" className="symbole"></img>
+                        <p>Humidity: {weather_info.main.humidity}%</p>
+                    </div>
+                    <div className="infoRow">
+                        <img src="../../../static/media/pressure.png" className="symbole"></img>
+                        <p>Pressure: {weather_info.main.pressure ? weather_info.main.pressure : weather_info.main.sea_level}pHa</p>
+                    </div>
+                </div>) : null}
                 
                 {weather_info.wind.hasOwnProperty("speed") ? (
                 <div className="infoBox">
                     <h3 className="infoHl">Wind</h3>
-                    <p>Wind Speed: {weather_info.wind.speed}m/s</p>
-                    <p>Wind Direction: {weather_info.wind.deg}°</p>
-                    <p>Gust: {weather_info.wind.gust}m/s</p>
-                    {weather_info.weather.map((weather, index) => (
-                        weather.description != null ?
-                        <p key={index}>→ {weather.description}</p> : null
-                    ))}
-                </div>) : <div></div>}
+                    <div className="infoRow">
+                        <img src="../../../static/media/wind_speed.png" className="symbole"></img>
+                        <p>Wind Speed: {weather_info.wind.speed}m/s</p>
+                    </div>
+                    <div className="infoRow">
+                        <img src="../../../static/media/wind_dir.png" className="symbole"></img>
+                        <p>Wind Direction: {weather_info.wind.deg}°</p>
+                    </div>
+                    <div className="infoRow">
+                        <img src="../../../static/media/wind_gust.png" className="symbole"></img>
+                        <p>Gust: {weather_info.wind.gust}m/s</p>
+                    </div>
+                </div>) : null}
                 
                 {weather_info.hasOwnProperty("rain") || weather_info.hasOwnProperty("snow") || (weather_info.pop >= 0 && weather_info.pop != null) ? (
                     <div className="infoBox">
                         <h3 className="infoHl">Precipitation</h3>
                         {weather_info.hasOwnProperty("rain") && weather_info.rain !== null  ? (
-                           <p>Rain: {weather_info.rain.hasOwnProperty("1h") ? `${weather_info.rain["1h"]}mm (1h)` :
-                           `${weather_info.rain["3h"]}mm (3h)`}</p>
-                        ) : <div></div>}
+                            <div className="infoRow">
+                                <img src="../../../static/media/rain.png" className="symbole"></img>
+                                <p>Rain: {weather_info.rain.hasOwnProperty("1h") ? `${weather_info.rain["1h"]}mm (1h)` :
+                                `${weather_info.rain["3h"]}mm (3h)`}</p>
+                            </div>
+                        ) : null}
                         {weather_info.hasOwnProperty("snow") && weather_info.snow !== null ? (
-                            <p>Snow: {weather_info.snow.hasOwnProperty("1h") ? `${weather_info.snow["1h"]}mm (1h)` :
-                            `${weather_info.snow["3h"]}mm (3h)}`}</p>
-                        ) : <div></div>}
+                            <div className="infoRow">
+                                <img src="../../../static/media/snow.png" className="symbole"></img>
+                                <p>Snow: {weather_info.snow.hasOwnProperty("1h") ? `${weather_info.snow["1h"]}mm (1h)` :
+                                `${weather_info.snow["3h"]}mm (3h)}`}</p>
+                            </div>
+                        ) : null}
                         {weather_info.pop >= 0 && weather_info.pop != null ? (
-                            <p>Rain probability: {(weather_info.pop * 100).toFixed(2)}%</p>
+                            <div className="infoRow">
+                                <img src="../../../static/media/chance_of_rain.png" className="symbole"></img>
+                                <p>Rain probability: {(weather_info.pop * 100).toFixed(2)}%</p>
+                            </div>
                         ) : undefined}
                     </div>
                    
-                ) : <div></div>}
+                ) : null}
 
                 {weather_info.hasOwnProperty("sys") && weather_info.sys.hasOwnProperty("sunrise") ? (
                 <div className="infoBox">
                     <h3 className="infoHl">General</h3>
-                    <p>Sunrise: {formatTime(weather_info.sys.sunrise)}</p>
-                    <p>Sunset: {formatTime(weather_info.sys.sunset)}</p>
+                    <div className="infoRow">
+                        <img src="../../../static/media/sunrise.png" className="symbole"></img>
+                        <p>Sunrise: {formatTime(weather_info.sys.sunrise)}</p>
+                    </div>
+                    <div className="infoRow">
+                        <img src="../../../static/media/sunset.png" className="symbole"></img>
+                        <p>Sunset: {formatTime(weather_info.sys.sunset)}</p>
+                    </div>
+                    {weather_info.weather.map((weather, index) => (
+                        weather.description != null ?
+                        <div className="infoRow" key={index}>
+                            <img src="../../../static/media/weather.png" className="symbole"></img>
+                            <p key={index}>→ {weather.description}</p>
+                        </div> : null
+                    ))}
                 </div>) : <div></div>    
                 }
             </div>
@@ -125,13 +171,24 @@ export const DisplayForecast = (props) => {
         className="flex flex-wrap lg:flex-row sm:flex-col w-full my-3 justify-evenly scaleInVerBottom">
             <div className="lg:basis-1/5 bg-blue-950 shrink-0 m-1 p-2 rounded-lg">
                 <h3 className="infoHl">{props.currentWeather.date == dateToString(new Date()) ? "Today" : "Center Date"}</h3>
-                <p>Max {ZipFindExtremeValues([...props.forecastWeather, props.currentWeather], [...unpackedForecast, unpackedCurrent], "main.temp_max",
-                    props.currentWeather.date)[0]}°C</p>
+                <div className="infoRow">
+                    <img src="../../../static/media/max_temp.png" className="symbole"></img>
+                    <p>Max {ZipFindExtremeValues([...props.forecastWeather, props.currentWeather], [...unpackedForecast, unpackedCurrent], "main.temp_max",
+                        props.currentWeather.date)[0]}°C</p>
+                </div>
+                <div className="infoRow">
+                    <img src="../../../static/media/min_temp.png" className="symbole"></img>
                 <p>Min {ZipFindExtremeValues([...props.forecastWeather, props.currentWeather], [...unpackedForecast, unpackedCurrent], "main.temp_min",
                     props.currentWeather.date)[1]}°C</p>
+                </div>
+                
                 {props.forecastWeather.hasOwnProperty('pop') ? 
+                <div className="infoRow">
+                <img src="../../../static/media/chance_of_rain.png" className="symbole"></img>
                 <p>Max chance of Rain {(ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "pop",
-                    props.currentWeather.date)[2]*100).toFixed(2)}%</p> : null}
+                    props.currentWeather.date)[2]*100).toFixed(2)}%</p> </div>
+                    : null}
+                
             </div>
             {[1, 2, 3, 4].map((i) => {
                 let date = calculateForecastDate(props.currentWeather.date, i);
@@ -139,13 +196,23 @@ export const DisplayForecast = (props) => {
                 return (
                     <div key={i} className="lg:basis-1/5 bg-blue-950 shrink-0 m-1 p-2 rounded-lg">
                         <h3 className="infoHl">{formatDay(date)}</h3>
-                        <p>Max {ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "main.temp",
-                         date)[0]}°C</p>
-                        <p>Min {ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "main.temp",
-                         date)[1]}°C</p>
+                        <div className="infoRow">
+                            <img src="../../../static/media/max_temp.png" className="symbole"></img>
+                            <p>Max {ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "main.temp",
+                            date)[0]}°C</p>
+                        </div>
+                        <div className="infoRow">
+                            <img src="../../../static/media/min_temp.png" className="symbole"></img>
+                            <p>Min {ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "main.temp",
+                                date)[1]}°C</p>
+                        </div>
                         {!unpackedForecast.every(element => element.pop == null) ?
-                        <p>Average {(ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "pop",
-                            date)[2]*100).toFixed(2)} % Rain probability</p> : null}
+                        <div className="infoRow">
+                            <img src="../../../static/media/chance_of_rain.png" className="symbole"></img>
+                            <p>Average {(ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "pop",
+                                date)[2]*100).toFixed(2)} % Rain probability</p>
+                        </div> : null}
+
                     </div>
                 );
             })}

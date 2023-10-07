@@ -186,7 +186,7 @@ const tagManagmet = () => {
 const listPublicationTable = () => {
   return (
     <div className='m-auto'>
-      <h3 className='infoHl mt-2'>Publicate a List</h3>
+      <h3 className='infoHl mt-2'>Share a List</h3>
       <div className='overflow-x-auto'>
         <table className='table-auto min-w-full bg-gray-700 border-2 border-gray-500 mt-1 overflow-scroll'>
           {window.window.screen.width > 768 ? (
@@ -195,7 +195,7 @@ const listPublicationTable = () => {
                 <tr className='border-solid border-b-2 border-gray-500'>
                   <th className='tableElement'>List Name</th>
                   <th className='tableElement'>URL</th>
-                  <th className='tableElement'>Readonly?</th>
+                  <th className='tableElement'>Read-only?</th>
                   <th className='tableElement'>Password?</th>
                   <th className='tableElement'>X</th>
                 </tr>
@@ -325,7 +325,7 @@ const locationsTable = () => {
               <tr className='border-solid border-b-2 border-gray-500'>
                 <th className='tableElement'>Location Name</th>
                 <th className='tableElement'>Latitude</th>
-                <th className='tableElement'>Logitude</th>
+                <th className='tableElement'>Longitude</th>
                 <th className='tableElement'> X </th>
               </tr>
             </thead>
@@ -367,6 +367,7 @@ const addLocation = () => {
                   document.getElementById('newLocationName').value,
                   document.getElementById('newLocationLat').value, document.getElementById('newLocationLon').value)
               }}>Add</button>
+              <a href="https://www.latlong.net/" className='text-blue-600 ml-4 mt-auto'>Find coordinates →</a>
           </div>
   )
 }
@@ -381,7 +382,7 @@ const AddWeatherApiKey = () => {
         <button className='inputElement'
           onClick={() => { weatherProfileSetLocations('set_api_key', undefined, undefined, undefined, document.getElementById('weatherApiKey').value) }}
         >Set</button>
-        <a href="https://home.openweathermap.org/api_keys" className='text-blue-600 ml-4'>Get an API Key -&gt;</a>
+        <a href="https://home.openweathermap.org/api_keys" className='text-blue-600 ml-4 mt-auto'>Get an API Key →</a>
       </div>
     
   )
