@@ -405,7 +405,7 @@ const removeAccount = () => {
 
 
   return (
-    <div className='flex flex-col dark:text-white'>
+    <div className='flex flex-col'>
       {TopBar()}
       <div className='m-auto'>
         <h1 className='maxHl'>Settings</h1>

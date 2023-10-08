@@ -32,6 +32,10 @@ body {
   @apply mx-5 shrink-0 mt-3
 }
 
+.grid .infoBox {
+  @apply !m-0
+}
+
 .infoContainer {
   @apply bg-blue-950 rounded-md min-h-full pt-3 sm:pb-3
 }
@@ -42,6 +46,14 @@ body {
 
 .tableElement{
   @apply border-dashed border-x-2 border-gray-500 px-2
+}
+
+.imgAsOverlyContainer {
+  @apply relative inline-block
+}
+
+.imgAsOverly {
+  @apply absolute top-0 left-0 w-full h-full bg-transparent bg-center bg-no-repeat bg-cover opacity-50 pointer-events-none
 }
 
 .interactiveContainer {

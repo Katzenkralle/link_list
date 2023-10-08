@@ -124,11 +124,13 @@ function HomeWeather() {
 
 
     return (
-        <div className='content dark:text-white flex flex-col'>
+        <div className='content flex flex-col'>
             {TopBar()}
-            <div className='max-w-[1624px] mx-auto shrink-0 grow-0'>
+            <div className='max-w-[1624px] mx-auto shrink-0 grow-0 overflow-x-hidden'>
+
                 <div className='flex flex-wrap justify-between'>
-                    <div className='my-auto'>
+
+                    <div className='my-auto sm:order-2'>
                         <select className='inputElement'
                             value={curerntLocation}
                             onChange={(e) => { console.log(e.target.value); setCurrentLocation(e.target.value); }}>
@@ -138,27 +140,30 @@ function HomeWeather() {
                             )) : <option value="default">Default</option>}
                         </select>
                     </div>
-                    <div className='mx-auto'>
+
+                    <div className='mx-auto text-center sm:w-full sm:order-1'>
                         <h1 className='text-3xl'>WeeWee</h1>
                     </div>
-                    <div className='my-auto'>
 
-                        <button className='inputElement'
-                            onClick={() => { getWeather(true) }}
-                        >{formatDay(dateToString(new Date()))}</button>
-
+                    <div className='sm:order-3 flex flex-row items-center'>
                         <DatePicker
-                            className='inputElement mr-3 ml-1 !max-w-[8em]'
+                            className='inputElement !max-w-[8em] z-100 my-auto '
                             selected={date}
                             onChange={(newDate) => newDate !== null ? setDate(newDate) : null}
                             dateFormat="dd.MM.yy"
                         />
+                        <div className='imgAsOverlyContainer ml-2'>
+                            <button className='inputElement !p-2'
+                                onClick={() => { getWeather(true) }}
+                            >{new Date().getDate().toString().padStart(2, '0')}</button>
+                            <img src='../../../static/media/calender_empty.png' 
+                            className='imgAsOverly !opacity-100 translate-y-[-4px]'/>
+                        </div>
                     </div>
+
                 </div>
 
-
-
-                <div className='flex lg:flex-row sm:flex-col flex-wrap w-full my-3'>
+                <div className='flex lg:flex-row sm:flex-col w-full my-3'>
                     <div className='graph w-full lg:basis-1/2 sm:min-h-[400px]'>
 
                         <select
@@ -179,12 +184,15 @@ function HomeWeather() {
 
 
                         {window.window.screen.width > 768 ?
-                            <DateBubbles currentWeatherDate={currentWeather.date} daysInRange={daysInRange} selectedDay={selectedDay} changeSelectedDay={changeSelectedDay} />
+                            <DateBubbles
+                            currentWeatherDate={currentWeather.date} 
+                            daysInRange={daysInRange} selectedDay={selectedDay} 
+                            changeSelectedDay={changeSelectedDay} />
                             : null
                         }
 
                     </div>
-                    <div className='lg:basis-1/2 mt-5 pl-2 pr-2 pt-2 '>
+                    <div className='lg:basis-1/2 mt-5 lg:ml-3'>
                         <DisplaySelectedDay selectedDay={selectedDay}></DisplaySelectedDay>
                     </div>
                 </div>

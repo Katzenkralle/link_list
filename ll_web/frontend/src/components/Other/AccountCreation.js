@@ -46,7 +46,7 @@ function CreateAccount() {
     }
 
   return (
-<div className='dark:text-white flex justify-center'>
+<div className='flex justify-center'>
   <div className=''>
     <h1 className='mainHl mb-3'>Account Creation:</h1>
     <form className='' 

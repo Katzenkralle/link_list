@@ -36,14 +36,14 @@ export const DisplaySelectedDay = (props) => {
     return (
         weather_info.main.temp == null && weather_info.main.sea_level == null && weather_info.main.temp_max == null ? <div className="infoContainer">Sadly, there seems to be no Data or an Error occurred</div> :
         <div key={`${props.selectedDay.time}${props.selectedDay.date}}`}
-         className="infoContainer fadeInRight !max-h-auto">
+         className="infoContainer fadeInRight lg:max-h-[0px] sm:max-h-auto overflow-y-scroll">
             <h2 className="h-min ml-2 -mt-2">
                 Weather for{" "}
                 {formatDay(props.selectedDay.date)}{" "}
                 at {formatTime(props.selectedDay.time)}
             </h2>
 
-            <div className="flex flex-wrap justify-evenly mb-2 overflow-scroll">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-3 mt-2 p-2 overflow-scroll">
                 <div className="infoBox">
                     <h3 className="infoHl">Temperature</h3>
                     {weather_info.main.hasOwnProperty("temp") ? (
@@ -98,10 +98,11 @@ export const DisplaySelectedDay = (props) => {
                         <img src="../../../static/media/wind_dir.png" className="symbole"></img>
                         <p>Wind Direction: {weather_info.wind.deg}°</p>
                     </div>
+                    {weather_info.hasOwnProperty("wind_gust") ? (
                     <div className="infoRow">
                         <img src="../../../static/media/wind_gust.png" className="symbole"></img>
                         <p>Gust: {weather_info.wind.gust}m/s</p>
-                    </div>
+                    </div>) : null}
                 </div>) : null}
                 
                 {weather_info.hasOwnProperty("rain") || weather_info.hasOwnProperty("snow") || (weather_info.pop >= 0 && weather_info.pop != null) ? (
@@ -237,7 +238,7 @@ export const Bubbles = (props) => {
                         if (day.date === props.selectedDay.date) {
                             bubbels_exist = true;
                             return (
-                                <div className="relative inline-block" key={i}>
+                                <div className="imgAsOverlyContainer" key={i}>
                                     <button
                                         style={{backgroundColor: colorByTemp(deepCpDay.forecast_weather.main.temp), color: "black"}}
                                         className={`text-sm rounded-full m-1 px-2 py-1 ${day.time === props.selectedDay.time ? "isSelectedBoder" : ""}`} 
@@ -245,7 +246,7 @@ export const Bubbles = (props) => {
                                             props.setSelectedDay(deepCpDay)
                                         }}>{formatTime(day.time)}</button>
                                     {deepCpDay.forecast_weather.pop > 0.5  || getSumOfDownfall(deepCpDay.forecast_weather) > 0 ?
-                                     <img key={i+"a"} className="absolute top-0 left-0 w-full h-full bg-transparent bg-center bg-no-repeat bg-cover opacity-50 pointer-events-none" src="../../../static/media/raindrop.png"></img>
+                                     <img key={i+"a"} className="imgAsOverly" src="../../../static/media/raindrop.png"></img>
                                     : null}
                                 </div>
 
@@ -262,7 +263,7 @@ export const Bubbles = (props) => {
 
 export const DateBubbles = (props) => {
     return(
-    <div className='flex flex-wrap w-full inputElement mx-1 mb-2 mt-1'>
+    <div className='flex flex-wrap w-full inputElement mx-1 mb-2 mt-3'>
     {props.daysInRange.map((value, i) => (
         <button 
             key={i}

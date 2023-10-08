@@ -232,7 +232,7 @@ const provideGraphData = (basicGraphData) => {
 
   
   return (
-    <Line data={data} options={config} className='max-h-[400px]' />
+    <Line data={data} options={config} className={`max-h-[450px]`} />
   );
 };
 /*
