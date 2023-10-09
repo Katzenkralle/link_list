@@ -10,7 +10,6 @@ export default function LineChart(forecastWeather, backcastWeather, currentWeath
   const findGraphData = (centerDate) => {
     let workingData = [];
     let scope = [];
-    console.log(centerDate, centerDate == "overview")
     if (centerDate == "overview") {
         let currentWeatherTime = currentWeather.time;
         let currentWeatherDate = currentWeather.date;
@@ -89,7 +88,8 @@ const provideGraphData = (basicGraphData) => {
       if (!rain.hasOwnProperty(day.date)) {
         rain[day.date] = 0
       }
-      rain[day.date] += day.hasOwnProperty("forecast_weather") ?getSumOfDownfall(JSON.parse(day.forecast_weather)): null;
+      rain[day.date] += day.hasOwnProperty("forecast_weather") ? getSumOfDownfall(JSON.parse(day.forecast_weather)): 
+                                                                 getSumOfDownfall(JSON.parse(day.current_weather));
     })
     rain = Object.values(rain);
 
@@ -105,9 +105,6 @@ const provideGraphData = (basicGraphData) => {
       absolut_temperatur.push(ZipFindExtremeValues(forecastWeather.concat(backcastWeather), unpackedForecast, "main.temp", index)[2]);
       feels_like.push(ZipFindExtremeValues(forecastWeather.concat(backcastWeather), unpackedForecast, "main.feels_like", index)[2]);
     });
-
-    console.log("B", absolut_temperatur)
-
   }
 
   

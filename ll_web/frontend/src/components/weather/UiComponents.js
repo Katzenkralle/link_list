@@ -25,7 +25,6 @@ export const DisplaySelectedDay = (props) => {
         </div>;
     }
     
-    //console.log(props.selectedDay);
     const weather_info = props.selectedDay.hasOwnProperty("forecast_weather")
         ? props.selectedDay.forecast_weather
         : props.selectedDay.current_weather;
@@ -166,31 +165,37 @@ export const DisplayForecast = (props) => {
     });
 
     const unpackedCurrent = JSON.parse(props.currentWeather.current_weather);
-   
+
+    const unpackedBackcast = props.backcastWeather.map((day) => {
+        return JSON.parse(day.hasOwnProperty("forecast_weather") ? day.forecast_weather : day.current_weather);
+    });
+    const combindedWeather = [...props.forecastWeather, props.currentWeather, ...props.backcastWeather];
+    const combindedWeatherUnpacked = [...unpackedForecast, unpackedCurrent, ...unpackedBackcast];
+
     return(
         <div key={props.currentWeather.date} 
         className="flex flex-wrap lg:flex-row sm:flex-col w-full my-3 justify-evenly scaleInVerBottom">
+            
             <div className="lg:basis-1/5 bg-blue-950 shrink-0 m-1 p-2 rounded-lg">
                 <h3 className="infoHl">{props.currentWeather.date == dateToString(new Date()) ? "Today" : "Center Date"}</h3>
                 <div className="infoRow">
                     <img src="../../../static/media/max_temp.png" className="symbole"></img>
-                    <p>Max {ZipFindExtremeValues([...props.forecastWeather, props.currentWeather], [...unpackedForecast, unpackedCurrent], "main.temp_max",
+                    <p>Max {ZipFindExtremeValues(combindedWeather, combindedWeatherUnpacked, "main.temp_max",
                         props.currentWeather.date)[0]}°C</p>
                 </div>
                 <div className="infoRow">
                     <img src="../../../static/media/min_temp.png" className="symbole"></img>
-                <p>Min {ZipFindExtremeValues([...props.forecastWeather, props.currentWeather], [...unpackedForecast, unpackedCurrent], "main.temp_min",
+                <p>Min {ZipFindExtremeValues(combindedWeather, combindedWeatherUnpacked, "main.temp_min",
                     props.currentWeather.date)[1]}°C</p>
                 </div>
                 
-                {props.forecastWeather.hasOwnProperty('pop') ? 
                 <div className="infoRow">
-                <img src="../../../static/media/chance_of_rain.png" className="symbole"></img>
-                <p>Max chance of Rain {(ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "pop",
-                    props.currentWeather.date)[2]*100).toFixed(2)}%</p> </div>
-                    : null}
-                
+                    <img src="../../../static/media/chance_of_rain.png" className="symbole"></img>
+                    <p>Wind {(ZipFindExtremeValues(combindedWeather, combindedWeatherUnpacked, "wind.speed",
+                        props.currentWeather.date)[0])}m/s</p> 
+                </div>
             </div>
+
             {[1, 2, 3, 4].map((i) => {
                 let date = calculateForecastDate(props.currentWeather.date, i);
 

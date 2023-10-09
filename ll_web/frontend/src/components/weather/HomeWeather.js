@@ -12,8 +12,8 @@ import ConfirmDialog from '../Other/ConfirmDialog';
 
 function HomeWeather() {
     const [currentWeather, setCurrentWeather] = useState({});
-    const [forecastWeather, setForecastWeather] = useState({});
-    const [backcastWeather, setBackcastWeather] = useState({});
+    const [forecastWeather, setForecastWeather] = useState([]);
+    const [backcastWeather, setBackcastWeather] = useState([]);
     const [curerntLocation, setCurrentLocation] = useState("");
     const [date, setDate] = useState(""); //selected day in obj as center date for and from datepicker
     const [selectedCenterDate, setSelectedCenterDate] = useState("overview"); // unsed for the graph
@@ -89,10 +89,10 @@ function HomeWeather() {
                 setDate(strToDate(data.current.date));
                 setCurrentLocation(data.current.loc_name);
 
+                //this stays for transparancy
                 console.log("Current:", data.current);
                 console.log("Forecast:", data.forecast);
                 console.log("Backcast:", data.backcast);
-                console.log(data.current.loc_name);
 
                 document.getElementById('errorMSG').innerHTML = "";
             })
@@ -133,7 +133,7 @@ function HomeWeather() {
                     <div className='my-auto sm:order-2'>
                         <select className='inputElement'
                             value={curerntLocation}
-                            onChange={(e) => { console.log(e.target.value); setCurrentLocation(e.target.value); }}>
+                            onChange={(e) => {setCurrentLocation(e.target.value); }}>
                             {profile.hasOwnProperty("locations") ? Object.entries(profile.locations).map(([key, value], index) => (
                                 <option
                                     key={index} value={key}>{key}</option>
@@ -213,8 +213,15 @@ function HomeWeather() {
                 </div>
 
                 <div>
-                    <DisplayForecast forecastWeather={forecastWeather} currentWeather={currentWeather}></DisplayForecast>
-                </div>
+                    {/*Needs backcast for center date*/ }
+                    {backcastWeather.length != 0 ? (
+                    <DisplayForecast 
+                    forecastWeather={forecastWeather} 
+                    currentWeather={currentWeather}
+                    backcastWeather={backcastWeather.filter((value) => value.date == dateToString(date))}></DisplayForecast>
+                    ) : <div/>}
+                </div> 
+
                 <div id='errorMSG'></div>
             </div>
         </div>

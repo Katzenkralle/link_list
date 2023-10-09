@@ -19,7 +19,8 @@ subprocess.run(mange_py + ['migrate', 'weather_api'])
 subprocess.run(mange_py + ['makemigrations'])
 subprocess.run(mange_py + ['migrate'])
 
-
-if input("Create new Superuser?(1)") == str(1):
-    subprocess.run(mange_py + ['createsuperuser']) 
-    
+try:
+    if input("Create new Superuser?(1)") == str(1):
+        subprocess.run(mange_py + ['createsuperuser']) 
+except:
+    print("No Superuser created")
