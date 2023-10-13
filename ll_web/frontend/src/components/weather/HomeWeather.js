@@ -8,7 +8,9 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'; // Import the CSS for styling
 import ReactDOM from 'react-dom/client';
 import TopBar, { topBar } from '../Other/TopBar';
+import BottomBar from '../Other/BottomBar';
 import ConfirmDialog from '../Other/ConfirmDialog';
+import LoadingAnimation from '../Other/LoadingAnimation';
 
 function HomeWeather() {
     const [currentWeather, setCurrentWeather] = useState({});
@@ -53,7 +55,7 @@ function HomeWeather() {
     }, [date, curerntLocation]);
 
     const getWeather = (forceNow) => {
-
+        document.getElementById("loadingAnimation").style.display = "";
         let location = curerntLocation != "" ? curerntLocation : "default";
         let dateTmp = date != "" ? dateToString(date) : "now";
         forceNow ? dateTmp = dateToString(new Date()) : null;
@@ -62,6 +64,7 @@ function HomeWeather() {
         }
         fetch(`weatherApi/data?loc=${location}&date=${dateTmp}&time=now`)
             .then(response => {
+                document.getElementById("loadingAnimation").style.display = "none";
                 if (response.status == 500) {
                     return { error: "internal server error" };
                 }
@@ -124,10 +127,9 @@ function HomeWeather() {
 
 
     return (
-        <div className='content flex flex-col'>
+        <div className='content flex flex-col text-cat-main'>
             {TopBar()}
-            <div className='max-w-[1624px] mx-auto shrink-0 grow-0 overflow-x-hidden'>
-
+            <main className='max-w-[1624px] mx-auto shrink-0 grow-0 overflow-x-hidden'>
                 <div className='flex flex-wrap justify-between'>
 
                     <div className='my-auto sm:order-2'>
@@ -223,7 +225,9 @@ function HomeWeather() {
                 </div> 
 
                 <div id='errorMSG'></div>
-            </div>
+                <LoadingAnimation/>
+            </main>
+        {BottomBar()}
         </div>
     )
 }

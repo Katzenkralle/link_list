@@ -3,6 +3,8 @@ import CreateList from './CreateList';
 import ListGrid from './ListGrid';
 import Multiselect from 'multiselect-react-dropdown';
 import TopBar, { topBar } from '../Other/TopBar';
+import BottomBar from '../Other/BottomBar';
+import LoadingAnimation from '../Other/LoadingAnimation';
 
 function HomePage() {
 
@@ -89,7 +91,8 @@ function HomePage() {
     //split into attributes to simplify, also reruns filterHandler
     fetch('linkListApi/getMetaHome/')
       .then(response => response.json())
-      .then(data => {setMetaTags(JSON.parse(data.metaTags)); 
+      .then(data => {  document.getElementById('loadingAnimation').style.display = 'none';
+                    setMetaTags(JSON.parse(data.metaTags)); 
                      setMetaLists(JSON.parse(data.metaLists));
                      setMetaUser(JSON.parse(data.metaUser))
                      filterHandler();})
@@ -98,6 +101,7 @@ function HomePage() {
 
   useEffect(() => {
     //calls fetchData once on load
+    document.getElementById('loadingAnimation').style.display = '';
     fetchData();
   }, []);
 
@@ -109,46 +113,51 @@ function HomePage() {
   return (
     <div className='dark:text-white'>
       {TopBar()}
-      <h1 id="headline" className='maxHl text-center mt-5 mb-3'>Link List</h1>
+        <main>
+          <h1 id="headline" className='maxHl text-center mt-5 mb-3'>Link List</h1>
 
-      <div className="flex flex-wrap justify-center">
-        <CreateList tag_names={metaTags} update_data={fetchData}></CreateList>
-        <hr className='w-[90%] border-2 border-gray-500 mt-3'></hr>
-      </div>
+          <div className="flex flex-wrap justify-center">
+            <CreateList tag_names={metaTags} update_data={fetchData}></CreateList>
+            <hr className='w-[90%] border-2 border-gray-500 mt-3'></hr>
+          </div>
 
-      <div className='flex flex-wrap justify-center my-2'>
-        <input type='text' id='list_search' placeholder='Search...' onChange={filterHandler} className='inputElement h-9 my-2'></input>
-        <Multiselect
-          id="filter_tag"
-          type="checkbox"
-          isObject={false}
-          selectedValues={tagFilter}
-          closeOnSelect={true}
-          placeholder="▼ Select..."
-          avoidHighlightFirstOption={true}
-          className='inputElement mx-1 my-2 h-9 pb-1'
-          style={{
-            ...multiselectStyles,
-            searchBox: {
-              ...multiselectStyles.searchBox,
-              width: 'w-48', 
-              minWidth: 'min-w-48',
-              height: 'h-7', 
-              transform: 'translateY(-3px)' //move 3px up to align with inputElement
-            }
-          }}
-          onSelect={(e) => {setTagFilter(e)}}
-          onRemove={(e) => {setTagFilter(e)}}
-          options={(['Default']).concat(
-            metaTags.map((tag) => tag))}/>
-      </div>
+          <div className='flex flex-wrap justify-center my-2'>
+            <input type='text' id='list_search' placeholder='Search...' onChange={filterHandler} className='inputElement h-9 my-2'></input>
+            <Multiselect
+              id="filter_tag"
+              type="checkbox"
+              isObject={false}
+              selectedValues={tagFilter}
+              closeOnSelect={true}
+              placeholder="▼ Select..."
+              avoidHighlightFirstOption={true}
+              className='inputElement mx-1 my-2 h-9 pb-1'
+              style={{
+                ...multiselectStyles,
+                searchBox: {
+                  ...multiselectStyles.searchBox,
+                  width: 'w-48', 
+                  minWidth: 'min-w-48',
+                  height: 'h-7', 
+                  transform: 'translateY(-3px)' //move 3px up to align with inputElement
+                }
+              }}
+              onSelect={(e) => {setTagFilter(e)}}
+              onRemove={(e) => {setTagFilter(e)}}
+              options={(['Default']).concat(
+                metaTags.map((tag) => tag))}/>
+          </div>
 
-      <div className=''>
-        <ListGrid lists={listAfterFilter} tag_names={metaTags} update_data={fetchData}></ListGrid>
-      </div>
-      
-      <div id='listEditor'></div> {/* div to create ListEditor in */}
-      <div id='tagContainer'></div> {/* div to create CreateTags in */}
+          <div className=''>
+            <ListGrid lists={listAfterFilter} tag_names={metaTags} update_data={fetchData}></ListGrid>
+          </div>
+        
+          
+          <div id='listEditor'></div> {/* div to create ListEditor in */}
+          <div id='tagContainer'></div> {/* div to create CreateTags in */}
+          <LoadingAnimation/>
+        </main>
+        {BottomBar()}
     </div>
   );
 }

@@ -486,8 +486,7 @@ function ListEditor(props) {
         ) : (
           <textarea
             id="list_content"
-            className="mainBody"
-            style={{ backgroundColor: '#a5a5a5' }}
+            className="mainBody bg-cat-light"
             defaultValue={renderedContent}
             onKeyDown={(e) => {
               monitorKeyPressTextarea(e);

@@ -13,7 +13,7 @@ body {
 
 /* Custom Tailwind */
 .inputElement {
-  @apply bg-zinc-800 text-white p-1 rounded-lg
+  @apply bg-cat-input text-cat-main p-1 rounded-lg
 }
 
 .infoHl {
@@ -32,12 +32,16 @@ body {
   @apply mx-5 shrink-0 mt-3
 }
 
+.link{
+  @apply text-cat-link hover:text-cat-linkHover
+}
+
 .grid .infoBox {
   @apply !m-0
 }
 
 .infoContainer {
-  @apply bg-blue-950 rounded-md min-h-full pt-3 sm:pb-3
+  @apply bg-cat-surface rounded-md min-h-full pt-3 sm:pb-3
 }
 
 .centerRow {
@@ -45,7 +49,7 @@ body {
 }
 
 .tableElement{
-  @apply border-dashed border-x-2 border-gray-500 px-2
+  @apply border-dashed border-x-2 border-cat-borderInactive px-2
 }
 
 .imgAsOverlyContainer {
@@ -63,7 +67,7 @@ body {
 }
 
 .isSelectedBoder{
-  @apply outline outline-4 outline-violet-500
+  @apply outline outline-4 outline-cat-border
 }
 
 .overlay {
@@ -79,15 +83,19 @@ body {
   z-index: 2;
 }
 
-.symbole{
-  @apply max-h-[50px]
+.symbole {
+  @apply w-[50px] h-full max-h-[50px] object-contain 
 }
 
 .infoRow {
   @apply flex flex-row my-1 items-center
 }
 .infoRow p {
-  @apply ml-1
+  @apply ml-1 my-1
+}
+
+main {
+  @apply min-h-screen
 }
 
 @media (max-width: 600px) {
@@ -114,7 +122,7 @@ body {
       left: 50%;
       color: white;
       transform: translate(-50%, -50%);
-      background-color: #787878;
+      background-color: #414559;
       height: 90%;
       width: 90%;
       display: flex;
@@ -130,7 +138,7 @@ body {
   bottom: 0;
   overflow: scroll;
   color: white;
-  background-color: #787878;
+  background-color: #414559;
   display: flex;
   flex-direction: column;
 }

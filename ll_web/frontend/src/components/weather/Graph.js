@@ -113,22 +113,22 @@ const provideGraphData = (basicGraphData) => {
       {
           label: "Absolute temperature in °C",
           data: absolut_temperatur,
-          borderColor: "#ae00be",
-          backgroundColor: "#ae00be",
+          borderColor: "#ea999c",
+          backgroundColor: "#ea999c",
           tension: 0.3,
       },
       {
           label: "Feels like in °C",
           data: feels_like,
-          borderColor: "#4abe7a",
-          backgroundColor: "#4abe7a",
+          borderColor: "#a6d189",
+          backgroundColor: "#a6d189",
           tension: 0.3,
       },
       {
           label: "Wind speed in m/s",
           data: wind_speed,
-          borderColor: "#e2a232",
-          backgroundColor: "#e2a232",
+          borderColor: "#EF9F76",
+          backgroundColor: "#EF9F76",
           tension: 0.3,
           hidden: true,
       },
@@ -138,8 +138,8 @@ const provideGraphData = (basicGraphData) => {
            datasets.push({
                   label: "Rain Probability in %",
                   data: rain_prop,
-                  borderColor: "#8673c8",
-                  backgroundColor: "#8673c8",
+                  borderColor: "#CA9EE6",
+                  backgroundColor: "#CA9EE6",
                   tension: 0.3,
                   hidden: basicGraphData.x[4] == "Today" || basicGraphData.x[4] == "Center Date" ? true : false,
           })
@@ -148,8 +148,8 @@ const provideGraphData = (basicGraphData) => {
           datasets.push({
               label: "Rain in mm",
               data: rain,
-              borderColor: "#79d1f0",
-              backgroundColor: "#79d1f0",
+              borderColor: "#BABBF1",
+              backgroundColor: "#BABBF1",
               tension: 0.3,
               hidden: true,
           })
@@ -158,16 +158,16 @@ const provideGraphData = (basicGraphData) => {
         datasets.push({
             label: "Min-temperature in °C",
             data: min_temperatur,
-            borderColor: "#2a87d9",
-            backgroundColor: "#2a87d9",
+            borderColor: "#8AADF4",
+            backgroundColor: "#8AADF4",
             tension: 0.3,
             hidden: true,
         },
         {
             label: "Max-temperature in °C",
             data: max_temperatur,
-            borderColor: "#e2329b",
-            backgroundColor: "#e2329b",
+            borderColor: "#ED8796",
+            backgroundColor: "#ED8796",
             tension: 0.3,
             hidden: true,
         }
@@ -217,13 +217,13 @@ const provideGraphData = (basicGraphData) => {
   ChartJS.register(ArcElement, Tooltip, Legend,);
   //ChartJS.defaults.plugins.tooltip.enabled = false;
   ChartJS.defaults.plugins.legend.display = true;
-  ChartJS.defaults.color = "#FFFFFF"
+  ChartJS.defaults.color = "#c6d0f5"
   ChartJS.defaults.font.family = "sans-serif"
   ChartJS.defaults.font.size = 12
   ChartJS.defaults.maintainAspectRatio = false
 
   ChartJS.defaults.plugins.tooltip.mode = "x"
-  ChartJS.defaults.plugins.tooltip.backgroundColor = "#172554"
+  ChartJS.defaults.plugins.tooltip.backgroundColor = "#626880"
   ChartJS.defaults.plugins.tooltip.font = {"family": "sans-serif"}
   ChartJS.defaults.plugins.tooltip.usePointStyle = true
 

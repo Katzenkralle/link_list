@@ -13,6 +13,24 @@ module.exports = {
           },
           borderRadius: {
             'eml': '1em',
+          },
+          colors: {
+            'cat-bg': '#303446',
+            'cat-input': '#232634',
+            'cat-bg2': '#292C3C',
+            'cat-surface': '#414559',
+            'cat-overlay': '#949cbb',
+            'cat-main': '#c6d0f5',
+            'cat-sub': '#b5bfe2',
+            'cat-light': '#838ba7',
+            'cat-link': '#8caaee',
+            'cat-linkHover': '#99d1db',
+            'cat-success': '#a6d189',
+            'cat-warning': '#e5c890',
+            'cat-error': '#e78284',
+            'cat-border': '#babbf1',
+            'cat-borderInactive': '#a6a6a6',
+            'cat-bordeBell': '#e5c890',
           }
       },
       screens: {
@@ -20,7 +38,7 @@ module.exports = {
         // => @media (max-width: 1535px) { ... }
         'lg': {'min': '769px'},
         // => @media (min-width: 768px) { ... }
-      }
+      },
     },
     darkMode: 'media',
     plugins: [],

@@ -60,12 +60,12 @@ export const DisplaySelectedDay = (props) => {
                         {weather_info.main.temp_min !== weather_info.main.temp_max ? (
                             <div>
                                 <div className="infoRow">
-                                    <img src="../../../static/media/min_temp.png" className="symbole"></img>
-                                    <p>Min: {weather_info.main.temp_min}°C</p>
-                                </div>
-                                <div className="infoRow">
                                     <img src="../../../static/media/max_temp.png" className="symbole"></img>
                                     <p>Max: {weather_info.main.temp_max}°C</p>
+                                </div>
+                                <div className="infoRow">
+                                    <img src="../../../static/media/min_temp.png" className="symbole"></img>
+                                    <p>Min: {weather_info.main.temp_min}°C</p>
                                 </div>
                             </div>
                     ) : (
@@ -176,7 +176,7 @@ export const DisplayForecast = (props) => {
         <div key={props.currentWeather.date} 
         className="flex flex-wrap lg:flex-row sm:flex-col w-full my-3 justify-evenly scaleInVerBottom">
             
-            <div className="lg:basis-1/5 bg-blue-950 shrink-0 m-1 p-2 rounded-lg">
+            <div className="lg:basis-1/5 bg-cat-surface shrink-0 m-1 p-2 rounded-lg">
                 <h3 className="infoHl">{props.currentWeather.date == dateToString(new Date()) ? "Today" : "Center Date"}</h3>
                 <div className="infoRow">
                     <img src="../../../static/media/max_temp.png" className="symbole"></img>
@@ -190,7 +190,7 @@ export const DisplayForecast = (props) => {
                 </div>
                 
                 <div className="infoRow">
-                    <img src="../../../static/media/chance_of_rain.png" className="symbole"></img>
+                    <img src="../../../static/media/wind_speed.png" className="symbole"></img>
                     <p>Wind {(ZipFindExtremeValues(combindedWeather, combindedWeatherUnpacked, "wind.speed",
                         props.currentWeather.date)[0])}m/s</p> 
                 </div>
@@ -200,7 +200,7 @@ export const DisplayForecast = (props) => {
                 let date = calculateForecastDate(props.currentWeather.date, i);
 
                 return (
-                    <div key={i} className="lg:basis-1/5 bg-blue-950 shrink-0 m-1 p-2 rounded-lg">
+                    <div key={i} className="lg:basis-1/5 bg-cat-surface shrink-0 m-1 p-2 rounded-lg">
                         <h3 className="infoHl">{formatDay(date)}</h3>
                         <div className="infoRow">
                             <img src="../../../static/media/max_temp.png" className="symbole"></img>
@@ -243,16 +243,19 @@ export const Bubbles = (props) => {
                         if (day.date === props.selectedDay.date) {
                             bubbels_exist = true;
                             return (
-                                <div className="imgAsOverlyContainer" key={i}>
-                                    <button
-                                        style={{backgroundColor: colorByTemp(deepCpDay.forecast_weather.main.temp), color: "black"}}
-                                        className={`text-sm rounded-full m-1 px-2 py-1 ${day.time === props.selectedDay.time ? "isSelectedBoder" : ""}`} 
+                                <div className="imgAsOverlyContainer overflow-hidden" key={i}>
+                                    <div
+                                        style={{backgroundColor: colorByTemp(deepCpDay.forecast_weather.main.temp)}}
+                                        className={`rounded-full cursor-pointer m-1 px-2 py-1 ${day.time === props.selectedDay.time ? "isSelectedBoder" : ""}`} 
                                         onClick={() => {
                                             props.setSelectedDay(deepCpDay)
-                                        }}>{formatTime(day.time)}</button>
+                                        }}>
+                                    <p className="text-sm relative z-10 m-auto text-cat-input">{formatTime(day.time)}</p>
                                     {deepCpDay.forecast_weather.pop > 0.5  || getSumOfDownfall(deepCpDay.forecast_weather) > 0 ?
-                                     <img key={i+"a"} className="imgAsOverly" src="../../../static/media/raindrop.png"></img>
+                                     <img key={i+"a"} className="imgAsOverly !opacity-100 rounded-full px-2 py-1" src="../../../static/media/raindrop.png"></img>
                                     : null}
+                                    
+                                    </div>
                                 </div>
 
                             );
