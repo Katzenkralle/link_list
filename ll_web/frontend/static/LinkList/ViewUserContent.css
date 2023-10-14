@@ -1,42 +1,64 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
 .viewUserContentP {
-    all: unset;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+    @apply [all:unset] !break-words !whitespace-pre-wrap !text-cat-main text-base
 }
 
 .viewUserContentLi {
-    all: unset;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    color: rgb(43, 43, 150);
-    cursor: pointer;
+    @apply whitespace-pre-wrap text-cat-link hover:text-cat-linkHover
 }
 .viewUserContentLi::after{
     content: "\a";
 }
 
-.viewUserContentH {
-    all: unset;
-    display: flex;
-    font-size: revert;   
+ol {
+    @apply !list-decimal !list-inside !text-cat-light
 }
+
+ul {
+    @apply !list-disc !list-inside !text-cat-light
+}
+
 ul li .viewUserContentH {
-    display: inline-block;
-    vertical-align: middle; 
+    @apply inline-block [vertical-align:middle]
 }
 
 .viewUserContentHr{
-    color: rgb(74, 77, 80);
-    width: 95%;
+    @apply border border-cat-light w-[95%] mx-auto my-1
 }
 
 .viewUserContentCb{
-    width: 1.5em;
-    height: 1.5em;
-    margin: 0 1em auto 0;
-    vertical-align: middle;
+    @apply m-auto w-5 h-5 mb-1 [vertical-align:middle] mr-2
 }
 
 .viewUserContentUlOlElem{
-    position: relative;
+    @apply relative
   }
+
+
+h1.viewUserContentH {
+    @apply text-3xl font-bold text-cat-main
+}
+
+h2.viewUserContentH  {
+    @apply text-2xl font-bold text-cat-main
+}
+
+h3.viewUserContentH {
+    @apply text-xl font-bold text-cat-main
+}
+
+h4.viewUserContentH  {
+    @apply text-lg font-bold text-cat-main
+}
+
+h5.viewUserContentH  {
+    @apply text-base font-bold text-cat-main
+}
+
+h6.viewUserContentH  {
+    @apply text-sm font-bold text-cat-main
+}
+

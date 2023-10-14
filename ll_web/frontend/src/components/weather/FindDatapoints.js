@@ -147,6 +147,9 @@ export const colorByTemp = (temp) => {
     
 export const strToDate = (new_date) => {
         // Helper function to convert a string in the format YYYYMMDD to a Date object
+        if (new_date.toString().includes("-")) {
+            new_date = new_date.replace(/-/g, "");
+        }
         new_date = new_date.toString();
         const year = new_date.slice(0, 4);
         const month = new_date.slice(4, 6) - 1; // Months are zero-based (0 = January)
@@ -154,12 +157,19 @@ export const strToDate = (new_date) => {
         return new Date(year, month, day);
     }
 
-export const dateToString = (new_date) => {
+export const dateToString = (new_date, datepicker) => {
         // Helper function to convert a Date object to a string in the format YYYYMMDD
+        try {
         const year = new_date.getFullYear();
         const month = (new_date.getMonth() + 1).toString().padStart(2, '0'); // Add 1 and pad with leading zero if needed
         const day = new_date.getDate().toString().padStart(2, '0'); // Pad with leading zero if needed
+        if (datepicker) {
+            return `${year}-${month}-${day}`;
+        }
         return `${year}${month}${day}`;
+        } catch (error) {
+            return null;
+        }
     }
 
 export const getSumOfDownfall = (dataset) => {

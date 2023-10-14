@@ -3,9 +3,9 @@
   }
 
 body {
-    background-color: #333333;
+    background-color: #303446;
     font-family: 'Inter', sans-serif;
-    color: rgb(255, 255, 255);
+    color: #c6d0f5;
     font-size: 1.3em;
     overflow: scroll;
     -ms-overflow-style: none;  /* IE and Edge */
@@ -21,12 +21,13 @@ h1 {
 button, input, select{
     width: 10em;
     height: 2em;
-    background-color: #1e1e1e;
-    color: #858382;
+    background-color: #232634;
+    color: #c6d0f5;
     border: none;
     border-radius: 25px;
     margin: 0.5em;  
 }
+
 button:hover, input:hover{
     color: white;
     border: rgb(165, 165, 165);

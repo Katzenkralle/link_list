@@ -1,36 +1,38 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{% static 'login.css' %}">
+    <link rel="stylesheet" href="{% static 'tailwindBare.css' %}">
     <link rel="icon" href="{% static "/media/favicon.ico" %}" />
     <title>Login Somnia Notas</title>
-    <script type="text/javascript" src="{% static "frontend/jquery.js" %}"></script>
 </head>
-<body class="min-h-screen dark:bg-neutral-700">
+<body class="min-h-screen bg-cat-bg text-cat-main">
     {% block content %}
-    <h1>Login Required</h1>
-    <div class="main_frame_login">
-        <div>
-        <h3>Enter Credentials:</h3>
-        <form method="POST">
-            {% csrf_token %}
-            <input type="text" name="account" placeholder="Username">
-            <input type="password" name="token" placeholder="Password"><br>
-            <button class='login_field' type="submit">Login</button>
-        </form>
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        <a href="/account-creation" style="color: rgb(103, 103, 248);">Dont have an Account?</a>
+    <div class="flex justify-center">
+        <div class="flex flex-col justify-center">
+            <h1 class="maxHl mt-8 mb-4">Login Required</h1>
+            <h3 class="mainHl" style="margin-top: 1rem;">Enter Credentials:</h3>
+                <form method="POST" class="flex flex-col justify-center mt-2">
+                    <div class="flex justify-between">
+                    {% csrf_token %}
+                        <input class="inputElement" type="text" name="account" placeholder="Username">
+                        <input class="inputElement" type="password" name="token" placeholder="Password">
+                    </div>
+                    <button class='inputElement mt-2' type="submit">Login</button>
+                </form>
+
+                <a href="/account-creation" class="link ml-auto">Dont have an Account?</a>
+
+                {% if messages %}
+                <ul class="mt-4">
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }} infoHl" style="color:#e78284;" {% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
         </div>
     </div>
     {% endblock content %}

@@ -55,13 +55,13 @@ function HomeWeather() {
     }, [date, curerntLocation]);
 
     const getWeather = (forceNow) => {
-        document.getElementById("loadingAnimation").style.display = "";
         let location = curerntLocation != "" ? curerntLocation : "default";
         let dateTmp = date != "" ? dateToString(date) : "now";
         forceNow ? dateTmp = dateToString(new Date()) : null;
         if (dateTmp == currentWeather.date && curerntLocation == currentWeather.loc_name) {
             return;
         }
+        document.getElementById("loadingAnimation").style.display = "";
         fetch(`weatherApi/data?loc=${location}&date=${dateTmp}&time=now`)
             .then(response => {
                 document.getElementById("loadingAnimation").style.display = "none";
@@ -90,6 +90,7 @@ function HomeWeather() {
                 setSelectedDay(deepCpCurrent);
 
                 setDate(strToDate(data.current.date));
+                document.getElementById('setCenterDate').value = dateToString(strToDate(data.current.date), true);
                 setCurrentLocation(data.current.loc_name);
 
                 //this stays for transparancy
@@ -125,6 +126,23 @@ function HomeWeather() {
         return
     };
 
+    let previousInput = '';
+    let timeoutId;
+    const handelDatePicker = (currentInput) => {
+        // Check if the input has changed
+        if (currentInput !== previousInput) {
+          // If there's a timeout already set, clear it
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+          }
+          // Set a new timeout for 1 second
+          timeoutId = setTimeout(() => {
+            setDate(strToDate(currentInput));
+            // Update the previousInput for the next iteration
+            previousInput = currentInput;
+          }, 1000);
+        }
+      }
 
     return (
         <div className='content flex flex-col text-cat-main'>
@@ -148,18 +166,35 @@ function HomeWeather() {
                     </div>
 
                     <div className='sm:order-3 flex flex-row items-center'>
-                        <DatePicker
-                            className='inputElement !max-w-[8em] z-100 my-auto '
-                            selected={date}
-                            onChange={(newDate) => newDate !== null ? setDate(newDate) : null}
-                            dateFormat="dd.MM.yy"
+                        <input
+                            id='setCenterDate'
+                            type='date'
+                            className='inputElement my-auto'
+                            defaultValue={dateToString(date, true)}
+                            max={dateToString(new Date(), true)}
+                            min="1940-01-01"
+                            required pattern="\d{4}-\d{2}-\d{2}"
+                            onInput={(e) => handelDatePicker(e.target.value)}
                         />
                         <div className='imgAsOverlyContainer ml-2'>
                             <button className='inputElement !p-2'
                                 onClick={() => { getWeather(true) }}
                             >{new Date().getDate().toString().padStart(2, '0')}</button>
+
                             <img src='../../../static/media/calender_empty.png' 
-                            className='imgAsOverly !opacity-100 translate-y-[-4px]'/>
+                            className='imgAsOverly !opacity-100 translate-y-[-4px]'
+                            style={ date != "" && dateToString(new Date()) == dateToString(date) ?
+                                    {filter: (
+                                        'brightness(0%) ' +
+                                        'invert(77%) ' +
+                                        'sepia(6%) ' +
+                                        'saturate(1770%) ' +
+                                        'hue-rotate(201deg) ' +
+                                        'brightness(98%) ' +
+                                        'contrast(92%)'
+                                      ),}
+                                : null}       
+                            />
                         </div>
                     </div>
 

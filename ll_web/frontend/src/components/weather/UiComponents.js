@@ -111,14 +111,16 @@ export const DisplaySelectedDay = (props) => {
                             <div className="infoRow">
                                 <img src="../../../static/media/rain.png" className="symbole"></img>
                                 <p>Rain: {weather_info.rain.hasOwnProperty("1h") ? `${weather_info.rain["1h"]}mm (1h)` :
-                                `${weather_info.rain["3h"]}mm (3h)`}</p>
+                                 weather_info.rain.hasOwnProperty("3h") ? `${weather_info.rain["3h"]}mm (3h)` :
+                                 `${weather_info.rain["sum"]}mm (sum)`}</p>
                             </div>
                         ) : null}
                         {weather_info.hasOwnProperty("snow") && weather_info.snow !== null ? (
                             <div className="infoRow">
                                 <img src="../../../static/media/snow.png" className="symbole"></img>
                                 <p>Snow: {weather_info.snow.hasOwnProperty("1h") ? `${weather_info.snow["1h"]}mm (1h)` :
-                                `${weather_info.snow["3h"]}mm (3h)}`}</p>
+                                 weather_info.snow.hasOwnProperty("3h")? `${weather_info.snow["3h"]}mm (3h)}`:
+                                 `${weather_info.snow["sum"]}mm (sum)`}</p>
                             </div>
                         ) : null}
                         {weather_info.pop >= 0 && weather_info.pop != null ? (
@@ -250,7 +252,7 @@ export const Bubbles = (props) => {
                                         onClick={() => {
                                             props.setSelectedDay(deepCpDay)
                                         }}>
-                                    <p className="text-sm relative z-10 m-auto text-cat-input">{formatTime(day.time)}</p>
+                                    <p className="text-base relative z-10 m-auto text-cat-input">{formatTime(day.time)}</p>
                                     {deepCpDay.forecast_weather.pop > 0.5  || getSumOfDownfall(deepCpDay.forecast_weather) > 0 ?
                                      <img key={i+"a"} className="imgAsOverly !opacity-100 rounded-full px-2 py-1" src="../../../static/media/raindrop.png"></img>
                                     : null}
@@ -275,7 +277,7 @@ export const DateBubbles = (props) => {
     {props.daysInRange.map((value, i) => (
         <button 
             key={i}
-            className={`basis-1/9 ml-auto my-1 mr-auto pl-4 pr-4 ${value === props.selectedDay.date.toString() ? "isSelectedBoder" : ""}`}
+            className={`basis-1/9 text-lg ml-auto my-1 mr-auto pl-4 pr-4 ${value === props.selectedDay.date.toString() ? "isSelectedBoder" : ""}`}
             value={i}
             onClick={(e) => props.changeSelectedDay(e.target.value)}>
             {i-4 == 0 ? props.currentWeatherDate == dateToString(new Date()) ? "Today" : "Center Date" : getWeekdayFromDate(value)}</button>

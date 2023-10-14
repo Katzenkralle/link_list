@@ -61,7 +61,7 @@ body {
 }
 
 .interactiveContainer {
-  @apply m-3 p-2 rounded-eml overflow-hidden flex flex-col hover:outline hover:outline-gray-500 hover:outline-5 hover:cursor-pointer;
+  @apply m-3 p-2 rounded-eml overflow-hidden flex flex-col hover:outline hover:outline-cat-border hover:outline-5 hover:cursor-pointer;
   @apply lg:w-[20vw] lg:h-[20vw] lg:min-w-[150px] lg:min-h-[150px] lg:max-w-[240px] lg:max-h-[240px];
   @apply sm:w-[80vw];
 }
@@ -88,7 +88,7 @@ body {
 }
 
 .infoRow {
-  @apply flex flex-row my-1 items-center
+  @apply flex flex-row my-1 items-center text-lg
 }
 .infoRow p {
   @apply ml-1 my-1

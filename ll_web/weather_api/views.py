@@ -43,7 +43,7 @@ class SaveData():
         #Saves the data to the database, extracting data from current weather and directly adding it to rows in the database
         #Deleats thes from original data, wether data is saved as JSON
         date, time = SaveData.unix_timestamp_to_german_time(self.current_weather['dt']).split("-")
-        lat, lon = (round(self.current_weather['coord']['lat'], 1), round(self.current_weather['coord']['lon'], 1))
+        lat, lon = (round(self.current_weather['coord']['lat'], 2), round(self.current_weather['coord']['lon'], 2))
         alert = self.current_weather.get('alerts', None)
         souce = self.current_weather.get('source', 'openweather')
 
@@ -134,7 +134,7 @@ class Settings(View):
 
         try:
             if mode == "add":
-                lat, lon = round(float(request.POST['lat']),1), round(float(request.POST['lon']), 1)
+                lat, lon = round(float(request.POST['lat']),2), round(float(request.POST['lon']), 2)
             if location_name == "undefined" and mode != "set_api_key":
                 raise ValueError
         except ValueError:

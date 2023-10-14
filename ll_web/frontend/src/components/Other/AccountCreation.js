@@ -46,7 +46,7 @@ function CreateAccount() {
     }
 
   return (
-<div className='flex justify-center'>
+<div className='flex justify-center text-cat-main'>
   <div className=''>
     <h1 className='mainHl mb-3'>Account Creation:</h1>
     <form className='' 
@@ -68,8 +68,8 @@ function CreateAccount() {
         <input id="passwdCheck" type='password' className='inputElement'></input>
       </div>
       <div className='justify-between flex flex-row my-1'>
-        <input className='inputElement cursor-pointer' type='submit' value='Create Account' />
-        <a href='/login' className='text-blue-500 ml-auto mt-auto'>Already have an Account?</a>
+        <a href='/login' className='link my-auto'>Already have an Account?</a>
+        <input className='inputElement cursor-pointer ml-auto' type='submit' value='Create Account' />
       </div>
     </form>
     <p id='creationMsg'></p>

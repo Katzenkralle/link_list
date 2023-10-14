@@ -511,7 +511,7 @@ function ListEditor(props) {
   const fotter = () => {
     return (
       <div className='footer my-1 flex flex-col'>
-        <p id='list_edit_msg' className='text-purple-800 mx-auto mb-1'></p>
+        <p id='list_edit_msg' className='text-cat-success mx-auto mb-1'></p>
         <div>
           {isEditable ? 
             //If edit premission, render a button to change view mode

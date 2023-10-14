@@ -36,14 +36,14 @@ class OpenWeatherCaller:
         formatted_days = []
         dayly = self.response['daily']
         formatted_hours = []
-
+        #self.response['longitude']
         #For every day (in db master) ad a properly formatted day to the list
         for (time, max_temp, min_temp, sunrise, sunset, rainsum, snowsum) in\
             zip(dayly['time'], dayly['temperature_2m_max'], dayly['temperature_2m_min'], dayly['sunrise'],\
                 dayly['sunset'], dayly['rain_sum'], dayly['snowfall_sum']):
             formatted_days.append(\
             {'coord': 
-                {'lat': self.response['latitude'], 'lon': self.response['longitude']},
+                {'lat': self.location[0], 'lon': self.location[1]},
             
             'weather': [{}],
             'base': 'unknown',
