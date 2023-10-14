@@ -53,7 +53,7 @@ class SaveData():
 
         #Checks if the data already exists in the database, if so, abort
         if WeatherData.objects.filter(lat=lat, lon=lon, date=date, time=time).exists() and not self.force_save:
-            print(f"Data for {lat, lon, date, time} already exists!")
+            print(f"Saving {date, time}; Master for {lat, lon} already exists!")
             return
 
         self.createdWeatherObject = WeatherData.objects.create(
@@ -66,14 +66,13 @@ class SaveData():
             source= souce,
             alert=dumps(alert) if alert else None,
         )
-        print(f"Saved Master for {lat, lon, date, time}!")
+        print(f"Saving {date, time}; Master for {lat, lon}!")
         #If forecast data is provided, save it to the database
         if self.forcast_weather:
             self.save_forecast()
         return self.createdWeatherObject
 
     def save_forecast(self):
-        #Exreacts, deleats and saves the forecast data to the database similar to the current weather data
         #Exreacts, deleats and saves the forecast data to the database similar to the current weather data
         for entry in self.forcast_weather['list']:
             date, time = datetime.utcfromtimestamp(entry['dt']).strftime('%Y%m%d-%H%M').split("-")
@@ -89,7 +88,7 @@ class SaveData():
                 forecast_weather=dumps(entry),
                 associated_data=self.createdWeatherObject   
             )
-            print(f"Saved Forecast for {date, time, self.createdWeatherObject.id}!")
+            print(f"Saving {date, time}; Slave of [{self.createdWeatherObject.id}]!")
         return
     
     @staticmethod
@@ -317,13 +316,56 @@ class Data(View, SaveData):
             # Handle invalid date strings
             return False
 
+    def fit_to_max_datasets(self, data, max_datasets):
+        #Fits amount of datasets to max_datasets
+
+        #Sorts the data by date, each date is a key in the dictionary
+        datasets_in_days = {}
+        for entry in data:
+            date = entry['date']
+            if not date in datasets_in_days.keys():
+                datasets_in_days[date] = []
+            datasets_in_days[date].append(entry)
+        
+        #For each day, if amount of datasets is smaller than max_datasets, add all datasets
+        finished_data = []
+        for day in datasets_in_days:
+            if len(datasets_in_days[day]) <= int(max_datasets):
+                finished_data += datasets_in_days[day]
+            else:
+                #Sorts the datasets by time
+                datasets_in_days[day] = sorted(datasets_in_days[day], key=lambda x: x['time'])
+                
+                #Calculates the time between each dataset, sorts them by time between datasets (lowest first)
+                #Enumerates the list to keep track of the index in the original list (datasets_in_days)
+                time_between_datasets = [datasets_in_days[day][x+1]['time'] - datasets_in_days[day][x]['time']\
+                                         for x in range(len(datasets_in_days[day])-1)]
+                enumerate_time = list(enumerate(time_between_datasets))
+                time_between_datasets = sorted(enumerate_time, key=lambda x: x[1])
+                
+                #Gets the index of the datasets to delete
+                datasets_to_delete = []
+                for _ in range(len(datasets_in_days[day]) - int(max_datasets)):
+                    index = time_between_datasets.pop(0)[0]
+                    datasets_to_delete.append(index)
+                
+                #Deletes the datasets from the original list
+                #Must be done in reverse order to not mess up the indexes
+                for index in sorted(datasets_to_delete, reverse=True):
+                    del datasets_in_days[day][index]
+                finished_data += datasets_in_days[day]
+
+        return finished_data
+
     def get(self, request):
         #Possible bug that sets tim by 2? hours back resulting in a api request at every request, even if data is in db
         #Gets request data and user settings, converts it to the correct format and calls the WeatherCollector
-
         location_name = request.GET['loc']
         date = request.GET['date']
-        
+        try:
+            max_datasets_dayly = request.GET['dayly_datasets']
+        except KeyError:
+            max_datasets_dayly = None
         self.user_settings = WeatherProfile.objects.get(user=request.user)
 
         user_locations = loads(self.user_settings.custom_coordinates)
@@ -341,10 +383,15 @@ class Data(View, SaveData):
         current_weather, forecast, backcast = WetherCollector(date, location_name, self.user_settings.api_key,\
                                                            user_locations).with_center_date()
 
-
+        
         #Adds the location name to the current weather data, front end needs it
         current_weather['loc_name'] = location_name 
 
+        if max_datasets_dayly != None:
+            #Note it is possible that max_datasets is exceeded if the same date is in backcast and forecast
+            forecast = self.fit_to_max_datasets(forecast, max_datasets_dayly)
+            backcast = self.fit_to_max_datasets(backcast, max_datasets_dayly)
+    
         profile = {"locations": {**Settings.default_location, **user_locations}}
         return JsonResponse({"current": current_weather, "forecast": forecast, "backcast": backcast, "profile": profile})
 

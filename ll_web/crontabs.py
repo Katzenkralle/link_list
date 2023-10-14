@@ -3,7 +3,7 @@ from weather_api.views import WetherCollector
 from datetime import datetime
 
 class CurrentWeatherCron(CronJobBase):
-    RUN_EVERY_MINS = 60
+    RUN_EVERY_MINS = 30
     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
     code = 'weather_api.current_weather_cron'
 

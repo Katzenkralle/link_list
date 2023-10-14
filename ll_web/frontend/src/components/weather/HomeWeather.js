@@ -62,7 +62,7 @@ function HomeWeather() {
             return;
         }
         document.getElementById("loadingAnimation").style.display = "";
-        fetch(`weatherApi/data?loc=${location}&date=${dateTmp}&time=now`)
+        fetch(`weatherApi/data?loc=${location}&date=${dateTmp}&dayly_datasets=24`)
             .then(response => {
                 document.getElementById("loadingAnimation").style.display = "none";
                 if (response.status == 500) {
