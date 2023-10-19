@@ -17,6 +17,8 @@ function BottomBar(){
             {boder()}
             <div className='flex flex-col shrink-0 mx-4 whitespace-normal'>
                 <h3 className='infoHl'>Weather</h3>
+                <div>Information about
+                <a className='link' href='https://somnia-notas.urmel.duckdns.org/qLinkList?li=9'> processing of weather data</a>.</div>
                 <div>Weather since 07.10.2023 onwards from 
                     <a className='link' href='https://openweathermap.org/'> OpenWeather</a>.</div>
                 <div >Historical dates from 

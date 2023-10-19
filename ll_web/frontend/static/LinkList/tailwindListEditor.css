@@ -41,15 +41,7 @@
   }
   
   .hamburger-menu {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 40%;
-    height: 100%;
-    z-index: 999;
-    display: flex;
-    flex-direction: column;
-  
+    @apply fixed top-0 right-0 w-[40%] h-full z-50 flex flex-col 
   }
   .hamburger-menu .menu-items {
     @apply flex flex-col mt-[-2em] pt-[2em] bg-cat-light rounded-bl-lg
@@ -66,11 +58,5 @@
   }
   
   .blur_background {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    top: 0;
-    left: 0;
-    z-index: -1;
+    @apply fixed top-0 left-0 w-full h-full bg-opacity-50 bg-cat-bg z-[-1]
   }

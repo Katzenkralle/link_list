@@ -109,8 +109,8 @@ function formatLink(line, mode){
     }
     else {
         //Set text to [text](path)
-        var line = line['text'] == line['path'] ? "[]" : `[${line['text']}]`
-        line += `(${line['path']})` + "\n"
+        let line_text = line['text'] == line['path'] ? "[]" : `[${line['text']}]`
+        line = line_text + `(${line['path']})` + "\n"
         return line
     }
 }

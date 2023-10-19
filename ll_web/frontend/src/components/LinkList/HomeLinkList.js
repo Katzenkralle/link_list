@@ -17,17 +17,17 @@ function HomePage() {
       margin: '0',
     },
     chips: {
-      background: '#565559',
+      background: '#414559',
       marginBottom: '0',
       transform: 'translateY(-1px)'
     },
     optionContainer: {
-      border: '3px solid #565559',
-      background: '#27272a',
+      border: '3px solid #babbf1',
+      background: '#232634',
       overflow: 'hidden',
     },
     option: {
-      color: 'white',
+      color: '#c6d0f5',
       overflow: 'hidden'
      },
     // ... other styles

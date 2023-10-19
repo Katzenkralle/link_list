@@ -100,45 +100,17 @@ main {
 
 @media (max-width: 600px) {
   .largeOverlayBox{ 
-      
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      overflow: scroll;
-      color: white;
-      background-color: #787878;
-      display: flex;
-      flex-direction: column;
+      @apply fixed flex flex-col top-0 left-0 right-0 bottom-0 overflow-scroll bg-cat-bg text-cat-main
     }
 }
 
 @media (min-width: 600px) {
 
     .largeOverlayBox {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      color: white;
-      transform: translate(-50%, -50%);
-      background-color: #414559;
-      height: 90%;
-      width: 90%;
-      display: flex;
-      flex-direction: column;
-      overflow: scroll;
+      @apply absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-cat-main bg-cat-bg h-[90%] w-[90%] flex flex-col overflow-auto
     }
 }
 .largeViewerLargeOverlayBox {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: scroll;
-  color: white;
-  background-color: #414559;
-  display: flex;
-  flex-direction: column;
+  @apply fixed flex flex-col top-0 left-0 right-0 bottom-0 overflow-scroll bg-cat-bg text-cat-main
+
 }
