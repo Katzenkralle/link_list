@@ -161,7 +161,7 @@ export default function LineChart(forecastWeather, backcastWeather, currentWeath
         hidden: true,
       })
     }
-    console.log("Temp:", min_temperatur)
+   
     if (min_temperatur.filter((value) => value != null || value != undefined).length > 1 && 
       !equalityOfArrays(min_temperatur, absolut_temperatur) &&
       !min_temperatur.every(element => Math.abs(element) == Number.POSITIVE_INFINITY)) {
