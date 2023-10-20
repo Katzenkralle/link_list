@@ -141,7 +141,7 @@ export default function LineChart(forecastWeather, backcastWeather, currentWeath
       },
     ];
     //If not in overview and rain data is available --> basicGraphData.x[4] !== "Today" && 
-    if (!rain_prop.every(element => element == null)) {
+    if (!rain_prop.every(element => element == null) && !rain_prop.every(element => isNaN(element))) {
       datasets.push({
         label: "Rain Probability in %",
         data: rain_prop,
@@ -163,7 +163,8 @@ export default function LineChart(forecastWeather, backcastWeather, currentWeath
     }
     console.log("Temp:", min_temperatur)
     if (min_temperatur.filter((value) => value != null || value != undefined).length > 1 && 
-      !equalityOfArrays(min_temperatur, absolut_temperatur) ) {
+      !equalityOfArrays(min_temperatur, absolut_temperatur) &&
+      !min_temperatur.every(element => Math.abs(element) == Number.POSITIVE_INFINITY)) {
       datasets.push({
         label: "Min-temperature in °C",
         data: min_temperatur,
@@ -174,7 +175,8 @@ export default function LineChart(forecastWeather, backcastWeather, currentWeath
       })
     }
     if (max_temperatur.filter((value) => value != null || value != undefined).length > 1 && 
-      !equalityOfArrays(max_temperatur, absolut_temperatur) ) {
+      !equalityOfArrays(max_temperatur, absolut_temperatur)&&
+      !min_temperatur.every(element => Math.abs(element) == Number.POSITIVE_INFINITY)) {
         datasets.push({
           label: "Max-temperature in °C",
           data: max_temperatur,

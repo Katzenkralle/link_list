@@ -94,8 +94,11 @@ export const ZipFindExtremeValues = (dataset, datasetb, entry, date) => {
             if (value < lowest) {
                 lowest = value;
             }
-            average[0] += value;
-            average[1] += 1;
+
+            if (value != undefined) {
+                average[0] += value;
+                average[1] += 1;
+            }
             
         }
     }
