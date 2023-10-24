@@ -44,12 +44,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'django_cron',
     'link_list_api',
     'weather_api',
     'other_api',
     'frontend',
-    'rest_framework',
-    'django_cron'
+    "playground"
 ]
 
 CRON_CLASSES = [

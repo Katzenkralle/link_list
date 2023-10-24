@@ -31,7 +31,9 @@ function BottomBar(){
     }
 
     return(
-    <div className='flex flex-col z-30'>
+    <div className='flex flex-col z-30'
+    style={{transform: 'scale(1)', transformOrigin: '0% 0% 0px' }}
+    id="footer">
         {/* Used to render always below the screen */}
         <div className='flex flex-grow'>&nbsp;</div>
 

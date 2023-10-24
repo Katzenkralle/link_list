@@ -8,6 +8,8 @@ from json import dumps as to_json
 from link_list_api.models import LinkListProfile
 from weather_api.models import WeatherProfile
 from other_api.models import AppWideData
+import os
+
 def has_letter(string: str) -> bool:
     #Check if string contains a letter
     for char in string:
@@ -48,6 +50,13 @@ def modify_account(request):
         
         LinkListProfile(user=user).save()
         WeatherProfile(user=user).save()
+
+        #Create Media folder
+        path_to_media = os.path.join(os.getcwd(), f"ll_web/data/{user.id}")
+        os.mkdir(path_to_media)
+        path_to_media = os.path.join(path_to_media, "media")
+        os.mkdir(path_to_media)
+        
         return HttpResponse('created', status=status.HTTP_201_CREATED)
     elif action == 'account_removal':
         #Remove the user, that requested it, from the database, profile and lists are deleated by on_delete=CASCADE

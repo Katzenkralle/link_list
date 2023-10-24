@@ -21,3 +21,9 @@ class List(models.Model):
     creation_date = models.DateTimeField(default=datetime.now())
     public_list = models.CharField(max_length=20, default='False')
     public_list_passwd = models.CharField(max_length=20, default='', null=True)
+
+class Media(models.Model):
+    name = models.CharField(max_length=100)
+    type = models.CharField(max_length=10)
+    uploaded_date = models.DateTimeField(default=datetime.now())
+    user = models.ForeignKey(User, on_delete=models.CASCADE)

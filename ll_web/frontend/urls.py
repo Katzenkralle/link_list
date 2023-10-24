@@ -14,4 +14,5 @@ urlpatterns = [
     path('logout/', logout_page, name='logout'),
 
     path('weather', index),
+    path('asciiColor', index),
 ]

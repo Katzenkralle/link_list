@@ -7,7 +7,7 @@ from django.views import View
 from .open_weather_caller import OpenWeatherCaller
 from datetime import datetime, timedelta
 from json import loads, dumps
-# Create your views here.
+
 from django.db.models import Max
 from .serializers import WeatherDataSerializer, ForecastWeatherDataSerializer
 

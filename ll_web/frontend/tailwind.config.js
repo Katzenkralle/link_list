@@ -31,7 +31,11 @@ module.exports = {
             'cat-border': '#babbf1',
             'cat-borderInactive': '#a6a6a6',
             'cat-bordeBell': '#e5c890',
-          }
+          },
+          fontFamily: {
+            'ubuntuMono': ['Ubuntu Mono', 'monospace'],
+            'dejavuSansMono': ['dejavu_sans_monobook', 'monospace'],
+          },
       },
       screens: {
         'sm': {'max': '768px'},

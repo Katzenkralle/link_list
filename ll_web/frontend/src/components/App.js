@@ -9,6 +9,8 @@ import CreateAccount from "./Other/AccountCreation";
 import LargeViewer from "./LinkList/LargeViewer";
 import AppHome from "./Other/AppHome";
 import HomeWeather from "./weather/HomeWeather";
+import HomeAsciiColor from "./asciiColor/HomeAsciiColor";
+
 
 function App() {
     return (
@@ -20,6 +22,7 @@ function App() {
                 <Route path="account-creation" element={<CreateAccount/>} />
                 <Route path="" element={<AppHome />} /> 
                 <Route path="weather" element={<HomeWeather />} />
+                <Route path="asciiColor" element={<HomeAsciiColor />} />
             </Routes>
         </Router>
     );

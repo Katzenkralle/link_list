@@ -39,6 +39,20 @@ function AppHome() {
                     </div>
 
                     <div
+                        className='interactiveContainer bg-purple-600'
+                        onClick={() => {
+                            window.location.href = '/asciiColor';
+                        }}
+                    >
+                        <h3 className='infoHl mb-2'>Ascii Art</h3>
+
+                        <div className='whitespace-normal'>
+                            Lorem ipsum dolorem sit amet.
+                        </div>
+                    </div>
+
+
+                    <div
                         className='interactiveContainer bg-pink-900'
                         onClick={() => {
                             window.location.href = 'https://github.com/Katzenkralle/link_list';

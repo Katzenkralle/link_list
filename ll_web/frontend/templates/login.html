@@ -16,10 +16,10 @@
             <h1 class="maxHl mt-8 mb-4">Login Required</h1>
             <h3 class="mainHl" style="margin-top: 1rem;">Enter Credentials:</h3>
                 <form method="POST" class="flex flex-col justify-center mt-2">
-                    <div class="flex justify-between">
+                    <div class="flex flex-wrap justify-between">
                     {% csrf_token %}
-                        <input class="inputElement" type="text" name="account" placeholder="Username">
-                        <input class="inputElement" type="password" name="token" placeholder="Password">
+                        <input class="inputElement my-1" type="text" name="account" placeholder="Username">
+                        <input class="inputElement my-1" type="password" name="token" placeholder="Password">
                     </div>
                     <button class='inputElement mt-2' type="submit">Login</button>
                 </form>
