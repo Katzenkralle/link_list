@@ -102,15 +102,10 @@ function HomeAsciiColor() {
         // Apply translation to the translationElement
         //translationElement.style.transform = `translateY(${translationAmount}px)`;
     };
-    
-    
-    
-    
-  
 
     const toolbar = () => {
         return (
-            <div className="grid grid-cols-2 gap-4 infoContainer !p-2 h-[420px]">
+            <div className="grid grid-cols-2 gap-4 infoContainer !p-2 h-[500px]">
                 <h3 className="col-span-2 infoHl col-span-2">Transformation Settings</h3>
                 
                 <p className="">Stretch Width to account for character size</p>
@@ -164,16 +159,16 @@ function HomeAsciiColor() {
 
     const originalImg = () => {
         return selectedImg != null ? (
-            <div className="flex flex-col h-[420px] infoContainer !p-2">
+            <div className="flex flex-col h-[500px] infoContainer !p-2">
                 <h3 className="infoHl">Original Img</h3>
                 <img
                     className="h-full object-contain object-center"
-                    src={`${window.location.origin}/linkListApi/mediaContent/?name=${selectedImg.name}`}
+                    src={`${window.location.origin}/linkListApi/mediaContent/?id=${selectedImg.id}`}
                     alt={selectedImg.name}
                 />
             </div>
         ) : (
-            <div className="flex flex-col h-[420px] infoContainer !p-2">
+            <div className="flex flex-col h-[500px] infoContainer !p-2">
                 <h3 className="infoHl">No Image selected</h3>
                 <p>Please select an Image or upload a new one!</p>
             </div>

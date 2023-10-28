@@ -17,6 +17,10 @@ body {
   @apply bg-cat-input text-cat-main p-1 rounded-lg
 }
 
+.inputElementIcon {
+  @apply bg-cat-input rounded-lg p-1 max-h-10 cursor-pointer 
+}
+
 .infoHl {
   @apply text-xl font-bold 
 }

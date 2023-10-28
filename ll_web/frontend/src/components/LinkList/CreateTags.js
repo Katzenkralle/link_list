@@ -10,7 +10,7 @@ export default class CreateTags extends Component {
     //TODO: (Maby) add error handling
 
     handleSelfDestruct = () => {
-      document.getElementById("select_tag").value = "Default"
+      document.getElementById("tag").value = "Default"
       ReactDOM.createRoot(document.getElementById('tagContainer')).unmount()
       //This will rais an error, this is expected
     }
@@ -21,9 +21,10 @@ export default class CreateTags extends Component {
 
       const formData = new FormData(event.target);
       formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
-      formData.append("tag_name", document.getElementById("input_tag_name").value)
+      formData.append("tag", document.getElementById("input_tag_name").value)
       formData.append("action", 'add')
-      fetch("linkListApi/manageTags/", {
+      formData.append("mode", 'tag')
+      fetch("linkListApi/listProfileManager/", {
         method: 'POST',
         body: formData,
       })

@@ -17,9 +17,9 @@ export default class CreateList extends Component {
       
       const formData = new FormData(event.target);
       formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
-      formData.append("list_tag", document.getElementById('select_tag').value)
+      formData.append("tag", document.getElementById('tag').value)
 
-      fetch("linkListApi/manageLists/", {
+      fetch("linkListApi/lists/", {
         method: 'POST',
         body: formData,
       })
@@ -46,7 +46,7 @@ export default class CreateList extends Component {
       //Option Create New Tag spawns CreateTags component in tagContainer (see HomePage)
       return (
         <select className='inputElement mx-1' 
-        id='select_tag'>
+        id='tag'>
           <option value="Default" >Default</option>
           {this.props.tag_names.map((option) => (
             <option key={option} value={option}>{option}</option>
@@ -60,8 +60,8 @@ export default class CreateList extends Component {
       return (
         <div className='flex flex-col'>
           <form onSubmit={(e) => {this.handleListSubmit(e)}} className='flex flex-wrap items-center justify-center'>
-            <input type="text" placeholder="Name..." id="list_name" name="list_name" className='inputElement mx-1 my-1' />
-            <input type="color" id="list_color" name="list_color" className='inputElement mx-1'/>
+            <input type="text" placeholder="Name..." id="name" name="name" className='inputElement mx-1 my-1' />
+            <input type="color" id="color" name="color" className='inputElement mx-1'/>
             {this.tagField()}
             <button type="submit" className='inputElement mx-1'>Create List</button>
           </form>

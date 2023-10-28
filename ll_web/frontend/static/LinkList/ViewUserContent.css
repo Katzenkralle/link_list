@@ -37,6 +37,13 @@ ul li .viewUserContentH {
     @apply relative
   }
 
+.viewUserContentImg{
+    @apply max-w-full max-h-[75vh] object-contain my-2 hover:cursor-pointer
+}
+
+.viewUserContentContainer{
+    @apply inline-flex
+}
 
 h1.viewUserContentH {
     @apply text-3xl font-bold text-cat-main

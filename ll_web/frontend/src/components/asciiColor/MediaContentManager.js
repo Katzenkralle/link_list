@@ -12,17 +12,6 @@ export const downloadBlob = (blob, fileName) => {
     document.body.appendChild(link); // Required for this to work in FireFox
     link.click();
     return link.href
-    //link.remove();
-    // in case the Blob uses a lot of memory
-    //setTimeout(() => URL.revokeObjectURL(link.href), 7000);
-
-    /*const element = document.createElement("a");
-                const file = new Blob([response], {type: 'text/plain'});
-                element.href = URL.createObjectURL(file);
-                element.download = `${imgName.split('.')[0]}_ascii.txt`;
-                document.body.appendChild(element); // Required for this to work in FireFox
-                element.click();
-                return;*/
     }; 
 
 function MediaContentManager(props){
@@ -32,6 +21,8 @@ function MediaContentManager(props){
     const [possitionContext, setPossitionContext] = useState(undefined)
     const [filesToUpload, setFilesToUpload] = useState([])
     const [status, setStatus] = useState("loading")
+
+    const [filter, setFilter] = useState("all")
     
     let allFiles = []
 
@@ -51,8 +42,7 @@ function MediaContentManager(props){
     const selfDestruct = () => {
         freeMemory()
         ReactDOM.createRoot(document.getElementById('mediaContentManager')).unmount();
-    }
-          
+    }         
 
     const getContent = () => {
         setStatus("loading")
@@ -62,8 +52,8 @@ function MediaContentManager(props){
                 setStatus("hidden")
                 return response.json()
             }).then(data => {
-                if (data.status == "error") {
-                    console.log(data.error)
+                if (data.status != "success") {
+                    setStatus([data.status])
                     return
                 }
                 setPossitionContext(data.possition)
@@ -121,14 +111,15 @@ function MediaContentManager(props){
             return response.json()
         }).then(data => {
             if (data.status != "done") {
-                throw new Error(`Logical error! Status: ${data.status}`);
+                throw new Error(`${data.status}`);
             }
+            getContent()
         }).catch(error => {
-            console.log(error)
+            setStatus([error.message])
+            setTimeout(() => { setStatus("hidden") } , 4000)
         })
-        getContent()
+       
     }
-
 
     const base64ToFile = (base64, type) => {
     // Decode the base64-encoded image data
@@ -144,7 +135,8 @@ function MediaContentManager(props){
     }
 
 
-    const infoOverlay = () => {
+
+    const infoOverlay = (otherInfo) => {
         if (status == undefined || status == "hidden") {
             return
         }
@@ -153,20 +145,50 @@ function MediaContentManager(props){
                 {status === "loading" ? (
                 <LoadingAnimation></LoadingAnimation>
                 ) : (
-                <div className="flex h-full">
+                    <div className="flex h-full">
                     <div className="bg-cat-bg2 m-auto rounded-lg p-3">
-                        <ul>
-                        {Object.entries(status).map(([key, value]) => (
-                            <li key={key} className={value === "created" ? "text-cat-success" : "text-cat-error"}>
-                            {value === "created" ? `${key} was created` : `${key} was not created`}
+                      <ul>
+                        {Array.isArray(status) ? (
+                          status.map((state) => (
+                            <li key={state} className="text-cat-error">
+                              {state}
                             </li>
-                        ))}
-                        </ul>
+                          ))
+                        ) : (
+                          Object.entries(status).map(([key, value]) => (
+                            <li
+                              key={key}
+                              className={value === "created" ? "text-cat-success" : "text-cat-error"}
+                            >
+                              {value === "created" ? `${key} was created` : `${key} was not created`}
+                            </li>
+                          ))
+                        )}
+                      </ul>
                     </div>
-                  </div>
+                  </div>                  
                 )}
             </div>
         )}
+
+    const filterContent = (e) => {
+        let filterOptions = []
+        return(
+            <div className="flex flex-row">
+                <select className="inputElement" onChange={(e) => setFilter(e.target.value)}>
+                    <option value="all">All</option>
+                    {content
+                    .map((media) => {
+                        if (filterOptions.includes(media.type)) {
+                            return
+                        }
+                        filterOptions.push(media.type);
+                        return <option key={media.type} value={media.type}>{media.type}</option>;
+                    })}
+                </select>
+            </div>
+        )
+    }
 
 
     const displayMedia = () => {
@@ -178,7 +200,8 @@ function MediaContentManager(props){
        
         return (
             <div className="flex flex-row flex-wrap">
-                {content.map((media, key) => (
+                {content.filter((media) => filter == "all" ? true : media.type == filter)
+                .map((media, key) => (
                     <div className={`grid gap-x-1 gap-y-2 grid-cols-4 grid-rows-3 py-1 h-32 ${key % 2 ? "bg-cat-bg" : "bg-cat-bg2"}`}>
                         
                         <img src={base64ToFile(media.file, media.type)} className="row-span-3 self-center object-fit max-h-full" />
@@ -219,10 +242,12 @@ function MediaContentManager(props){
     return (
         <div className="overlay !z-50">
           <div className="absolute top-0 right-0 h-full bg-cat-surface p-2 flex flex-col lg:w-1/2 w-full">
-            
+            <div>
             <button
               className="inputElement"
               onClick={() => selfDestruct()}>Close</button>
+            {filterContent()}
+            </div>
 
             <div className="flex flex-col h-full overflow-y-scroll overflow-x-hidden">
                 <h3 className="infoHl">Media Manager</h3>

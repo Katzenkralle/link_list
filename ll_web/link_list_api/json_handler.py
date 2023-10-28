@@ -64,6 +64,8 @@ def content_for_db(data: str) -> List[Dict]:
     #Split data in lines
     lines = data.split('\n')
     db_data = []
+    embeded_locals = []
+
     for line in lines:
         if line == '': continue
         #Check for !x! at line start
@@ -83,12 +85,16 @@ def content_for_db(data: str) -> List[Dict]:
         #Check for Links
         link_text, link_path = check_link_sequence(line)
 
+        if link_path.startswith('embedded'):
+            embeded_locals.append(link_path.split('@')[1])
+
         #What type?
         if link_path:
             #If line contains a link
             db_data.append({'type': 'li',
                             'text': link_text,
-                            'path': link_path})
+                            'path': link_path,
+                            'embeded_locals': link_path.split('@')[1] if link_path.startswith('embedded') else ''})
         elif line == '\r':
             #If line is empty
             db_data.append({'type':'br',
@@ -117,5 +123,5 @@ def content_for_db(data: str) -> List[Dict]:
             #If line is a ordered list
             db_data[-1]['style'].append(['ol'])
         
-    return db_data
+    return db_data, embeded_locals
 

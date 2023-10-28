@@ -29,15 +29,20 @@
 .inputElementSlim{
     @apply text-center bg-cat-input text-cat-main rounded-full min-w-[8em] appearance-none border-none
 }
-.editButtons .inputElementSlim{
-  @apply mx-1 my-1
+
+.editButtons {
+  @apply flex flex-wrap justify-center overflow-scroll my-1 
+}
+
+.editButtons img {
+    @apply mx-1
 }
 
 .hamburger-icon {
     @apply ml-auto mr-[0.5em] mt-[0.5em] z-10
   }
   .hamburger-icon .icon-bar {
-    @apply w-[30px] h-[5px] bg-cat-input mb-[5px]
+    @apply w-[30px] h-[5px] bg-cat-inputColor mb-[5px]
   }
   
   .hamburger-menu {

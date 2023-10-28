@@ -22,21 +22,18 @@ function ListGrid (props){
             onClick={(e) => {
                     ReactDOM.createRoot(document.getElementById("listEditor")).render(
                     <ListEditor 
-                    update_data={props.update_data} 
-                    id = {list.id}
-                    name={list.name} 
-                    color={list.color} 
-                    tag={list.tag} 
-                    content={list.content} 
-                    tag_names={props.tag_names}
-                    called_from_large_viewer = {false}
-                    is_editable = {true}
+                    listId = {list.id}
+                    parent = {'default'}
+                    isEditable = {true}
+                    exit = {() => props.update_data()}
                     />
                 )}}>
                 <h3 className='infoHl mb-2'>{list.name}</h3>
                 <p className='font-bold justify-bottom'>{list.tag}</p>
                 <p className='mt-auto justify-bottom'>{list.owner}</p>
                 <p>{list.creation_date}</p>
+                {list.url ? <a className='link' href={window.location.origin + list.url}>List is Public {list.public_list == 'r' ? "(Readonly)" : ""}</a> 
+                :null}
             </div>
           ))}
         </div>

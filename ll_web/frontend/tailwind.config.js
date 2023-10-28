@@ -17,6 +17,7 @@ module.exports = {
           colors: {
             'cat-bg': '#303446',
             'cat-input': '#232634',
+            'cat-inputColor': '#c89ce4',
             'cat-bg2': '#292C3C',
             'cat-surface': '#414559',
             'cat-overlay': '#949cbb',
