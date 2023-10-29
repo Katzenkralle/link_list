@@ -24,6 +24,9 @@ const ListEditor = (props) => {
     const parent = props.parent;
     const displayWidth = window.innerWidth;
 
+    window.location.hash = `#${listId}`
+
+
     const getContent = () => {
         fetch(`linkListApi/listContent/?id=${listId}`)
         .then(response => response.json())
@@ -146,7 +149,8 @@ const ListEditor = (props) => {
     
 
    const exitEditor = () => {
-      window.interactivElementChangeHandler = undefined;  
+      window.interactivElementChangeHandler = undefined; 
+      window.location.hash = '';
       props.exit()
       ReactDOM.createRoot(document.getElementById('listEditor')).unmount();
     
@@ -211,7 +215,10 @@ const ListEditor = (props) => {
               <h6 className='leftBlock text-sm'>View Mode</h6>
               <h3 className='centerBlock infoHl'>{name}</h3>
               {parent == 'largeViewer' ? <div className='ml-auto mr-1'>&nbsp;</div> :
-               <button className='ml-auto mr-1 inputElementSlim' onClick={() => exitEditor()}>Exit</button>}
+               <img 
+                src='static/media/close.png'
+               className='ml-auto mr-1 mt-1 inputElementIcon' 
+               onClick={() => exitEditor()}/>}
             </div>
           )
     
@@ -223,7 +230,7 @@ const ListEditor = (props) => {
           viewMode == 'edit' ? (
             //If in edit mode, show all edit buttons
             <div className='editButtons'>
-              <img className="inputElementIcon" src="static/media/headline.png" onClick={() => { handleInsertion('#') }}/>
+              <img className="inputElementIcon" src="static/media/headline.png" onClick={() => { handleInsertion('# ') }}/>
               <img className="inputElementIcon" src="static/media/link.png" onClick={() => { handleInsertion('[]()') }}/>
               <img className="inputElementIcon" src="static/media/list.png" onClick={() => { handleInsertion('->. ') }}/>
               <img className="inputElementIcon" src="static/media/list_orderd.png" onClick={() => { handleInsertion('-x. ') }}/>
@@ -232,7 +239,7 @@ const ListEditor = (props) => {
               <img className="inputElementIcon" src="static/media/ignore.png" onClick={() => { handleInsertion('!x!') }}/>
               <img className="inputElementIcon" src="static/media/media.png" 
               onClick={() => { ReactDOM.createRoot(document.getElementById("mediaContentManager"))
-              .render(<MediaContentManager contentType={["*/*"]} selectedImg={(e) => handleInsertion(`[](embedded-locale:${e.name}@${e.id})`)}/>)}}
+              .render(<MediaContentManager contentType={["*/*"]} selectedImg={(e) => handleInsertion(`[](embedded-locale:${e.name}@${e.id})\n`)}/>)}}
               />
             </div>
           ) : (
@@ -249,7 +256,7 @@ const ListEditor = (props) => {
               <textarea
                 key={renderedContent} //Must stay, otherwise react dosnt rerender
                 id="list_content"
-                className="mainBody bg-cat-light"
+                className="mainBody bg-cat-bg2 text-cat-light focus:outline focus:outline-1 focus:outline-cat-border focus:text-cat-main"
                 defaultValue={renderedContent}
                 onKeyDown={(e) => {
                   monitorKeyPressTextarea(e);
@@ -258,7 +265,7 @@ const ListEditor = (props) => {
             ) : (
             // If in view mode, render div with content (rendering must have finished first)
               <div
-                className="mainBody"
+                className="mainBody flex flex-col"
                 dangerouslySetInnerHTML={{ __html: renderedContent }}
               ></div>
             
@@ -285,14 +292,16 @@ const ListEditor = (props) => {
                 <img className="inputElementIcon" src='static/media/save.png' onClick={() => { saveHandler() }}/>
               ) : (
                 //If in view mode, render a button to open all links
-                <button className="inputElementSlim" onClick={() => {
+                <img className="inputElementIcon" 
+                src='static/media/open.png'
+                onClick={() => {
                   allLinks(content, listId).forEach(link => {
                     window.open((link.startsWith('http')
                       ? link
                       : `http://${link}`), '_blank').focus()
                   });
                 }}
-                >Open all Links</button>
+                />
               )}
             
           </div>
@@ -311,8 +320,8 @@ const ListEditor = (props) => {
     
             {fotter()}
 
-            <div id="mediaContentManager"></div>
           </div>
+          <div id="mediaContentManager"></div>
         </div>
       );//list_edit_msg used to display informations about saves and error msg
     };

@@ -47,7 +47,9 @@ function styleCheckbox(line, state, id, mode){
     if (mode == 'view'){
         //Encapsulate line in html checkbox element in given state
         var htmlElement
-        htmlElement = `<input type="checkbox" ${state ? 'checked' : ''} id="${id}" class="viewUserContentCb" onChange="interactivElementChangeHandler('checkbox', '${id}')">${line}</input>`;
+        htmlElement = `<div class="viewUserContentCbContainer">
+        <input type="checkbox" ${state ? 'checked' : ''} id="${id}" onChange="interactivElementChangeHandler('checkbox', '${id}')"/>
+        ${line}</div>`;
         return htmlElement
     }
     else {
@@ -60,7 +62,11 @@ function formatParagraph(line, mode){
     //Takes current line, mode=view/edit
     if (mode == 'view'){
         //Set text to html paragraph element
-        var htmlElement = `<p class='viewUserContentP'>${line['text']}</p>`
+        const font_styled_line = line['text']
+        .replace(/\*\*(.*?)\*\*/g, '<a class="viewUserContentB">$1</a>')
+        .replace(/~~(.*?)~~/g, '<a class="viewUserContentSt">$1</a>')
+        .replace(/\*(.*?)\*/g, '<a class="viewUserContentI">$1</a>');
+        var htmlElement = `<p class='viewUserContentP'>${font_styled_line}</p>`
         return htmlElement
     }
     else {
@@ -105,15 +111,17 @@ function formatLink(line, mode, list_id){
     if (mode == 'view'){
         //Encapsulate line in html a element, add http:// if path dosnt start with http(/s) for absolute path
         var htmlElement
-        if (line['path'].startsWith("embedded")){
+        if (line['path'].startsWith("embedded-locale:")){
             let localUrlInfo = line['path'].split(/[:-@]/).filter(part => part != '')
             htmlElement = `<a href="${window.location.origin}/linkListApi/mediaContent/?id=${localUrlInfo[2]}&reason=${list_id}"
             class="viewUserContentContainer">
-            <img  
-            src="${window.location.origin}/linkListApi/mediaContent/?id=${localUrlInfo[2]}&reason=${list_id}&thubmanil=True" 
-            class="viewUserContentImg" 
-            alt="${localUrlInfo[1]}"/>
-            </a>`
+                <img  
+                src="${window.location.origin}/linkListApi/mediaContent/?id=${localUrlInfo[2]}&reason=${list_id}&thubmanil=True" 
+                class="viewUserContentImg" 
+                alt="${localUrlInfo[1]}"/>
+                ${line['text'] != line['path'] ? `<p class="viewUserContentLi">${line.text}</p>` : ''}
+            </a>
+           `
         } else {
         const absoluteURL = line.path.startsWith('http') ? line.path : `http://${line.path}`;
         htmlElement = `<a href="${absoluteURL}" class='viewUserContentLi'>${line.text}</a>`;
@@ -128,7 +136,6 @@ function formatLink(line, mode, list_id){
         return line
     }
 }
-
 
 export function allLinks(raw_content, list_id){
     //Takes all lines from list, returns all links in an array

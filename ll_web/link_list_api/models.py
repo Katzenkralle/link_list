@@ -19,7 +19,7 @@ class List(models.Model):
     content_history = models.CharField(default='[]', max_length=500, unique=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     url = models.CharField(max_length=30, default='')
-    creation_date = models.DateTimeField(default=timezone.make_aware(datetime.now(), timezone.get_default_timezone()))
+    creation_date = models.DateTimeField(default=timezone.now)
     public_list = models.CharField(max_length=20, default='false')
     public_list_passwd = models.CharField(max_length=20, default='', null=True)
 

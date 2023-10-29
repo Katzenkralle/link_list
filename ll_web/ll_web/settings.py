@@ -15,7 +15,7 @@ from pathlib import Path
 
 print(os.environ.get('ALLOWED_HOSTS'))
 if os.environ.get('ALLOWED_HOSTS') == None:
-    ALLOWED_HOSTS = ['127.0.0.0']  #Seperate Hosts by ;
+    ALLOWED_HOSTS = ['127.0.0.1']  #Seperate Hosts by ;
 
 else:
     ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(';')  #Seperate Hosts by ;
@@ -139,7 +139,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'frontend/static')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 if os.environ.get('CSRF_TRUSTED_ORIGINS') == None:
-    CSRF_TRUSTED_ORIGINS = ['http://127.0.0.0']
+    CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1']
 else:
     CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS').split(';')
 

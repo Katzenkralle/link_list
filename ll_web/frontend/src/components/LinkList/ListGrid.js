@@ -11,6 +11,31 @@ function ListGrid (props){
       setLists(props.lists);
     }, [props.lists]);
 
+    useEffect(() => {
+
+      if (props.lists.length === 0) {
+        return;
+      }
+
+      const stripedHash = window.location.hash.replace('#', '');
+      const matchingList = props.lists.find((list) => list.id == stripedHash);
+
+      if (!matchingList) {
+        window.location.hash = '';
+      } else {
+        ReactDOM.createRoot(document.getElementById("listEditor")).render(
+          <ListEditor 
+            listId={matchingList.id}
+            parent={'default'}
+            isEditable={true}
+            exit={() => props.update_data()}
+          />
+        );
+      }
+    }
+    , [props.lists]);
+
+
     return(
       //show the lists in a grid, when clicked, show the list editor
       //for that create a new root and render the list editor in listEditor div (see HomePage)

@@ -60,5 +60,6 @@ def modify_account(request):
         return HttpResponse('created', status=status.HTTP_201_CREATED)
     elif action == 'account_removal':
         #Remove the user, that requested it, from the database, profile and lists are deleated by on_delete=CASCADE
+        os.remove(os.path.join(os.getcwd(), f"ll_web/data/{request.user.id}"))
         User.objects.get(username=request.user).delete()
         return HttpResponse("Removed User", status=status.HTTP_202_ACCEPTED)

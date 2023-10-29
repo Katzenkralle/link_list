@@ -66,6 +66,10 @@ class GetMedia(APIView):
         start_at = int(request.GET.get('next', 0))
         content_type = request.GET.get('type', all)
         media_id = request.GET.get('id', None)
+
+        user_filter = request.GET.get('filter','all')
+        user_search = request.GET.get('search', None)
+
         reason = request.GET.get('reason', None)#List id for list guest viewing
         thubmanil = request.GET.get('thubmanil', False)#Always return an img
         
@@ -95,11 +99,18 @@ class GetMedia(APIView):
 
         query = Q()
         if '*/*' in content_type :
-            query = Q(user = user) 
+            query = Q(user = user)
         else:
             for part in [item.split('/')[0] for item in content_type if '/' in item]:
                 query |= Q(user = user, type__contains=part)
 
+        all_types = list(set([item['type'] for item in Media.objects.filter(query).values('type')]))
+        all_types = [item for item in all_types if item != '']
+        
+        if user_filter != 'all':
+                query &= Q(type__contains=user_filter)
+        if user_search:
+                query &= Q(name__contains=user_search) 
         # Filter objects in the database
         filtered_objects = Media.objects.filter(query).order_by('-uploaded_date')
         media = MediaSerializer(filtered_objects[start_at:start_at+max_entries], many=True).data
@@ -116,7 +127,7 @@ class GetMedia(APIView):
                     entry["file"] = base64.b64encode(img).decode('utf-8')
         possition = {"start": start_at, "end": start_at + len(media), "total": len(filtered_objects)}
 
-        return JsonResponse({'content': media, "possition": possition, "status": "success"})
+        return JsonResponse({'content': media, "possition": possition, "allContentTypes": all_types,  "status": "success"})
     
     def post(self,request):
         user = request.user

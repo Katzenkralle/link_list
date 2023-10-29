@@ -8,7 +8,7 @@ from django.utils import timezone
 from .models import LinkListProfile, List, Media
 from .serializers import ListSerializer
 
-from .json_handler import content_for_db
+from .json_handler import ListTransformer
 from hashlib import sha256
 
 from json import loads as from_json
@@ -163,7 +163,7 @@ class ListContent(APIView):
 
     @staticmethod
     def get_embeded_locals(content):
-        return [e['embeded_locals'] for e in from_json(content) if e.get('embeded_locals', '') != '']
+        return [e['embeded_locals'] for e in content if e.get('embeded_locals', '') != '']
 
     @staticmethod
     def remove_list_refrence(embeded_element, list_id):
@@ -207,9 +207,10 @@ class ListContent(APIView):
 
     def change_content(self):
         
-        new_json_list_content, new_embeded_locals = content_for_db(self.content)
+        new_json_list_content = ListTransformer(self.content).content_for_db()
+        new_embeded_locals = self.get_embeded_locals(new_json_list_content)
 
-        for historic_embeded_local in self.get_embeded_locals(self.list.content):
+        for historic_embeded_local in self.get_embeded_locals(from_json(self.list.content)):
             if historic_embeded_local not in new_embeded_locals:
                 self.remove_list_refrence(historic_embeded_local, self.list.id)
         

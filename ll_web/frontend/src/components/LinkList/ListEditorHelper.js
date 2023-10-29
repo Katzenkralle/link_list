@@ -92,8 +92,9 @@ export const exitEditorButton = (htmlClassName, parent, exitEditor, renderedCont
       return (<div className={`${htmlClassName}`}>&nbsp;</div>)
     } else {
       return (
-        <button
-          className={`${htmlClassName} inputElementSlim`}
+        <img
+          className={`${htmlClassName} inputElementIcon mt-1`}
+          src='/static/media/close.png'
           onClick={() => {
             if (document.getElementById('list_content').value.replace(/\r/g, '') === renderedContent.replace(/\r/g, '')) {
               exitEditor();
@@ -108,9 +109,7 @@ export const exitEditorButton = (htmlClassName, parent, exitEditor, renderedCont
               );
             }
           }}
-        >
-          Exit
-        </button>
+        />
       )
     }
   }
@@ -122,9 +121,9 @@ export const deleteListButton = (htmlClassName, parent, saveList, exitEditor) =>
       return (<div className={`${htmlClassName}`}>&nbsp;</div>)
     } else {
       return (
-        <button
-        className={`${htmlClassName} inputElementSlim`}
-
+        <img
+        className={`${htmlClassName} inputElementIcon mt-1`}
+          src='/static/media/delete.png'
           onClick={() => {
             ReactDOM.createRoot(
               document.getElementById('tagContainer')
@@ -139,9 +138,7 @@ export const deleteListButton = (htmlClassName, parent, saveList, exitEditor) =>
               />
             );
           }}
-        >
-          Delete
-        </button>
+        />
       )
     }
   }

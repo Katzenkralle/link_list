@@ -2,16 +2,14 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-.viewUserContentP {
-    @apply [all:unset] !break-words !whitespace-pre-wrap !text-cat-main text-base
+p {
+    @apply [all:unset] !break-words !whitespace-pre-wrap !truncate text-cat-main text-base 
 }
 
-.viewUserContentLi {
+li {
     @apply whitespace-pre-wrap text-cat-link hover:text-cat-linkHover
 }
-.viewUserContentLi::after{
-    content: "\a";
-}
+
 
 ol {
     @apply !list-decimal !list-inside !text-cat-light
@@ -21,28 +19,37 @@ ul {
     @apply !list-disc !list-inside !text-cat-light
 }
 
-ul li .viewUserContentH {
-    @apply inline-block [vertical-align:middle]
+li * {
+    @apply inline-block [vertical-align:middle] ml-2
 }
 
 .viewUserContentHr{
     @apply border border-cat-light w-[95%] mx-auto my-1
 }
 
-.viewUserContentCb{
-    @apply m-auto w-5 h-5 mb-1 [vertical-align:middle] mr-2
+.viewUserContentCbContainer{
+    @apply flex flex-wrap items-center
 }
 
-.viewUserContentUlOlElem{
-    @apply relative
-  }
+.viewUserContentCbContainer input[type="checkbox"]{
+    @apply mr-2 w-5 h-5
+}
+
+
+.viewUserContentLi {
+    @apply !text-cat-link hover:!text-cat-linkHover
+}
 
 .viewUserContentImg{
     @apply max-w-full max-h-[75vh] object-contain my-2 hover:cursor-pointer
 }
 
 .viewUserContentContainer{
-    @apply inline-flex
+    @apply lg:inline-flex sm:flex sm:flex-col
+}
+
+.viewUserContentContainer p {
+    @apply inline-block mb-2 mt-auto ml-1
 }
 
 h1.viewUserContentH {
@@ -67,5 +74,17 @@ h5.viewUserContentH  {
 
 h6.viewUserContentH  {
     @apply text-sm font-bold text-cat-main
+}
+
+.viewUserContentI {
+    @apply italic
+}
+
+.viewUserContentB {
+    @apply font-bold
+}
+
+.viewUserContentSt {
+    @apply line-through decoration-cat-main decoration-solid decoration-2
 }
 

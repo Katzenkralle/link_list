@@ -15,14 +15,14 @@ export const downloadBlob = (blob, fileName) => {
     }; 
 
 function MediaContentManager(props){
-    const [contentType, setContentType] = useState(props.contentType)
+    const contentType = props.contentType
     const [content, setContent] = useState([])
+    const [allContentTypes, setAllContentTypes] = useState([])
     const [nextDatasetToFetch, setNextDatasetToFetch] = useState(0)
     const [possitionContext, setPossitionContext] = useState(undefined)
     const [filesToUpload, setFilesToUpload] = useState([])
     const [status, setStatus] = useState("loading")
 
-    const [filter, setFilter] = useState("all")
     
     let allFiles = []
 
@@ -44,10 +44,19 @@ function MediaContentManager(props){
         ReactDOM.createRoot(document.getElementById('mediaContentManager')).unmount();
     }         
 
-    const getContent = () => {
+    const getContent = (filterType, search) => {
         setStatus("loading")
         freeMemory()
-        fetch(`linkListApi/mediaContent?type=${contentType}&datasets=${DATASETSPERFETCH}&next=${nextDatasetToFetch}`)
+        const queryString = new URLSearchParams({
+            csrfmiddlewaretoken: document.querySelector('[name=csrfmiddlewaretoken]').value,
+            type: contentType,
+            datasets: DATASETSPERFETCH,
+            next: nextDatasetToFetch,
+            filter: filterType != undefined ? filterType : "all",
+            search: search != undefined ? search : ""
+        })
+
+        fetch(`linkListApi/mediaContent?${queryString}`)
             .then(response => {
                 setStatus("hidden")
                 return response.json()
@@ -56,6 +65,7 @@ function MediaContentManager(props){
                     setStatus([data.status])
                     return
                 }
+                setAllContentTypes(data.allContentTypes)
                 setPossitionContext(data.possition)
                 data.content.map((media) => {
                     media.new_name = media.name
@@ -134,58 +144,30 @@ function MediaContentManager(props){
     return fileUrl
     }
 
-
-
-    const infoOverlay = (otherInfo) => {
-        if (status == undefined || status == "hidden") {
-            return
-        }
-        return(
-            <div id="infoOverlay" className="absolute left-0 w-full h-full bg-cat-overlay bg-opacity-50">
-                {status === "loading" ? (
-                <LoadingAnimation></LoadingAnimation>
-                ) : (
-                    <div className="flex h-full">
-                    <div className="bg-cat-bg2 m-auto rounded-lg p-3">
-                      <ul>
-                        {Array.isArray(status) ? (
-                          status.map((state) => (
-                            <li key={state} className="text-cat-error">
-                              {state}
-                            </li>
-                          ))
-                        ) : (
-                          Object.entries(status).map(([key, value]) => (
-                            <li
-                              key={key}
-                              className={value === "created" ? "text-cat-success" : "text-cat-error"}
-                            >
-                              {value === "created" ? `${key} was created` : `${key} was not created`}
-                            </li>
-                          ))
-                        )}
-                      </ul>
-                    </div>
-                  </div>                  
-                )}
-            </div>
-        )}
-
     const filterContent = (e) => {
         let filterOptions = []
         return(
-            <div className="flex flex-row">
-                <select className="inputElement" onChange={(e) => setFilter(e.target.value)}>
+            <div className="flex flex-row justify-between my-1">
+                <select className="inputElement" id="typeFilter">
                     <option value="all">All</option>
-                    {content
-                    .map((media) => {
-                        if (filterOptions.includes(media.type)) {
-                            return
-                        }
-                        filterOptions.push(media.type);
-                        return <option key={media.type} value={media.type}>{media.type}</option>;
-                    })}
+                        {allContentTypes.map((type) => {
+                            filterOptions.push(type);
+                            return <option key={type} value={type}>{type}</option>;
+                        })}
                 </select>
+                <input className="inputElement" id="search" type="text" placeholder="Search"></input>
+                <button className="inputElement" onClick={() => getContent(document.getElementById('typeFilter').value, document.getElementById('search').value)}>Filter</button>
+            </div>
+        )
+    }
+
+    const topBar = () => {
+        return(
+            <div className="flex flex-col">
+                <button
+                    className="inputElement ml-auto"
+                    onClick={() => selfDestruct()}>Close</button>
+                {filterContent()}
             </div>
         )
     }
@@ -200,12 +182,12 @@ function MediaContentManager(props){
        
         return (
             <div className="flex flex-row flex-wrap">
-                {content.filter((media) => filter == "all" ? true : media.type == filter)
+                {content
                 .map((media, key) => (
-                    <div className={`grid gap-x-1 gap-y-2 grid-cols-4 grid-rows-3 py-1 h-32 ${key % 2 ? "bg-cat-bg" : "bg-cat-bg2"}`}>
-                        
-                        <img src={base64ToFile(media.file, media.type)} className="row-span-3 self-center object-fit max-h-full" />
-
+                    <div className={`grid gap-x-1 gap-y-2 grid-cols-4 grid-rows-3 py-1 h-32 ${key % 2 ? "bg-cat-bg" : "bg-cat-bg2"} w-full`}>
+                        <a className="row-span-3 flex justify-center align-center" href={`${window.location.origin}/linkListApi/mediaContent/?id=${media.id}`}>
+                        <img src={base64ToFile(media.file, media.type)} className="object-fit self-center justify-self-center max-h-full" />
+                        </a>
                         <input 
                         className="infoHl col-span-2 bg-inherit cursor-pointer rounded-lg text-ellipsis overflow-hidden
                         hover:outline hover:outline-2 hover:outline-cat-border hover:bg-cat-input 
@@ -239,23 +221,10 @@ function MediaContentManager(props){
         )
     }
 
-    return (
-        <div className="overlay !z-50">
-          <div className="absolute top-0 right-0 h-full bg-cat-surface p-2 flex flex-col lg:w-1/2 w-full">
-            <div>
-            <button
-              className="inputElement"
-              onClick={() => selfDestruct()}>Close</button>
-            {filterContent()}
-            </div>
-
-            <div className="flex flex-col h-full overflow-y-scroll overflow-x-hidden">
-                <h3 className="infoHl">Media Manager</h3>
-        
-                {displayMedia()}
-
-
-                {possitionContext != undefined ? (
+    const footer = () => {
+        return (
+            <>
+            {possitionContext != undefined ? (
                 <div className="flex flex-row mb-2">
                     {possitionContext.start - DATASETSPERFETCH >= 0 ? (
                     <button
@@ -294,8 +263,13 @@ function MediaContentManager(props){
                     >Upload</button>) :
                     null}
                 </div>
+            </>
+        )
+    }
 
-                <div className="flex flex-col !text-cat-main max-h-32 overflow-y-scroll">
+    const imgToUpload = () => {
+        return(
+            <div className="flex flex-col !text-cat-main max-h-32 overflow-y-scroll">
                         {filesToUpload.length > 0 && (
                             <>
                                 <h3 className="infoHl">Selected files:</h3>
@@ -321,9 +295,59 @@ function MediaContentManager(props){
                             </>
                         )}
                 </div>
+        )
+    }
+    
+    const infoOverlay = (otherInfo) => {
+        if (status == undefined || status == "hidden") {
+            return
+        }
+        return(
+            <div id="infoOverlay" className="absolute left-0 w-full h-full bg-cat-overlay bg-opacity-50">
+                {status === "loading" ? (
+                <LoadingAnimation></LoadingAnimation>
+                ) : (
+                    <div className="flex h-full">
+                    <div className="bg-cat-bg2 m-auto rounded-lg p-3">
+                      <ul>
+                        {Array.isArray(status) ? (
+                          status.map((state) => (
+                            <li key={state} className="text-cat-error">
+                              {state}
+                            </li>
+                          ))
+                        ) : (
+                          Object.entries(status).map(([key, value]) => (
+                            <li
+                              key={key}
+                              className={value === "created" ? "text-cat-success" : "text-cat-error"}
+                            >
+                              {value === "created" ? `${key} was created` : `${key} was not created`}
+                            </li>
+                          ))
+                        )}
+                      </ul>
+                    </div>
+                  </div>                  
+                )}
+            </div>
+        )}
+
+    return (
+        <div className="overlay !z-50">
+          <div className="absolute top-0 right-0 h-full bg-cat-surface p-2 flex flex-col lg:w-1/2 w-full max-w-[800px]">
+            {topBar()}
+            <h3 className="infoHl">Meida Manager</h3>
+            <div className="flex flex-col h-full overflow-y-scroll overflow-x-hidden">
+    
+                {displayMedia()}
+
+                {footer()}
+
+                {imgToUpload()}
                 
                 {infoOverlay()}
-          </div>
+            </div>
           </div>
         </div>
       );
