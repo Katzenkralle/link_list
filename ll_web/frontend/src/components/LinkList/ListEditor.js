@@ -188,25 +188,37 @@ const ListEditor = (props) => {
                 <h6 className='leftBlock text-sm'>Edit Mode</h6>
                 <h3 className='centerBlock infoHl'>{name}</h3>
                 {hamburgerIcon(showMenu, setShowMenu)}
+                
                 {showMenu && (
-                  <div className="hamburger-menu">
-                    {hamburgerIcon(showMenu, setShowMenu)}
-                    <div className="menu-items">
-                      <div className='blur_background' onClick={() => setShowMenu(!showMenu)} />
+                  <>
+                  <div className='overlay' onClick={() => setShowMenu(!showMenu)} />
+                  
+                  <div className="fixed top-0 right-0 z-50 grid grid-cols-2 grid-rows-5 gap-x-1 gap-y-3 bg-cat-surface rounded-bl-lg pl-2 pb-2">
+                    <div className='col-start-2 justify-self-end'>
+                      {hamburgerIcon(showMenu, setShowMenu)}
+                    </div>
+                    <div className='row-start-2 col-start-2 justify-self-center self-center'>
                       {deleteListButton("", parent, saveList, exitEditor)}
-                      <div className="my-1">
-                        <p>Tag:</p>
-                        {selectTag("", setTag, tag, parent, tagsOfOwner)}
-                      </div>
-                      <div className="my-1">
-                        <p>Color:</p>
-                        {selectColor("", color, setColor, parent)}
-                      </div>
+                    </div>
+    
+                    <p className='row-start-3 self-center justify-self-center'>Tag:</p>
+                    <div className='row-start-3 justify-self-center self-center'>
+                      {selectTag("", setTag, tag, parent, tagsOfOwner)}
+                    </div>
+                      
+                    <p  className='row-start-4 self-center justify-self-center'>Color:</p>
+                    <div className='row-start-4 justify-self-center self-center'>
+                      {selectColor("", color, setColor, parent)}
+                    </div>
+
+                    <div className='row-start-5 col-start-2 justify-self-center self-center'>
                       {exitEditorButton("", parent, exitEditor, renderedContent)}
                     </div>
                   </div>
+                  </>
                 )
                 }
+
               </div>
             )
           ) : (

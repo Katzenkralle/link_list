@@ -7,9 +7,8 @@ p {
 }
 
 li {
-    @apply whitespace-pre-wrap text-cat-link hover:text-cat-linkHover
+    @apply whitespace-pre-wrap text-cat-main
 }
-
 
 ol {
     @apply !list-decimal !list-inside !text-cat-light
@@ -20,7 +19,7 @@ ul {
 }
 
 li * {
-    @apply inline-block [vertical-align:middle] ml-2
+    @apply [vertical-align:middle] ml-2 /*inline-block*/
 }
 
 .viewUserContentHr{
@@ -35,22 +34,27 @@ li * {
     @apply mr-2 w-5 h-5
 }
 
-
-.viewUserContentLi {
-    @apply !text-cat-link hover:!text-cat-linkHover
+.viewUserContentEmbededContainer{
+    @apply flex sm:flex-col lg:flex-row
 }
+
+.viewUserContentLi, .viewUserContentEmbededDisciption {
+    @apply !text-cat-link hover:!text-cat-linkHover !break-words !whitespace-pre-wrap !truncate 
+}
+.viewUserContentEmbededDisciption{
+    @apply lg:w-1/2 h-fit mt-2 ml-2
+}
+
+.viewUserContentEmbededA{
+    @apply lg:inline-flex sm:block w-fit 
+}
+
 
 .viewUserContentImg{
-    @apply max-w-full max-h-[75vh] object-contain my-2 hover:cursor-pointer
+    @apply max-w-full max-h-[75vh] object-contain my-2 hover:cursor-pointer ml-0
 }
 
-.viewUserContentContainer{
-    @apply lg:inline-flex sm:flex sm:flex-col
-}
 
-.viewUserContentContainer p {
-    @apply inline-block mb-2 mt-auto ml-1
-}
 
 h1.viewUserContentH {
     @apply text-3xl font-bold text-cat-main

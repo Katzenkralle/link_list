@@ -16,7 +16,6 @@ class List(models.Model):
     color = models.CharField(max_length=7, unique=False)
     tag = models.CharField(max_length=24, unique=False)
     content = models.CharField(default='[]', max_length=500, unique=False)
-    content_history = models.CharField(default='[]', max_length=500, unique=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     url = models.CharField(max_length=30, default='')
     creation_date = models.DateTimeField(default=timezone.now)

@@ -17,7 +17,6 @@ class ListSerializer(serializers.ModelSerializer):
         for field in exclude_field:
             self.fields.pop(field)
         self.fields.pop("public_list_passwd")
-        self.fields.pop("content_history")
     
     class Meta:
         model = List

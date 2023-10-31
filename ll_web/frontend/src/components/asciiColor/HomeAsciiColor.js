@@ -4,6 +4,7 @@ import TopBar, { topBar } from '../Other/TopBar';
 import BottomBar from '../Other/BottomBar';
 import MediaContentManager, {downloadBlob} from "./MediaContentManager";
 import ConfirmDialog from "../Other/ConfirmDialog";
+import LoadingAnimation from "../Other/LoadingAnimation";
 
 function HomeAsciiColor() {
 
@@ -16,10 +17,13 @@ function HomeAsciiColor() {
     const [transformedImg, setTransformedImg] = useState(null)
 
     const transform = (colorize, download) => {
+        const loading = document.getElementById("loadingAnimationContainer")
+        loading.hidden = false
         allFiles.map((file) => {
             URL.revokeObjectURL(file)
         })
         setAllFiles([])
+        setColorizeMode({"f": true, "b": true})
 
         const imgName = selectedImg.name;
         const adjustWidth = document.getElementById("adjustWidth").value;
@@ -69,6 +73,8 @@ function HomeAsciiColor() {
                 trueBtnText="Reset" 
                 falseBtnText="Retrey" />)
             console.error("Error:", error);
+        }).finally(() => {
+            loading.hidden = true
         });
     }
     
@@ -188,20 +194,24 @@ function HomeAsciiColor() {
                 {!transformedImg.only_use_blocks ? (
                     <>
                         <h3 className="font-bold mr-4">Color Options</h3>
-                        <input 
-                        type="checkbox" 
-                        className="mr-1" 
-                        checked={colorizeMode.f} 
-                        id="colorizeModeF"
-                        onChange={(e) => setColorizeMode({"f": e.target.checked, "b": colorizeMode.b })}/>
-                        <label className="mr-2" htmlFor="colorizeModeF">Foreground</label>
-                        <input type="checkbox" 
-                        className="mr-1"
-                        id="colorizeModeB" 
-                        checked={colorizeMode.b}
-                        onChange={(e) => setColorizeMode({"f": colorizeMode.f, "b": e.target.checked })}/>
-                        <label className="mr-4" htmlFor="colorizeModeB">Background</label>
-                        </>) : null}
+                        <div>
+                            <input 
+                            type="checkbox" 
+                            className="mr-1" 
+                            checked={colorizeMode.f} 
+                            id="colorizeModeF"
+                            onChange={(e) => setColorizeMode({"f": e.target.checked, "b": colorizeMode.b })}/>
+                            <label className="mr-2" htmlFor="colorizeModeF">Foreground</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" 
+                            className="mr-1"
+                            id="colorizeModeB" 
+                            checked={colorizeMode.b}
+                            onChange={(e) => setColorizeMode({"f": colorizeMode.f, "b": e.target.checked })}/>
+                            <label className="mr-4" htmlFor="colorizeModeB">Background</label>
+                        </div>
+                    </>) : null}
                     
                         <button className="link" 
                         onClick={() => transform(`${colorizeMode.b ? "b" : " "}${colorizeMode.f ? "f" : " "}`, true)}
@@ -268,7 +278,7 @@ function HomeAsciiColor() {
             <main className="flex flex-col"
             id="mainContainer">
                 <h1 className="mainHl text-center">Img-to-Ascii</h1>
-                <div className="flex lg:felx-row sm:flex-col sm:flex-col-reverse">
+                <div className="flex lg:felx-row sm:flex-col sm:flex-col-reverse lg:max-w-[1624px] lg:mx-auto">
                     <div className="lg:w-4/6 m-2">
                         {originalImg()}
                     </div>
@@ -279,12 +289,13 @@ function HomeAsciiColor() {
                 {transformedImgElement()}
                 <div id="mediaContentManager"></div>
                 <div id="tagContainer"></div>
+                <div id="loadingAnimationContainer" hidden><LoadingAnimation/></div>
             </main>
             
             
             {BottomBar()}
-           
-                   
+
+            
         </div>
     )
 }

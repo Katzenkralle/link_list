@@ -42,26 +42,5 @@
     @apply ml-auto mr-[0.5em] mt-[0.5em] z-10
   }
   .hamburger-icon .icon-bar {
-    @apply w-[30px] h-[5px] bg-cat-inputColor mb-[5px]
-  }
-  
-  .hamburger-menu {
-    @apply fixed top-0 right-0 w-[40%] h-full z-50 flex flex-col 
-  }
-  .hamburger-menu .menu-items {
-    @apply flex flex-col mt-[-2em] pt-[2em] bg-cat-light rounded-bl-lg
-  }
-  
-  .hamburger-menu .menu-items * {
-    margin-left: auto;
-  }
-  .hamburger-menu .menu-items div {
-    display: flex;
-  }
-  .hamburger-menu .menu-items div p {
-    margin: auto 2px auto 0; 
-  }
-  
-  .blur_background {
-    @apply fixed top-0 left-0 w-full h-full bg-opacity-50 bg-cat-bg z-[-1]
+    @apply w-[30px] h-[5px] bg-cat-warning mb-[5px]
   }

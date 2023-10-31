@@ -220,7 +220,6 @@ class ListContent(APIView):
             #TODO: Handle error not premited to use media
             pass
         
-        self.list.content_history = self.list.content
         self.list.content = to_json(new_json_list_content)
 
         self.list.save()

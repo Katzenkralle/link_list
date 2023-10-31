@@ -147,23 +147,23 @@ function MediaContentManager(props){
     const filterContent = (e) => {
         let filterOptions = []
         return(
-            <div className="flex flex-row justify-between my-1">
-                <select className="inputElement" id="typeFilter">
+            <div className="flex flex-row justify-between my-1 max-w-full">
+                <select className="inputElement w-2/5" id="typeFilter">
                     <option value="all">All</option>
                         {allContentTypes.map((type) => {
                             filterOptions.push(type);
                             return <option key={type} value={type}>{type}</option>;
                         })}
                 </select>
-                <input className="inputElement" id="search" type="text" placeholder="Search"></input>
-                <button className="inputElement" onClick={() => getContent(document.getElementById('typeFilter').value, document.getElementById('search').value)}>Filter</button>
+                <input className="inputElement w-2/5 mx-1" id="search" type="text" placeholder="Search"></input>
+                <button className="inputElement w-1/5" onClick={() => getContent(document.getElementById('typeFilter').value, document.getElementById('search').value)}>Filter</button>
             </div>
         )
     }
 
     const topBar = () => {
         return(
-            <div className="flex flex-col">
+            <div className="flex flex-col max-w-full">
                 <button
                     className="inputElement ml-auto"
                     onClick={() => selfDestruct()}>Close</button>
@@ -204,7 +204,7 @@ function MediaContentManager(props){
                         >Rename</button>
                         
 
-                        <p className="text-cat-main col-span-2">{media.type}</p>
+                        <p className="text-cat-main col-span-2 row-span-2 text-ellipsis overflow-hidden">{media.type}</p>
                         <button 
                         className="inputElement" 
                         onClick={() => updateContent("delete", media.name)}
@@ -268,35 +268,31 @@ function MediaContentManager(props){
     }
 
     const imgToUpload = () => {
-        return(
-            <div className="flex flex-col !text-cat-main max-h-32 overflow-y-scroll">
-                        {filesToUpload.length > 0 && (
-                            <>
-                                <h3 className="infoHl">Selected files:</h3>
-                                    {Array.from(filesToUpload).map((file) => (
-                                        <div key={file.name}
-                                        className="grid gap-x-1 gap-y-2 grid-cols-3 grid-rows-1 my-1">
-                                            <p className="truncate mr-2 col-span-2">{file.name}</p>
-
-                                            <button className="inputElement"
-                                            onClick={() => {{
-                                                let newFilesToUpload = []
-                                                for (const iFile of filesToUpload) {
-                                                    if (iFile.name == file.name) {
-                                                        continue
-                                                    }
-                                                    newFilesToUpload.push(iFile)
-                                                }
-                                                setFilesToUpload(newFilesToUpload)
-                                            }}
-                                            }
-                                            >Remove</button></div>
-                                    ))}
-                            </>
-                        )}
-                </div>
-        )
-    }
+        return filesToUpload.length > 0 ? (
+          <div className="max-h-32">
+            <div className="flex flex-col !text-cat-main h-full overflow-y-scroll">
+              <>
+                <h3 className="infoHl">Selected files:</h3>
+                {Array.from(filesToUpload).map((file) => (
+                  <div key={file.name} className="grid gap-x-1 gap-y-2 grid-cols-3 grid-rows-1 my-1">
+                    <p className="truncate mr-2 col-span-2">{file.name}</p>
+                    <button
+                      className="inputElement"
+                      onClick={() => {
+                        let newFilesToUpload = filesToUpload.filter((iFile) => iFile.name !== file.name);
+                        setFilesToUpload(newFilesToUpload);
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </>
+            </div>
+          </div>
+        ) : null;
+      }
+      
     
     const infoOverlay = (otherInfo) => {
         if (status == undefined || status == "hidden") {

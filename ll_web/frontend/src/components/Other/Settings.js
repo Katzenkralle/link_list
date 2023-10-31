@@ -323,7 +323,7 @@ const listSelectToPublicate = () => {
               onClick={async (e) => {
                 e.preventDefault();
                 await handelListPublication({
-                  'list': metaLists.filter((list) => document.getElementById('selectPublishList').value = list.id)[0],
+                  'list': metaLists.filter((list) => document.getElementById('selectPublishList').value == list.id)[0],
                   'isReadonly': document.getElementById('publishListMode').checked,
                   'passwd': document.getElementById('publishListPasswd').value
                 })
