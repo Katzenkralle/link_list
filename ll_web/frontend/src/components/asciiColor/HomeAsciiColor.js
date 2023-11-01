@@ -237,10 +237,10 @@ function HomeAsciiColor() {
                 {sizeWarning ? (
                     <div className="flex flex-col">
                         <h3 className="infoHl">Large file!</h3>
-                        <p>Due to the chosen size of the output, if you precide your browser might crash!</p>
+                        <p>Due to the chosen size of the output, if you precede your browser might crash!</p>
                         <p>However, you can download the output file and display it in your terminal or text editor</p>
-                        <p>Displaying in Teminal (Linux/Windows): cat /path/to/the/file</p>
-                        <button className="inputElement" onClick={() => setSizeWarning(false)}>Precide</button>
+                        <p>Displaying in Terminal (Linux/Windows): cat /path/to/the/file</p>
+                        <button className="inputElement mb-2" onClick={() => setSizeWarning(false)}>Precede</button>
                     </div> ) : ( 
                 
                     <div className="overflow-x-scroll overflow-y-hidden" id="growVertically" style={{height: "auto"}}>

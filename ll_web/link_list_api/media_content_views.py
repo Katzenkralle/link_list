@@ -47,6 +47,7 @@ class SaveMedia(APIView):
         status_for_file = {}
         for file in uploaded_files:
             try: 
+                file.name = file.name.replace(' ', '_')
                 path_to_file = os.path.join(path_to_fodler, file.name)
                 with open(path_to_file, 'xb') as destination:
                     for chunk in file.chunks():
@@ -70,14 +71,21 @@ class GetMedia(APIView):
         user_filter = request.GET.get('filter','all')
         user_search = request.GET.get('search', None)
 
-        reason = request.GET.get('reason', None)#List id for list guest viewing
+        reason = request.GET.get('reason', -1)#List id for list guest viewing required
         thubmanil = request.GET.get('thubmanil', False)#Always return an img
         
         if media_id:
-            if not check_permissions(user, reason, request.session.get('auth', {}), False):
-                print("asd")
-                return HttpResponse(status=403, content="You are not allowed to access this resource")
             db_entry = Media.objects.filter(id=media_id).first()
+            if not db_entry:
+                return HttpResponse(status=404, content="Media not found")
+            
+            if  db_entry.user == user\
+            or (check_permissions(user, reason, request.session.get('auth', {}), False)\
+            and int(reason) in from_json(db_entry.used_in_list)):
+                pass
+            else:
+                return HttpResponse(status=403, content="You are not allowed to access this resource")
+            
             path_to_fodler = os.path.join(os.getcwd(), f"ll_web/data/{db_entry.user.id}/media")
 
             if thubmanil and not db_entry.type.startswith('image'):

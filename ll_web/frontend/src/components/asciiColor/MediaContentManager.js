@@ -333,7 +333,7 @@ function MediaContentManager(props){
         <div className="overlay !z-50">
           <div className="absolute top-0 right-0 h-full bg-cat-surface p-2 flex flex-col lg:w-1/2 w-full max-w-[800px]">
             {topBar()}
-            <h3 className="infoHl">Meida Manager</h3>
+            <h3 className="infoHl">Media Manager</h3>
             <div className="flex flex-col h-full overflow-y-scroll overflow-x-hidden">
     
                 {displayMedia()}

@@ -40,6 +40,16 @@ export const hamburgerIcon = (showMenu, setShowMenu) => {
       </div>)
   }
 
+export const selectName = (htmlClassName, name, setName) => {
+  return ( 
+    <input 
+    value={name}
+    onChange={(e) => {setName(e.target.value)}}
+    className={`${htmlClassName} infoHl rounded-full bg-cat-bg text-center
+    hover:outline hover:outline-2 hover:outline-cat-border hover:bg-cat-input 
+    focus:outline focus:outline-2 focus:outline-cat-border focus:bg-cat-input`}/>
+  )}
+
 export const selectTag = (htmlClassName, setTag, tag, parent, tagsOfOwner) => {
     //HTML select tag element, with options from props.tagsOfOwner
     //If called from large viewer it can be undefined, then return empty div

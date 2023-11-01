@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import renderByLine, {allLinks} from './ContentRender';
 import '../../../static/LinkList/tailwindListEditor.css'
 import '../../../static/LinkList/ViewUserContent.css'
-import { interactivElementChangeHandler, deleteListButton, selectTag, selectColor, exitEditorButton, hamburgerIcon, changeViewMode, monitorKeyPressTextarea, handleInsertion } from './ListEditorHelper';
+import { interactivElementChangeHandler, selectName, deleteListButton, selectTag, selectColor, exitEditorButton, hamburgerIcon, changeViewMode, monitorKeyPressTextarea, handleInsertion } from './ListEditorHelper';
 import MediaContentManager from '../asciiColor/MediaContentManager';
 
 
@@ -176,17 +176,20 @@ const ListEditor = (props) => {
               <div className='head'>
                 <h6 className='leftBlock mr-0 text-sm'>Edit Mode</h6>
                 {deleteListButton('leftBlock', parent, saveList, exitEditor)}
-                {selectTag('centerBlock', setTag, tag, parent, tagsOfOwner)}
 
-                <h3 className='centerBlock infoHl mx-1'>{name}</h3>
+                {selectTag('centerBlock', setTag, tag, parent, tagsOfOwner)}
+                {selectName('centerBlock', name, setName)}
                 {selectColor('centerBlock', color, setColor, parent)}
+                
                 {exitEditorButton('rightBlock', parent, exitEditor, renderedContent)}
               </div>
             ) : (
               //show hamburger menu
               <div className='head'>
                 <h6 className='leftBlock text-sm'>Edit Mode</h6>
-                <h3 className='centerBlock infoHl'>{name}</h3>
+                
+                {selectName('centerBlock', name, setName)}
+
                 {hamburgerIcon(showMenu, setShowMenu)}
                 
                 {showMenu && (

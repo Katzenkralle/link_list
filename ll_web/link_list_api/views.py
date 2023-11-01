@@ -59,6 +59,24 @@ class Lists(APIView):
             json['creation_date'] = timezone.localtime(db.creation_date).strftime("%d.%m.%Y %H:%M")
         return JsonResponse({"metaLists": serializedLists, "metaTags": user_tags, "setMetaUser": self.user.username }, safe=False)
     
+    def post(self, request, *args, **kwargs):
+        self.user = request.user
+        self.id = request.POST.get('id', None)
+        self.name = request.POST.get('name', '')
+        self.color = request.POST.get('color', None)
+        self.tag = request.POST.get('tag', None)
+        self.public_read_only = request.POST.get('read_only', None)
+        self.public_list_passwd = request.POST.get('passwd', None)
+
+        self.name = self.generate_unused_name() if self.name == "" else self.name
+
+        if self.id:
+            self.update_list()
+            return HttpResponse(status=status.HTTP_202_ACCEPTED)
+        else:
+            self.create_list()
+            return HttpResponse(status=status.HTTP_201_CREATED)
+
     def generate_unused_name(self):
         i, unamed_list_name = 1, "UnamedList"
         while List.objects.filter(user=self.user, name=f"{unamed_list_name}{i}").exists():
@@ -89,7 +107,7 @@ class Lists(APIView):
             return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
         if self.color == "del":
-            for embeded_element in ListContent.get_embeded_locals(self.list.content):
+            for embeded_element in ListContent.get_embeded_locals(from_json(self.list.content)):
                 ListContent.remove_list_refrence(embeded_element, self.list.id)
             self.list.delete()
             return HttpResponse(status=status.HTTP_202_ACCEPTED)
@@ -108,24 +126,6 @@ class Lists(APIView):
         list = List.objects.create(name=self.name, color=self.color, tag=self.tag, user=self.user)
         list.save()
         return
-
-    def post(self, request, *args, **kwargs):
-        self.user = request.user
-        self.id = request.POST.get('id', None)
-        self.name = request.POST.get('name', '')
-        self.color = request.POST.get('color', None)
-        self.tag = request.POST.get('tag', None)
-        self.public_read_only = request.POST.get('read_only', None)
-        self.public_list_passwd = request.POST.get('passwd', None)
-
-        self.name = self.generate_unused_name() if self.name == "" else self.name
-
-        if self.id:
-            self.update_list()
-            return HttpResponse(status=status.HTTP_202_ACCEPTED)
-        else:
-            self.create_list()
-            return HttpResponse(status=status.HTTP_201_CREATED)
 
 class ListContent(APIView):
     def get(self, request):
@@ -156,9 +156,12 @@ class ListContent(APIView):
 
         self.list = List.objects.get(id=self.id)
         if self.interactive_changes:
-            self.change_interactive_elements()        
+            save_msg = self.change_interactive_elements()        
         else:
-            self.change_content()
+            save_msg = self.change_content()
+        
+        if save_msg:
+            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
         return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
     @staticmethod
@@ -178,8 +181,8 @@ class ListContent(APIView):
         return
     
     @staticmethod
-    def add_list_refrence(embeded_element, list_id, user):
-        media = Media.objects.filter(id=embeded_element, user=user)
+    def add_list_refrence(embeded_element, list_id):
+        media = Media.objects.filter(id=embeded_element)
         if media.exists():
             media = media.first()
             #This needs to be so long and ugly because for some obscure reason it wont work otherwise...
@@ -190,6 +193,7 @@ class ListContent(APIView):
                 used_in.append(this) 
                 media.used_in_list = to_json(used_in)
                 media.save()
+        return
 
 
     def change_interactive_elements(self):
@@ -210,16 +214,23 @@ class ListContent(APIView):
         new_json_list_content = ListTransformer(self.content).content_for_db()
         new_embeded_locals = self.get_embeded_locals(new_json_list_content)
 
+        try:
+            for embeded_local in new_embeded_locals:
+                if self.id in str(from_json(Media.objects.get(id=embeded_local).used_in_list))\
+                    or Media.objects.get(id=int(embeded_local)).user == self.user:
+                    continue
+                else:
+                    raise PermissionError("Not premited to use media")
+        except (PermissionError, Media.DoesNotExist) as e:
+            return "could not save media refrences"
+        
         for historic_embeded_local in self.get_embeded_locals(from_json(self.list.content)):
             if historic_embeded_local not in new_embeded_locals:
                 self.remove_list_refrence(historic_embeded_local, self.list.id)
         
-        for embeded_local in new_embeded_locals:
-            self.add_list_refrence(embeded_local, self.list.id, self.user)
-        else:
-            #TODO: Handle error not premited to use media
-            pass
-        
+        for new_embeded_local in new_embeded_locals:
+            self.add_list_refrence(new_embeded_local, self.list.id)        
+    
         self.list.content = to_json(new_json_list_content)
 
         self.list.save()
