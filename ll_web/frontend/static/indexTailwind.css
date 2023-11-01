@@ -1,6 +1,7 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+@import 'fonts/fonts.css';
 
 /* Remove Scrollbars */
 ::-webkit-scrollbar {
@@ -14,6 +15,10 @@ body {
 /* Custom Tailwind */
 .inputElement {
   @apply bg-cat-input text-cat-main p-1 rounded-lg
+}
+
+.inputElementIcon {
+  @apply bg-cat-input rounded-lg p-1 max-h-10 cursor-pointer 
 }
 
 .infoHl {

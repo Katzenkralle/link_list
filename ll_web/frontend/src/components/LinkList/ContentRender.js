@@ -1,3 +1,5 @@
+
+
 function styleHeadline(line, level, mode){
     //Takes (mabye already formated) line, level=1-6, mode=view/edit
     if (mode == 'view'){
@@ -45,7 +47,9 @@ function styleCheckbox(line, state, id, mode){
     if (mode == 'view'){
         //Encapsulate line in html checkbox element in given state
         var htmlElement
-        htmlElement = `<input type="checkbox" ${state == true ? 'checked' : ''} id="${id}" class="viewUserContentCb">${line}</input>`
+        htmlElement = `<div class="viewUserContentCbContainer">
+        <input type="checkbox" ${state ? 'checked' : ''} id="${id}" onChange="interactivElementChangeHandler('checkbox', '${id}')"/>
+        ${line}</div>`;
         return htmlElement
     }
     else {
@@ -58,7 +62,11 @@ function formatParagraph(line, mode){
     //Takes current line, mode=view/edit
     if (mode == 'view'){
         //Set text to html paragraph element
-        var htmlElement = `<p class='viewUserContentP'>${line['text']}</p>`
+        const font_styled_line = line['text']
+        .replace(/\*\*(.*?)\*\*/g, '<a class="viewUserContentB">$1</a>')
+        .replace(/~~(.*?)~~/g, '<a class="viewUserContentSt">$1</a>')
+        .replace(/\*(.*?)\*/g, '<a class="viewUserContentI">$1</a>');
+        var htmlElement = `<p class='viewUserContentP'>${font_styled_line}</p>`
         return htmlElement
     }
     else {
@@ -84,7 +92,7 @@ function formatBreakeRow(mode){
     //Takes mode=view/edit
     if (mode == 'view'){
         //Returns html br element
-        return "<br/>"
+        return "<div>&nbsp;</div>"
     }
     else {
         //returns new line
@@ -92,19 +100,33 @@ function formatBreakeRow(mode){
     }
 }
 
-function formatLink(line, mode){
+function formatLink(line, mode, list_id){
     // Takes line (which is a link) might contain text and path, mode=view/edit
     
     //If no alt. text is given, set text to path
-    if (line['text'] == ''){
-        line['text'] = line['path']
-    }
 
     if (mode == 'view'){
         //Encapsulate line in html a element, add http:// if path dosnt start with http(/s) for absolute path
+        var htmlElement
+        if (line['path'].startsWith("embedded-locale:")){
+            let localUrlInfo = line['path'].split(/[:-@]/).filter(part => part != '')
+            htmlElement = `<div class="viewUserContentEmbededContainer"><a href="${window.location.origin}/linkListApi/mediaContent/?id=${localUrlInfo[2]}&reason=${list_id}" class="viewUserContentEmbededA"
+            ><img src="${window.location.origin}/linkListApi/mediaContent/?id=${localUrlInfo[2]}&reason=${list_id}&thubmanil=True" 
+                class="viewUserContentImg" 
+                alt="${localUrlInfo[1]}"/
+            ></a
+            ><a class="viewUserContentEmbededDisciption" 
+            href="${window.location.origin}/linkListApi/mediaContent/?id=${localUrlInfo[2]}&reason=${list_id}"
+            >${line.text}</a
+            ></div>`
+        } else {
+        if (line['text'] == ''){
+            line['text'] = line['path']
+        }
         const absoluteURL = line.path.startsWith('http') ? line.path : `http://${line.path}`;
-
-        var htmlElement = htmlElement = `<a href="${absoluteURL}" class='viewUserContentLi'>${line.text}</a>`;
+        htmlElement = `<a href="${absoluteURL}" class='viewUserContentLi'>${line.text}</a>`;
+        
+        }
         return htmlElement
     }
     else {
@@ -115,28 +137,32 @@ function formatLink(line, mode){
     }
 }
 
-
-function allLinks(content){
+export function allLinks(raw_content, list_id){
     //Takes all lines from list, returns all links in an array
     var links = []
+    var content = JSON.parse(raw_content)
     content.forEach(element => {
         if (element['type'] == 'li'){
+            if (element['path'].startsWith("embedded")){
+                let localUrlInfo = element['path'].split(/[:-@]/).filter(part => part != '')
+                links.push(`${window.location.origin}/linkListApi/mediaContent/?id=${localUrlInfo[2]}&reason=${list_id}`)
+            } else {
             links.push(element['path'])
+        }
         }
     })
     return links
 }
 
-function renderByLine(raw_content, mode){
+function renderByLine(raw_content, mode, list_id){
     //Take raw_content (JSON) and mode=view/edit/links, returns formated content (HTML or Md-like syntax)
     //with all interactiveElements or array of links
+    if (raw_content == undefined || raw_content == '' || raw_content == '[]'){
+        return ['', []]
+    }
     var content = JSON.parse(raw_content)
     var formatedContent = ''
     var interactiveElements = []
-
-    if (mode == 'links'){
-        return allLinks(content)
-    }
 
 
     content.forEach((element, index) => {
@@ -151,7 +177,7 @@ function renderByLine(raw_content, mode){
                 break;
             case 'li':
                 //console.log('li', mode)
-                formatedLine = formatLink(element, mode);
+                formatedLine = formatLink(element, mode, list_id);
                 break;
             case "br":
                 formatedLine = formatBreakeRow(mode);

@@ -17,11 +17,11 @@ function Settings() {
   const linkListFetchData = () => {
     //get data about the tags and lists from api
     return new Promise((resolve, reject) => {
-    fetch('linkListApi/getMetaHome/')
+    fetch('linkListApi/lists/')
       .then(response => response.json())
       .then(data => {
-        setMetaTags(JSON.parse(data.metaTags))
-        setMetaLists(JSON.parse(data.metaLists));
+        setMetaTags(data.metaTags)
+        setMetaLists(data.metaLists);
         resolve()
       })
       .catch(error => {console.error('Error:', error); reject()});
@@ -45,15 +45,16 @@ function Settings() {
     //Refetch the data after deleation, show short error message on failure
     //Prevent the default form submission
     event.preventDefault();
-    if (document.getElementById("select_tag").value == 'default') {
+    if (document.getElementById("tag").value == 'Default') {
       return
     }
 
     const formData = new FormData(event.target);
     formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
-    formData.append("tag_name", document.getElementById("select_tag").value)
+    formData.append("tag", document.getElementById("tag").value)
     formData.append("action", 'del')
-    fetch("linkListApi/manageTags/", {
+    formData.append("mode", 'tag')
+    fetch("linkListApi/listProfileManager/", {
       method: 'POST',
       body: formData,
     })
@@ -109,10 +110,12 @@ function Settings() {
     return new Promise((resolve, reject) => {
       const formData = new FormData();
       formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value)
-      formData.append('list', concernedList.name)
-      formData.append('readonly', concernedList.isReadonly == true ? true : concernedList.isReadonly == false ? 'writable' : 'false')
+      Object.entries(concernedList.list).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+      formData.append('read_only', concernedList.isReadonly == true ? true : concernedList.isReadonly == false ? 'rw' : 'false')
       formData.append('passwd', concernedList.passwd)
-      fetch("linkListApi/listPublicationChanges/", {
+      fetch("linkListApi/lists/", {
         method: 'POST',
         body: formData,
       })
@@ -174,7 +177,7 @@ const tagManagmet = () => {
 
           <form className='flex flex-wrap mt-1' onSubmit={(e) => deleteTag(e)}>
   
-            <select className='inputElement mx-1' id='select_tag'>
+            <select className='inputElement mx-1' id='tag'>
               <option value="default">None</option>
               {metaTags.map((option) => (
                 <option key={option} value={option}>{option}</option>
@@ -214,7 +217,7 @@ const listPublicationTable = () => {
               </thead>
               <tbody>
                 {metaLists.map((list) =>
-                  list.is_public !== "False" ? (
+                  list.public_list !== 'false' ? (
                     <tr key={list.name}>
                       <th className='tableElement'>{list.name}</th>
                       <th className='tableElement'><a href={window.location.origin + list.url}
@@ -225,17 +228,17 @@ const listPublicationTable = () => {
                           className='inputElement'
                           id={`${list.name}_cb`}
                           type="checkbox"
-                          defaultChecked={list.is_public === 'r'}
-                          onChange={(e) => { handelListPublication({ 'name': list.name, 'isReadonly': e.target.checked }) }}
+                          defaultChecked={list.public_list === 'r'}
+                          onChange={(e) => { handelListPublication({ 'list': list, 'isReadonly': e.target.checked }) }}
                         />
                       </th>
-                      <th className='tableElement'>{list.has_passwd ? 'Password protected.' : 'No Password set!'}</th>
+                      <th className='tableElement'>{list.public_list_passwd ? 'Password protected.' : 'No Password set!'}</th>
                       <th className='tableElement'>
                         <button
                           className='inputElement'
                           id={`${list.name}_del`}
                           onClick={async () => {
-                            await handelListPublication({ name: list.name, isReadonly: 'del' });
+                            await handelListPublication({ list: list, isReadonly: 'del' });
                             linkListFetchData();
                           }}
                         >Make private</button>
@@ -255,7 +258,7 @@ const listPublicationTable = () => {
               </thead>
               <tbody>
                 {metaLists.map((list) =>
-                  list.is_public !== "False" ? (
+                  list.public_list !== 'false' ? (
                     <tr key={list.name}>
                       <th className='tableElement'>
                         <button
@@ -264,13 +267,13 @@ const listPublicationTable = () => {
                             ReactDOM.createRoot(document.getElementById("tagContainer")).render(
                               <ConfirmDialog
                                 onConfirmation={async (user_input) => {if (user_input) {
-                                  await handelListPublication({ name: list.name, isReadonly: 'del' });
+                                  await handelListPublication({ list: list, isReadonly: 'del' });
                                   linkListFetchData();
                                 }}
                                 }
                                 question={window.location.origin + list.url}
                                 trueBtnText="Make Private"
-                                falseBtnText={list.has_passwd ? 'Password protected. (Sorry, this is a bodge!)' : 'No Password set! (Sorry, this is a bodge!)'}
+                                falseBtnText={list.public_list_passwd ? 'Password protected. (Sorry, this is a bodge!)' : 'No Password set! (Sorry, this is a bodge!)'}
                               />
                             )
                           }}
@@ -283,8 +286,8 @@ const listPublicationTable = () => {
                           className='inputElement'
                           id={`${list.name}_cb`}
                           type="checkbox"
-                          defaultChecked={list.is_public === 'r'}
-                          onChange={(e) => { handelListPublication({ 'name': list.name, 'isReadonly': e.target.checked }) }}
+                          defaultChecked={list.public_list === 'r'}
+                          onChange={(e) => { handelListPublication({ 'list': list, 'isReadonly': e.target.checked }) }}
                         />
                       </th>
                     </tr>
@@ -306,8 +309,8 @@ const listSelectToPublicate = () => {
             <select className='max-w-[10em] inputElement mx-1 mt-1'
               id='selectPublishList'>
               {metaLists.map((list) =>
-                list.is_public === "False" ? (
-                  <option key={list.name} value={list.name}>
+                list.public_list === 'false' ? (
+                  <option key={list.name} value={list.id}>
                     {list.name}
                   </option>
                 ) : null
@@ -320,7 +323,7 @@ const listSelectToPublicate = () => {
               onClick={async (e) => {
                 e.preventDefault();
                 await handelListPublication({
-                  'name': document.getElementById('selectPublishList').value,
+                  'list': metaLists.filter((list) => document.getElementById('selectPublishList').value == list.id)[0],
                   'isReadonly': document.getElementById('publishListMode').checked,
                   'passwd': document.getElementById('publishListPasswd').value
                 })

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import LinkListProfile, List
+from .models import LinkListProfile, List, Media
 
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
@@ -11,5 +11,6 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.register(LinkListProfile)
 admin.site.register(List)
+admin.site.register(Media)
 admin.site.unregister(User)  # Unregister the default User admin
 admin.site.register(User, CustomUserAdmin)  # Register the User model with the custom admin class

@@ -17,6 +17,7 @@ module.exports = {
           colors: {
             'cat-bg': '#303446',
             'cat-input': '#232634',
+            'cat-inputColor': '#c89ce4',
             'cat-bg2': '#292C3C',
             'cat-surface': '#414559',
             'cat-overlay': '#949cbb',
@@ -31,7 +32,11 @@ module.exports = {
             'cat-border': '#babbf1',
             'cat-borderInactive': '#a6a6a6',
             'cat-bordeBell': '#e5c890',
-          }
+          },
+          fontFamily: {
+            'ubuntuMono': ['Ubuntu Mono', 'monospace'],
+            'dejavuSansMono': ['dejavu_sans_monobook', 'monospace'],
+          },
       },
       screens: {
         'sm': {'max': '768px'},

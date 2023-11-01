@@ -23,4 +23,5 @@ urlpatterns = [
     path('', include('frontend.urls')),
     path('otherApi/', include('other_api.urls')),
     path('weatherApi/', include('weather_api.urls')),
+    path('playground/', include('playground.urls')),
 ]

@@ -39,6 +39,20 @@ function AppHome() {
                     </div>
 
                     <div
+                        className='interactiveContainer bg-purple-600'
+                        onClick={() => {
+                            window.location.href = '/asciiColor';
+                        }}
+                    >
+                        <h3 className='infoHl mb-2'>Img-to-Ascii</h3>
+
+                        <div className='whitespace-normal'>
+                            Convert an image to Ascii-chars or Unicode-blocks, download the result colorized or in plain text!
+                        </div>
+                    </div>
+
+
+                    <div
                         className='interactiveContainer bg-pink-900'
                         onClick={() => {
                             window.location.href = 'https://github.com/Katzenkralle/link_list';

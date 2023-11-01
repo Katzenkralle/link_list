@@ -89,12 +89,12 @@ function HomePage() {
   const fetchData = () => {
     //Fetches meta data from api
     //split into attributes to simplify, also reruns filterHandler
-    fetch('linkListApi/getMetaHome/')
+    fetch('linkListApi/lists/')
       .then(response => response.json())
       .then(data => {  document.getElementById('loadingAnimation').style.display = 'none';
-                    setMetaTags(JSON.parse(data.metaTags)); 
-                     setMetaLists(JSON.parse(data.metaLists));
-                     setMetaUser(JSON.parse(data.metaUser))
+                    setMetaTags(data.metaTags); 
+                     setMetaLists(data.metaLists);
+                     setMetaUser(data.metaUser)
                      filterHandler();})
       .catch(error => console.error('Error:', error));
   };

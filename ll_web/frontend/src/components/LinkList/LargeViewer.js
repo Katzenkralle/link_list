@@ -2,38 +2,52 @@ import React, { useEffect, useState, Component} from 'react';
 import ListEditor from './ListEditor';
 
 function LargeViewer() {
-    const [listData, setListData] = useState({passwd_needed: undefined});
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isEditable, setIsEditable] = useState(false);
+
     const [passwdForList, setPasswdForList] = useState('');
 
     const fetchData= () => {
       // Get data about list which id is in the url, if user provided a password, send it
-        console.log("fetching data")
-        fetch('linkListApi/getDataViewerLarge' + window.location.search + (passwdForList !== '' ? '&passwd=' + passwdForList : ''))
-        .then(response => response.json())
-            .then(data => {
-                setListData(data);
-            })
-            .catch(error => console.error('Error:', error));
-    };
-    
-    useEffect(() => {
-        fetchData();
-    }, []);
+      const formData = new FormData();
+      formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value);
+      formData.append("id", window.location.search.split('=')[1]);
+      formData.append("passwd", passwdForList);
+      fetch(`linkListApi/authGuest/`, {
+          method: 'POST',
+          body: formData,
+      }).then((response) => {
+          if (!response.ok || response == undefined) {
+              throw Error(response.statusText);
+          }
+            return response.text()})
+        .then((text) => {
+            setIsEditable(true ? text == "rw" : false);
+            setIsAuthenticated(true);
+      }).catch(error => {
+              setIsAuthenticated(false);
+              const msg = document.getElementById('largeViewerMsg');
+              msg.innerHTML = error;
+              setTimeout(() => {
+                  msg.innerHTML = '';
+              }, 5000);
+            });
+          };
+
+          useEffect(() => {
+            fetchData();
+          }, []);
     
     return (
       //when password is not needed, show the list editor, otherwise show a password input
       //password needet until list backend returns a list
         <div className='dark:text-white'>
-          {listData.passwd_needed === false ? (
+          {isAuthenticated ? (
             <ListEditor update_data={() => fetchData()}
-            name={listData.name}
-            id = {listData.id}
-            color={('color' in listData ? listData.color : undefined)} 
-            tag={('tag' in listData ? listData.tag[0] : undefined)}
-            content={listData.content} 
-            tag_names={('tag_names' in listData ? listData.tag_names : undefined)}
-            is_editable={listData.is_editable}
-            called_from_large_viewer={true}
+            listId = {window.location.search.split('=')[1]}
+            parent = {'largeViewer'}
+            isEditable = {isEditable}
+            exit = {() => window.location.reload()}
             />
           ) : (
             <div className='flex flex-col'>
@@ -41,12 +55,14 @@ function LargeViewer() {
                 <h3 className='mainHl mx-auto my-5'>Guest Viewer</h3>
                 <p className='mx-auto infoHl mx-auto mb-2'>Password needed!</p>
 
-                <div className='mx-auto mx-auto'>
+                <div className='m-auto'>
                   <input className='inputElement' type='password' onChange={e => setPasswdForList(e.target.value)}/>
                   <button className='inputElement ml-1' onClick={() => fetchData()}>Submit</button>
                 </div>
+                <p id="largeViewerMsg" className='text-cat-error mx-auto'></p>
             </div>
           )}
+        <div id='tagContainer'></div>
         </div>
       );
 }
