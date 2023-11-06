@@ -68,6 +68,19 @@ function AppHome() {
                     <div
                         className='interactiveContainer bg-slate-600'
                         onClick={() => {
+                            window.location.href = '/durak';
+                        }}
+                    >
+                        <h3 className='infoHl mb-2'>Durak</h3>
+
+                        <div className='whitespace-normal'>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                        </div>
+                    </div>
+
+                    <div
+                        className='interactiveContainer bg-slate-600'
+                        onClick={() => {
                             window.location.href = '/settings';
                         }}
                     >
