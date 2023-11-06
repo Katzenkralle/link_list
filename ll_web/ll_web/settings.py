@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'weather_api',
     'other_api',
     'frontend',
-    "playground"
+    'playground',
+    'durak'
 ]
 
 CRON_CLASSES = [

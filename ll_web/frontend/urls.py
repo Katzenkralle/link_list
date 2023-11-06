@@ -15,4 +15,5 @@ urlpatterns = [
 
     path('weather', index),
     path('asciiColor', index),
+    path('durak', index_no_login)
 ]

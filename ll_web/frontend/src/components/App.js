@@ -10,7 +10,7 @@ import LargeViewer from "./LinkList/LargeViewer";
 import AppHome from "./Other/AppHome";
 import HomeWeather from "./weather/HomeWeather";
 import HomeAsciiColor from "./asciiColor/HomeAsciiColor";
-
+import HomeDurak from "./durak/HomeDurak";
 
 function App() {
     return (
@@ -23,6 +23,7 @@ function App() {
                 <Route path="" element={<AppHome />} /> 
                 <Route path="weather" element={<HomeWeather />} />
                 <Route path="asciiColor" element={<HomeAsciiColor />} />
+                <Route path="durak" element={<HomeDurak />} />
             </Routes>
         </Router>
     );
