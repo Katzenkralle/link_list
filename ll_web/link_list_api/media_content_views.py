@@ -19,6 +19,7 @@ import os
 import base64
 from PIL import Image
 from io import BytesIO
+import re
 
 def compress_img(image_data, max_wh=(200, 200)):
     # Open the image from binary data
@@ -151,7 +152,9 @@ class GetMedia(APIView):
                 media.delete()
                 return JsonResponse({'status': 'done'})
             case 'rename':
-                new_name = request.POST.get('new_name', None)
+                new_name = request.POST.get('new_name', '').replace(' ', '_')
+                if not bool(re.match(r'^[\w\.-]+$', new_name)):
+                    return JsonResponse({'status': 'error, invalid name'})
                 if Media.objects.filter(user=user, name=new_name).exists():
                     return JsonResponse({'status': 'error, name already exists'})
                 path_to_file = os.path.join(os.getcwd(), f"ll_web/data/{user.id}/media/{name}")
