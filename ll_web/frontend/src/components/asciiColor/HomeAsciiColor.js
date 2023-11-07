@@ -153,7 +153,7 @@ function HomeAsciiColor() {
                 > Select</button>
                 <button 
                     id="transform" 
-                    className={`inputElement ${selectedImg == null ? "!bg-cat-bg2 !text-cat-sub opacity-75 cursor-not-allowed" : ""}`}
+                    className={`inputElement ${selectedImg == null ? "disabledInput" : ""}`}
                     onClick={() => {
                         selectedImg == null ? null : 
                         transform()

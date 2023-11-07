@@ -21,6 +21,10 @@ body {
   @apply bg-cat-input rounded-lg p-1 max-h-10 cursor-pointer 
 }
 
+.disabledInput {
+  @apply !bg-cat-bg2 !text-cat-sub opacity-75 cursor-not-allowed
+}
+
 .infoHl {
   @apply text-xl font-bold 
 }
