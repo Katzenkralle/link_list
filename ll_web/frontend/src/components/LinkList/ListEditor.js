@@ -271,7 +271,7 @@ const ListEditor = (props) => {
               <textarea
                 key={renderedContent} //Must stay, otherwise react dosnt rerender
                 id="list_content"
-                className="mainBody bg-cat-bg2 text-cat-light focus:outline focus:outline-1 focus:outline-cat-border focus:text-cat-main"
+                className="mainBody bg-cat-bg2 text-cat-light font-mono focus:outline focus:outline-1 focus:outline-cat-border focus:text-cat-main"
                 defaultValue={renderedContent}
                 onKeyDown={(e) => {
                   monitorKeyPressTextarea(e);

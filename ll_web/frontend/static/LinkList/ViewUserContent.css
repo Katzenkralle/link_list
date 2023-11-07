@@ -54,7 +54,9 @@ li * {
     @apply max-w-full max-h-[75vh] object-contain my-2 hover:cursor-pointer ml-0
 }
 
-
+.viewUserContentMultiline{
+    @apply flex flex-col font-mono bg-cat-bg2 rounded-lg p-2 overflow-x-scroll w-fit
+}
 
 h1.viewUserContentH {
     @apply text-3xl font-bold text-cat-main
