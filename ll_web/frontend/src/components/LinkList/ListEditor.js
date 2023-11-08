@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import renderByLine, {allLinks} from './ContentRender';
 import '../../../static/LinkList/tailwindListEditor.css'
 import '../../../static/LinkList/ViewUserContent.css'
-import { interactivElementChangeHandler, selectName, deleteListButton, selectTag, selectColor, exitEditorButton, hamburgerIcon, changeViewMode, monitorKeyPressTextarea, handleInsertion } from './ListEditorHelper';
+import { interactivElementChangeHandler, monitorKeyRelease, selectName, deleteListButton, selectTag, selectColor, exitEditorButton, hamburgerIcon, changeViewMode, monitorKeyPress, handleInsertion } from './ListEditorHelper';
 import MediaContentManager from '../asciiColor/MediaContentManager';
 
 
@@ -70,7 +70,7 @@ const ListEditor = (props) => {
             const formData = new FormData();
             formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value);
             formData.append("id", listId);
-            formData.append("content", document.getElementById('list_content').value);
+            formData.append("content", document.getElementById('listContent').value);
             fetch(`linkListApi/listContent/`, {
                 method: 'POST',
                 body: formData,
@@ -93,6 +93,7 @@ const ListEditor = (props) => {
         getContent();
         listSaveMsg.classList.add('text-cat-success');
         listSaveMsg.innerHTML = 'Saved';
+        document.getElementById("listContent").focus()
         setTimeout(() => {listSaveMsg.classList.remove('text-cat-success'); listSaveMsg.innerHTML = '';}, 5000);
       }).catch(error => {
         listSaveMsg.classList.add('text-cat-error');
@@ -231,6 +232,7 @@ const ListEditor = (props) => {
               <h3 className='centerBlock infoHl'>{name}</h3>
               {parent == 'largeViewer' ? <div className='ml-auto mr-1'>&nbsp;</div> :
                <img 
+                id="exitEditor"
                 src='static/media/close.png'
                className='ml-auto mr-1 mt-1 inputElementIcon' 
                onClick={() => exitEditor()}/>}
@@ -250,6 +252,7 @@ const ListEditor = (props) => {
               <img className="inputElementIcon" src="static/media/list.png" onClick={() => { handleInsertion('->. ') }}/>
               <img className="inputElementIcon" src="static/media/list_orderd.png" onClick={() => { handleInsertion('-x. ') }}/>
               <img className="inputElementIcon" src="static/media/checkbox.png" onClick={() => { handleInsertion('[ ] ') }}/>
+              <img className='inputElementIcon' src="static/media/codeblock.png" onClick={() => {handleInsertion("```\n\n```", 4)}} ></img>
               <img className="inputElementIcon" src="static/media/spacer.png" onClick={() => { handleInsertion('---\n') }}/>
               <img className="inputElementIcon" src="static/media/ignore.png" onClick={() => { handleInsertion('!x!') }}/>
               <img className="inputElementIcon" src="static/media/media.png" 
@@ -270,11 +273,17 @@ const ListEditor = (props) => {
             //If in edit mode, render textarea with content, (rendering must have finished first)
               <textarea
                 key={renderedContent} //Must stay, otherwise react dosnt rerender
-                id="list_content"
+                id="listContent"
                 className="mainBody bg-cat-bg2 text-cat-light font-mono focus:outline focus:outline-1 focus:outline-cat-border focus:text-cat-main"
                 defaultValue={renderedContent}
                 onKeyDown={(e) => {
-                  monitorKeyPressTextarea(e);
+                  monitorKeyPress(e, viewMode, saveHandler);
+                }}
+                onKeyUp={(e) => {
+                  monitorKeyRelease(e)
+                }}
+                onBlur={() => {
+                  monitorKeyRelease(null, true)
                 }}
               ></textarea>
             ) : (

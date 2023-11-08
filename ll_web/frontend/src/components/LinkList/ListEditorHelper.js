@@ -2,10 +2,10 @@ import React, { useEffect, useState, Component} from 'react';
 import ReactDOM from 'react-dom/client';
 import ConfirmDialog from '../Other/ConfirmDialog'
 
-export const handleInsertion = (strToInset) => {
+export const handleInsertion = (strToInset, moveCursor) => {
     //Handles the insertion of strings into the textarea
     //Insert at cursor position, the provided string
-    const textarea = document.getElementById('list_content');
+    const textarea = document.getElementById('listContent');
     const startPos = textarea.selectionStart;
     const endPos = textarea.selectionEnd;
 
@@ -19,15 +19,42 @@ export const handleInsertion = (strToInset) => {
     //Moves cursor to after str
     textarea.value = newValue;
     textarea.focus();
-    textarea.setSelectionRange(startPos + strToInset.length, startPos + strToInset.length);
+    if (!moveCursor) {
+      textarea.setSelectionRange(startPos + strToInset.length, startPos + strToInset.length);
+    } else {
+      textarea.setSelectionRange(startPos + moveCursor, startPos + moveCursor);
+    }
   };
 
-export const monitorKeyPressTextarea = (event) => {
+let pressedKeys = []
+export const monitorKeyPress = (event, viewMode, saveHandler) => {
+    pressedKeys.includes(event.keyCode) ? null : pressedKeys.push(event.keyCode)
+    console.log(pressedKeys)
     //Monitors keypresses in textarea
-    if (event.keyCode === 9) { //If Tab is pressed
-      event.preventDefault()
-      handleInsertion("    ")
+    switch (event.keyCode) {
+      case 9: //Tab
+        event.preventDefault()
+        handleInsertion("    ")
+        break        
     }
+    if (pressedKeys.includes(17)) { //ctrl
+     if (pressedKeys.includes(83) && viewMode == "edit"){ //s
+        event.preventDefault()
+        saveHandler()
+      } else if (pressedKeys.includes(88)){ //x
+        pressedKeys = []
+        document.getElementById("exitEditor").click()
+      }
+    }
+    }
+export const monitorKeyRelease = (event, delAll) => {
+  if (delAll) {
+    pressedKeys = []
+    console.log(pressedKeys)
+    return
+  }
+  pressedKeys = pressedKeys.filter(key => key != event.keyCode)
+  console.log(pressedKeys)
 }
 
 export const hamburgerIcon = (showMenu, setShowMenu) => {
@@ -103,10 +130,11 @@ export const exitEditorButton = (htmlClassName, parent, exitEditor, renderedCont
     } else {
       return (
         <img
+          id="exitEditor"
           className={`${htmlClassName} inputElementIcon mt-1`}
           src='/static/media/close.png'
           onClick={() => {
-            if (document.getElementById('list_content').value.replace(/\r/g, '') === renderedContent.replace(/\r/g, '')) {
+            if (document.getElementById('listContent').value.replace(/\r/g, '') === renderedContent.replace(/\r/g, '')) {
               exitEditor();
             } else {
               ReactDOM.createRoot(document.getElementById('tagContainer')).render(
@@ -169,7 +197,7 @@ export const changeViewMode = (renderedContent, setViewMode, viewMode, getConten
           setViewMode('edit');
         } else {
           //If in edit mode, check if content has changed, if so, display confirmation dialog, if not, change view mode
-          if (document.getElementById('list_content').value.replace(/\r/g, '') === renderedContent.replace(/\r/g, '')) {
+          if (document.getElementById('listContent').value.replace(/\r/g, '') === renderedContent.replace(/\r/g, '')) {
             setViewMode('view');
           } else {
             ReactDOM.createRoot(document.getElementById("tagContainer")).render(
