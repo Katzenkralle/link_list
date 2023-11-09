@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom/client';
 import renderByLine, {allLinks} from './ContentRender';
 import '../../../static/LinkList/tailwindListEditor.css'
 import '../../../static/LinkList/ViewUserContent.css'
-import { interactivElementChangeHandler, monitorKeyRelease, selectName, deleteListButton, selectTag, selectColor, exitEditorButton, hamburgerIcon, changeViewMode, monitorKeyPress, handleInsertion } from './ListEditorHelper';
+import { interactivElementChangeHandler, monitorKeyPress, monitorKeyRelease, handleInsertion, 
+  selectName, deleteListButton, selectTag, selectColor, exitEditorButton, hamburgerIcon, changeViewMode,} from './ListEditorHelper';
 import MediaContentManager from '../asciiColor/MediaContentManager';
 
 
@@ -25,7 +26,6 @@ const ListEditor = (props) => {
     const displayWidth = window.innerWidth;
 
     window.location.hash = `#${listId}`
-
 
     const getContent = () => {
         fetch(`linkListApi/listContent/?id=${listId}`)
@@ -149,26 +149,47 @@ const ListEditor = (props) => {
         window.interactivElementChangeHandler = interactivElementChangeHandler;
     
 
+        const keydownHandler = (e) => {
+          monitorKeyPress(e, viewMode, saveHandler, document.activeElement.id == 'listContent');
+        }
+        const keyupHandler = (e) => {
+          monitorKeyRelease(e);
+        };
+         const blurHandler =  () => {
+          monitorKeyRelease(null, true);
+        }
+
+
    const exitEditor = () => {
       window.interactivElementChangeHandler = undefined; 
       window.location.hash = '';
+      window.removeEventListener('keydown', keydownHandler);
+      window.removeEventListener('keyup', keyupHandler);
+      window.removeEventListener('blur', blurHandler);
       props.exit()
       ReactDOM.createRoot(document.getElementById('listEditor')).unmount();
     
     }
-    
 
     useEffect(() => {
-        getContent()
-    },[]);
-
+      // Fetch content
+      getContent();
+      // Adding event listeners to the document
+      if (!window.ListEventHandeler) {
+      window.addEventListener('keydown', keydownHandler)
+      window.addEventListener('keyup', keyupHandler)
+      window.addEventListener('blur', blurHandler);
+      window.ListEventHandeler = true
+      }
+  }, []);
+  
     useEffect(() => {
         let [formCont, interElem] = (renderByLine(content, viewMode, listId));
         setRenderedContent(formCont);
         setInteractiveElements(interElem);
     },[content, viewMode]);
 
-    const topBar = () => {
+        const topBar = () => {
         return (
           viewMode == 'edit' ? (
             //Top bar in edit mode
@@ -276,15 +297,6 @@ const ListEditor = (props) => {
                 id="listContent"
                 className="mainBody bg-cat-bg2 text-cat-light font-mono focus:outline focus:outline-1 focus:outline-cat-border focus:text-cat-main"
                 defaultValue={renderedContent}
-                onKeyDown={(e) => {
-                  monitorKeyPress(e, viewMode, saveHandler);
-                }}
-                onKeyUp={(e) => {
-                  monitorKeyRelease(e)
-                }}
-                onBlur={() => {
-                  monitorKeyRelease(null, true)
-                }}
               ></textarea>
             ) : (
             // If in view mode, render div with content (rendering must have finished first)
