@@ -29,16 +29,18 @@ export const handleInsertion = (strToInset, moveCursor) => {
   };
 
 let pressedKeys = []
-export const monitorKeyPress = (event, viewMode, saveHandler) => {
+export const monitorKeyPress = (event, viewMode, saveHandler, editorFocused) => {
     pressedKeys.includes(event.keyCode) ? null : pressedKeys.push(event.keyCode)
-    console.log(pressedKeys)
     //Monitors keypresses in textarea
-    switch (event.keyCode) {
-      case 9: //Tab
-        event.preventDefault()
-        handleInsertion("    ")
-        break        
+    if (editorFocused) {
+      switch (event.keyCode) {
+        case 9: //Tab
+          event.preventDefault()
+          handleInsertion("    ")
+          break        
+      }
     }
+    //Monitors keypresses in window
     if (pressedKeys.includes(17)) { //ctrl
      if (pressedKeys.includes(83) && viewMode == "edit"){ //s
         event.preventDefault()
@@ -52,11 +54,9 @@ export const monitorKeyPress = (event, viewMode, saveHandler) => {
 export const monitorKeyRelease = (event, delAll) => {
   if (delAll) {
     pressedKeys = []
-    console.log(pressedKeys)
     return
   }
   pressedKeys = pressedKeys.filter(key => key != event.keyCode)
-  console.log(pressedKeys)
 }
 
 export const hamburgerIcon = (showMenu, setShowMenu) => {
