@@ -89,7 +89,7 @@ class GetMedia(APIView):
             path_to_fodler = os.path.join(os.getcwd(), f"ll_web/data/{db_entry.user.id}/media")
 
             if thubmanil and not db_entry.type.startswith('image'):
-                with open(os.path.join(os.getcwd(), "ll_web/frontend/static/media/file.png"), 'rb') as file:
+                with open(os.path.join(os.getcwd(), "ll_web/frontend/static/media/other/file.png"), 'rb') as file:
                     return HttpResponse(file, content_type='image/png')
             with open(path_to_fodler + '/' + db_entry.name, 'rb') as file:
                 res = HttpResponse(file, content_type=db_entry.type)
@@ -130,7 +130,7 @@ class GetMedia(APIView):
                     img = compress_img(file.read(), max_wh=(400, 400))
                     entry["file"] = base64.b64encode(img).decode('utf-8')
             else:
-                with open(os.path.join(os.getcwd(), "ll_web/frontend/static/media/file.png"), 'rb') as file:
+                with open(os.path.join(os.getcwd(), "ll_web/frontend/static/media/other/file.png"), 'rb') as file:
                     img = compress_img(file.read(), max_wh=(400, 400))
                     entry["file"] = base64.b64encode(img).decode('utf-8')
         possition = {"start": start_at, "end": start_at + len(media), "total": len(filtered_objects)}

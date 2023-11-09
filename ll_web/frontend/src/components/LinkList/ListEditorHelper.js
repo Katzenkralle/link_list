@@ -29,7 +29,7 @@ export const handleInsertion = (strToInset, moveCursor) => {
   };
 
 let pressedKeys = []
-export const monitorKeyPress = (event, viewMode, saveHandler, editorFocused) => {
+export const monitorKeyPress = (event, saveHandler, editorFocused) => {
     pressedKeys.includes(event.keyCode) ? null : pressedKeys.push(event.keyCode)
     //Monitors keypresses in textarea
     if (editorFocused) {
@@ -42,15 +42,18 @@ export const monitorKeyPress = (event, viewMode, saveHandler, editorFocused) => 
     }
     //Monitors keypresses in window
     if (pressedKeys.includes(17)) { //ctrl
-     if (pressedKeys.includes(83) && viewMode == "edit"){ //s
+     if (pressedKeys.includes(83)){ //s
         event.preventDefault()
         saveHandler()
       } else if (pressedKeys.includes(88)){ //x
         pressedKeys = []
         document.getElementById("exitEditor").click()
+      } else if (pressedKeys.includes(69)){ //e
+          document.getElementById("changeMode").click()
       }
     }
-    }
+  }
+
 export const monitorKeyRelease = (event, delAll) => {
   if (delAll) {
     pressedKeys = []
@@ -73,6 +76,7 @@ export const selectName = (htmlClassName, name, setName) => {
   return ( 
     <input 
     value={name}
+    id="listName"
     onChange={(e) => {setName(e.target.value)}}
     className={`${htmlClassName} infoHl rounded-full bg-cat-bg text-center
     hover:outline hover:outline-2 hover:outline-cat-border hover:bg-cat-input 
@@ -89,7 +93,7 @@ export const selectTag = (htmlClassName, setTag, tag, parent, tagsOfOwner) => {
         <select
         className={`${htmlClassName} inputElementSlim`}
           onChange={(e) => { setTag(e.target.value) }}
-          id="list_tag"
+          id="listTag"
           defaultValue={tag}>
 
           <option value="Default">Default</option>
@@ -113,10 +117,11 @@ export const selectColor = (htmlClassName, color, setColor, parent) => {
     } else {
       return (
         <input
+
         className={`!p-[revert] h-[1.5em] ${htmlClassName} inputElementSlim`}
           onChange={(e) => { setColor(e.target.value) }}
           type="color"
-          id="list_color_editor"
+          id="listColor"
           name="list_color_editor"
           defaultValue={color}
         />
@@ -187,6 +192,7 @@ export const changeViewMode = (renderedContent, setViewMode, viewMode, getConten
     return (
       <img
         className="inputElementIcon mx-1"
+        id="changeMode"
         src={`${STATICS.OTHER}change_mode.png`}
         onClick={async () => {
         if (viewMode === 'view') {

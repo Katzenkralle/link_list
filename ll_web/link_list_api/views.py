@@ -46,7 +46,6 @@ class Lists(APIView):
     def list_passwd_hash(list_passwd):
         return sha256(list_passwd.encode('utf-8')).hexdigest()
 
-
     def get(self, request, *args, **kwargs):
         self.user = request.user
 
@@ -138,7 +137,7 @@ class Lists(APIView):
         #Create new list
         list = List.objects.create(name=self.name, color=self.color, tag=self.tag, user=self.user)
         list.save()
-        return
+        return list.id
 
 class ListContent(APIView):
     def get(self, request):

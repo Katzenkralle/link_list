@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect } from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom';
 import renderByLine, {allLinks} from './ContentRender';
 import '../../../static/LinkList/tailwindListEditor.css'
 import '../../../static/LinkList/ViewUserContent.css'
@@ -9,7 +9,7 @@ import MediaContentManager from '../asciiColor/MediaContentManager';
 
 import { STATICS } from '../Other/StaticPaths';
 
-const ListEditor = (props) => {
+function ListEditor (props){
     const listId = props.listId;
     const [name, setName] = useState("");
     const [color, setColor] = useState("");
@@ -48,9 +48,9 @@ const ListEditor = (props) => {
             const formData = new FormData();
             formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value);
             formData.append("id", listId);
-            formData.append("name", name);
-            formData.append("color", del ? 'del' : color);
-            formData.append("tag", tag);
+            formData.append("name", document.getElementById('listName').value);
+            formData.append("color", del ? 'del' : document.getElementById('listColor').value);
+            formData.append("tag", document.getElementById('listTag').value);
             fetch(`linkListApi/lists/`, {
                 method: 'POST',
                 body: formData,
@@ -87,6 +87,9 @@ const ListEditor = (props) => {
     };
 
     const saveHandler = () => {
+      if (!document.getElementById('listContent')) {
+        return
+      }
       //Saves list and content, then exits editor
       let listSaveMsg = document.getElementById('listEditMsg');
       listSaveMsg.classList.add('bg-cat-warning', 'loadingPing', 'rounded-full');
@@ -147,42 +150,41 @@ const ListEditor = (props) => {
             }             
           }
         };
-        window.interactivElementChangeHandler = interactivElementChangeHandler;
-    
+              window.interactivElementChangeHandler = interactivElementChangeHandler;
 
-        const keydownHandler = (e) => {
-          monitorKeyPress(e, viewMode, saveHandler, document.activeElement.id == 'listContent');
-        }
-        const keyupHandler = (e) => {
-          monitorKeyRelease(e);
-        };
-         const blurHandler =  () => {
-          monitorKeyRelease(null, true);
-        }
+         const exitEditor = () => {
+            window.interactivElementChangeHandler = undefined; 
+            window.location.hash = '';
+            props.exit();         
+          }
 
+          useEffect(() => {
+            // Fetch content
+            getContent();
 
-   const exitEditor = () => {
-      window.interactivElementChangeHandler = undefined; 
-      window.location.hash = '';
-      window.removeEventListener('keydown', keydownHandler);
-      window.removeEventListener('keyup', keyupHandler);
-      window.removeEventListener('blur', blurHandler);
-      props.exit()
-      ReactDOM.createRoot(document.getElementById('listEditor')).unmount();
-    
-    }
+            // Keydown handler
+            const keydownHandler = (e) => {
+              monitorKeyPress(e, saveHandler, document.activeElement.id == 'listContent');
+            }
+            const keyupHandler = (e) => {
+              monitorKeyRelease(e);
+            };
+            const blurHandler =  () => {
+            monitorKeyRelease(null, true);
+          }
 
-    useEffect(() => {
-      // Fetch content
-      getContent();
-      // Adding event listeners to the document
-      if (!window.ListEventHandeler) {
-      window.addEventListener('keydown', keydownHandler)
-      window.addEventListener('keyup', keyupHandler)
-      window.addEventListener('blur', blurHandler);
-      window.ListEventHandeler = true
-      }
-  }, []);
+            // Adding event listeners to the document
+            window.addEventListener('keydown', keydownHandler)
+            window.addEventListener('keyup', keyupHandler)
+            window.addEventListener('blur', blurHandler)
+            // Cleanup
+            return () => {
+              console.log('cleanup')
+              window.removeEventListener('keydown', keydownHandler)
+              window.removeEventListener('keyup', keyupHandler)
+              window.removeEventListener('blur', blurHandler)
+            }
+        }, []);
   
     useEffect(() => {
         let [formCont, interElem] = (renderByLine(content, viewMode, listId));
@@ -352,7 +354,7 @@ const ListEditor = (props) => {
             {topBar()}
     
             {editButtons()}
-    
+
             {contentArea()}
     
             {fotter()}

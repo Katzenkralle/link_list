@@ -145,7 +145,7 @@ function formatMultiline(line, mode, previousLine, nextLine){
         if (previousLine == undefined || previousLine.type != "ml" || previousLine.style[0][0] != line.style[0][0]){
             htmlElement += `<pre class="viewUserContentMultiline"><code>`
         }
-        htmlElement += `${line['text']}`
+        htmlElement += `${line['text']}${line['text'] == "" || line['text'].slice(-1).includes("\n\r") ? "" : "\n"}`
         if (nextLine == undefined || nextLine.type != "ml" || nextLine.style[0][0] != line.style[0][0]){
             htmlElement += `</code></pre>`
         }

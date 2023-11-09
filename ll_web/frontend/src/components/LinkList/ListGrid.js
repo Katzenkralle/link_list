@@ -7,6 +7,8 @@ function ListGrid(props) {
   const [lists, setLists] = useState(props.lists);
   const [draging, setDraging] = useState(false);
 
+  let [listEditorRoot, setListEditorRoot] = useState(null);
+
   const updateOrder = (lists) => {
     const errorDisplay = document.getElementById('list_creation_msg');
     const order = lists.map((list) => list.id);
@@ -24,6 +26,10 @@ function ListGrid(props) {
       })
   }
 
+  
+  useEffect(() => {
+    setListEditorRoot(ReactDOM.createRoot(document.getElementById('listEditor')));
+  }, []);
 
   useEffect(() => {
     //update the lists when the props change
@@ -42,12 +48,12 @@ function ListGrid(props) {
     if (!matchingList) {
       window.location.hash = '';
     } else {
-      ReactDOM.createRoot(document.getElementById("listEditor")).render(
+      listEditorRoot.render(
         <ListEditor
           listId={matchingList.id}
           parent={'default'}
           isEditable={true}
-          exit={() => props.update_data()}
+          exit={() => {props.update_data();listEditorRoot.render();}}
         />
       );
     }
@@ -84,12 +90,12 @@ function ListGrid(props) {
             <div className={`interactiveContainer ${draging ? 'outline outline-cat-borderInactive outline-5' : ''}`}
               style={{ backgroundColor: list.color, color: getBgColor(list.color) }}
               onClick={(e) => {
-                ReactDOM.createRoot(document.getElementById("listEditor")).render(
+                listEditorRoot.render(
                   <ListEditor
                     listId={list.id}
                     parent={'default'}
                     isEditable={true}
-                    exit={() => props.update_data()}
+                    exit={() => {props.update_data();listEditorRoot.render();}}
                   />
                 )
               }}>
