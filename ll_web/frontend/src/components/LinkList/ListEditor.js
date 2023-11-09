@@ -6,6 +6,7 @@ import '../../../static/LinkList/ViewUserContent.css'
 import { interactivElementChangeHandler, monitorKeyRelease, selectName, deleteListButton, selectTag, selectColor, exitEditorButton, hamburgerIcon, changeViewMode, monitorKeyPress, handleInsertion } from './ListEditorHelper';
 import MediaContentManager from '../asciiColor/MediaContentManager';
 
+import { STATICS } from '../Other/StaticPaths';
 
 const ListEditor = (props) => {
     const listId = props.listId;
@@ -233,7 +234,7 @@ const ListEditor = (props) => {
               {parent == 'largeViewer' ? <div className='ml-auto mr-1'>&nbsp;</div> :
                <img 
                 id="exitEditor"
-                src='static/media/close.png'
+                src={`${STATICS.OTHER}close.png`}
                className='ml-auto mr-1 mt-1 inputElementIcon' 
                onClick={() => exitEditor()}/>}
             </div>
@@ -247,15 +248,15 @@ const ListEditor = (props) => {
           viewMode == 'edit' ? (
             //If in edit mode, show all edit buttons
             <div className='editButtons'>
-              <img className="inputElementIcon" src="static/media/headline.png" onClick={() => { handleInsertion('# ') }}/>
-              <img className="inputElementIcon" src="static/media/link.png" onClick={() => { handleInsertion('[]()') }}/>
-              <img className="inputElementIcon" src="static/media/list.png" onClick={() => { handleInsertion('->. ') }}/>
-              <img className="inputElementIcon" src="static/media/list_orderd.png" onClick={() => { handleInsertion('-x. ') }}/>
-              <img className="inputElementIcon" src="static/media/checkbox.png" onClick={() => { handleInsertion('[ ] ') }}/>
-              <img className='inputElementIcon' src="static/media/codeblock.png" onClick={() => {handleInsertion("```\n\n```", 4)}} ></img>
-              <img className="inputElementIcon" src="static/media/spacer.png" onClick={() => { handleInsertion('---\n') }}/>
-              <img className="inputElementIcon" src="static/media/ignore.png" onClick={() => { handleInsertion('!x!') }}/>
-              <img className="inputElementIcon" src="static/media/media.png" 
+              <img className="inputElementIcon" src={`${STATICS.LINK_LIST}headline.png`} onClick={() => { handleInsertion('# ') }}/>
+              <img className="inputElementIcon" src={`${STATICS.LINK_LIST}link.png`} onClick={() => { handleInsertion('[]()') }}/>
+              <img className="inputElementIcon" src={`${STATICS.LINK_LIST}list.png`} onClick={() => { handleInsertion('->. ') }}/>
+              <img className="inputElementIcon" src={`${STATICS.LINK_LIST}list_orderd.png`} onClick={() => { handleInsertion('-x. ') }}/>
+              <img className="inputElementIcon" src={`${STATICS.LINK_LIST}checkbox.png`} onClick={() => { handleInsertion('[ ] ') }}/>
+              <img className='inputElementIcon' src={`${STATICS.LINK_LIST}codeblock.png`} onClick={() => {handleInsertion("```\n\n```", 4)}} ></img>
+              <img className="inputElementIcon" src={`${STATICS.LINK_LIST}spacer.png`} onClick={() => { handleInsertion('---\n') }}/>
+              <img className="inputElementIcon" src={`${STATICS.LINK_LIST}ignore.png`} onClick={() => { handleInsertion('!x!') }}/>
+              <img className="inputElementIcon" src={`${STATICS.LINK_LIST}media.png`} 
               onClick={() => { ReactDOM.createRoot(document.getElementById("mediaContentManager"))
               .render(<MediaContentManager contentType={["*/*"]} selectedImg={(e) => handleInsertion(`[](embedded-locale:${e.name}@${e.id})\n`)}/>)}}
               />
@@ -313,11 +314,11 @@ const ListEditor = (props) => {
               
               {viewMode == 'edit' ? (
                 //If in edit mode, render a button to save
-                <img className="inputElementIcon" src='static/media/save.png' onClick={() => { saveHandler() }}/>
+                <img className="inputElementIcon" src={`${STATICS.OTHER}save.png`} onClick={() => { saveHandler() }}/>
               ) : (
                 //If in view mode, render a button to open all links
                 <img className="inputElementIcon" 
-                src='static/media/open.png'
+                src={`${STATICS.OTHER}open.png`}
                 onClick={() => {
                   allLinks(content, listId).forEach(link => {
                     window.open((link.startsWith('http')

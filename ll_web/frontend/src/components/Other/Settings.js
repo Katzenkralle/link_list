@@ -384,7 +384,7 @@ const addLocation = () => {
                   document.getElementById('newLocationName').value,
                   document.getElementById('newLocationLat').value, document.getElementById('newLocationLon').value)
               }}>Add</button>
-              <a href="https://www.latlong.net/" className='text-blue-600 ml-4 mt-auto'>Find coordinates →</a>
+              <a href="https://www.latlong.net/" className='link ml-4 mt-auto'>Find coordinates →</a>
           </div>
   )
 }
@@ -399,7 +399,7 @@ const AddWeatherApiKey = () => {
         <button className='inputElement'
           onClick={() => { weatherProfileSetLocations('set_api_key', undefined, undefined, undefined, document.getElementById('weatherApiKey').value) }}
         >Set</button>
-        <a href="https://home.openweathermap.org/api_keys" className='text-blue-600 ml-4 mt-auto'>Get an API Key →</a>
+        <a href="https://home.openweathermap.org/api_keys" className='link ml-4 mt-auto'>Get an API Key →</a>
       </div>
     
   )

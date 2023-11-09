@@ -2,6 +2,8 @@ import React, { useEffect, useState, Component} from 'react';
 import ReactDOM from 'react-dom/client';
 import ConfirmDialog from '../Other/ConfirmDialog'
 
+import { STATICS } from '../Other/StaticPaths';
+
 export const handleInsertion = (strToInset, moveCursor) => {
     //Handles the insertion of strings into the textarea
     //Insert at cursor position, the provided string
@@ -132,7 +134,7 @@ export const exitEditorButton = (htmlClassName, parent, exitEditor, renderedCont
         <img
           id="exitEditor"
           className={`${htmlClassName} inputElementIcon mt-1`}
-          src='/static/media/close.png'
+          src={`${STATICS.OTHER}close.png`}
           onClick={() => {
             if (document.getElementById('listContent').value.replace(/\r/g, '') === renderedContent.replace(/\r/g, '')) {
               exitEditor();
@@ -161,7 +163,7 @@ export const deleteListButton = (htmlClassName, parent, saveList, exitEditor) =>
       return (
         <img
         className={`${htmlClassName} inputElementIcon mt-1`}
-          src='/static/media/delete.png'
+          src={`${STATICS.OTHER}delete.png`}
           onClick={() => {
             ReactDOM.createRoot(
               document.getElementById('tagContainer')
@@ -185,7 +187,7 @@ export const changeViewMode = (renderedContent, setViewMode, viewMode, getConten
     return (
       <img
         className="inputElementIcon mx-1"
-        src='/static/media/change_mode.png'
+        src={`${STATICS.OTHER}change_mode.png`}
         onClick={async () => {
         if (viewMode === 'view') {
           //If in view mode, check if any interactive elements have changed, if so, update data then change view mode
