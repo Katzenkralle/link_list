@@ -1,13 +1,15 @@
 import React, { Component, useState, useEffect } from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom';
 import renderByLine, {allLinks} from './ContentRender';
 import '../../../static/LinkList/tailwindListEditor.css'
 import '../../../static/LinkList/ViewUserContent.css'
-import { interactivElementChangeHandler, selectName, deleteListButton, selectTag, selectColor, exitEditorButton, hamburgerIcon, changeViewMode, monitorKeyPressTextarea, handleInsertion } from './ListEditorHelper';
+import { interactivElementChangeHandler, monitorKeyPress, monitorKeyRelease, handleInsertion, 
+  selectName, deleteListButton, selectTag, selectColor, exitEditorButton, hamburgerIcon, changeViewMode,} from './ListEditorHelper';
 import MediaContentManager from '../asciiColor/MediaContentManager';
 
+import { STATICS } from '../Other/StaticPaths';
 
-const ListEditor = (props) => {
+function ListEditor (props){
     const listId = props.listId;
     const [name, setName] = useState("");
     const [color, setColor] = useState("");
@@ -25,7 +27,6 @@ const ListEditor = (props) => {
     const displayWidth = window.innerWidth;
 
     window.location.hash = `#${listId}`
-
 
     const getContent = () => {
         fetch(`linkListApi/listContent/?id=${listId}`)
@@ -47,9 +48,9 @@ const ListEditor = (props) => {
             const formData = new FormData();
             formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value);
             formData.append("id", listId);
-            formData.append("name", name);
-            formData.append("color", del ? 'del' : color);
-            formData.append("tag", tag);
+            formData.append("name", document.getElementById('listName').value);
+            formData.append("color", del ? 'del' : document.getElementById('listColor').value);
+            formData.append("tag", document.getElementById('listTag').value);
             fetch(`linkListApi/lists/`, {
                 method: 'POST',
                 body: formData,
@@ -70,7 +71,7 @@ const ListEditor = (props) => {
             const formData = new FormData();
             formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value);
             formData.append("id", listId);
-            formData.append("content", document.getElementById('list_content').value);
+            formData.append("content", document.getElementById('listContent').value);
             fetch(`linkListApi/listContent/`, {
                 method: 'POST',
                 body: formData,
@@ -86,6 +87,9 @@ const ListEditor = (props) => {
     };
 
     const saveHandler = () => {
+      if (!document.getElementById('listContent')) {
+        return
+      }
       //Saves list and content, then exits editor
       let listSaveMsg = document.getElementById('listEditMsg');
       listSaveMsg.classList.add('bg-cat-warning', 'loadingPing', 'rounded-full');
@@ -93,6 +97,7 @@ const ListEditor = (props) => {
         getContent();
         listSaveMsg.classList.add('text-cat-success');
         listSaveMsg.innerHTML = 'Saved';
+        document.getElementById("listContent").focus()
         setTimeout(() => {listSaveMsg.classList.remove('text-cat-success'); listSaveMsg.innerHTML = '';}, 5000);
       }).catch(error => {
         listSaveMsg.classList.add('text-cat-error');
@@ -145,29 +150,49 @@ const ListEditor = (props) => {
             }             
           }
         };
-        window.interactivElementChangeHandler = interactivElementChangeHandler;
-    
+              window.interactivElementChangeHandler = interactivElementChangeHandler;
 
-   const exitEditor = () => {
-      window.interactivElementChangeHandler = undefined; 
-      window.location.hash = '';
-      props.exit()
-      ReactDOM.createRoot(document.getElementById('listEditor')).unmount();
-    
-    }
-    
+         const exitEditor = () => {
+            window.interactivElementChangeHandler = undefined; 
+            window.location.hash = '';
+            props.exit();         
+          }
 
-    useEffect(() => {
-        getContent()
-    },[]);
+          useEffect(() => {
+            // Fetch content
+            getContent();
 
+            // Keydown handler
+            const keydownHandler = (e) => {
+              monitorKeyPress(e, saveHandler, document.activeElement.id == 'listContent');
+            }
+            const keyupHandler = (e) => {
+              monitorKeyRelease(e);
+            };
+            const blurHandler =  () => {
+            monitorKeyRelease(null, true);
+          }
+
+            // Adding event listeners to the document
+            window.addEventListener('keydown', keydownHandler)
+            window.addEventListener('keyup', keyupHandler)
+            window.addEventListener('blur', blurHandler)
+            // Cleanup
+            return () => {
+              console.log('cleanup')
+              window.removeEventListener('keydown', keydownHandler)
+              window.removeEventListener('keyup', keyupHandler)
+              window.removeEventListener('blur', blurHandler)
+            }
+        }, []);
+  
     useEffect(() => {
         let [formCont, interElem] = (renderByLine(content, viewMode, listId));
         setRenderedContent(formCont);
         setInteractiveElements(interElem);
     },[content, viewMode]);
 
-    const topBar = () => {
+        const topBar = () => {
         return (
           viewMode == 'edit' ? (
             //Top bar in edit mode
@@ -231,7 +256,8 @@ const ListEditor = (props) => {
               <h3 className='centerBlock infoHl'>{name}</h3>
               {parent == 'largeViewer' ? <div className='ml-auto mr-1'>&nbsp;</div> :
                <img 
-                src='static/media/close.png'
+                id="exitEditor"
+                src={`${STATICS.OTHER}close.png`}
                className='ml-auto mr-1 mt-1 inputElementIcon' 
                onClick={() => exitEditor()}/>}
             </div>
@@ -245,14 +271,15 @@ const ListEditor = (props) => {
           viewMode == 'edit' ? (
             //If in edit mode, show all edit buttons
             <div className='editButtons'>
-              <img className="inputElementIcon" src="static/media/headline.png" onClick={() => { handleInsertion('# ') }}/>
-              <img className="inputElementIcon" src="static/media/link.png" onClick={() => { handleInsertion('[]()') }}/>
-              <img className="inputElementIcon" src="static/media/list.png" onClick={() => { handleInsertion('->. ') }}/>
-              <img className="inputElementIcon" src="static/media/list_orderd.png" onClick={() => { handleInsertion('-x. ') }}/>
-              <img className="inputElementIcon" src="static/media/checkbox.png" onClick={() => { handleInsertion('[ ] ') }}/>
-              <img className="inputElementIcon" src="static/media/spacer.png" onClick={() => { handleInsertion('---\n') }}/>
-              <img className="inputElementIcon" src="static/media/ignore.png" onClick={() => { handleInsertion('!x!') }}/>
-              <img className="inputElementIcon" src="static/media/media.png" 
+              <img className="inputElementIcon" src={`${STATICS.LINK_LIST}headline.png`} onClick={() => { handleInsertion('# ') }}/>
+              <img className="inputElementIcon" src={`${STATICS.LINK_LIST}link.png`} onClick={() => { handleInsertion('[]()') }}/>
+              <img className="inputElementIcon" src={`${STATICS.LINK_LIST}list.png`} onClick={() => { handleInsertion('->. ') }}/>
+              <img className="inputElementIcon" src={`${STATICS.LINK_LIST}list_orderd.png`} onClick={() => { handleInsertion('-x. ') }}/>
+              <img className="inputElementIcon" src={`${STATICS.LINK_LIST}checkbox.png`} onClick={() => { handleInsertion('[ ] ') }}/>
+              <img className='inputElementIcon' src={`${STATICS.LINK_LIST}codeblock.png`} onClick={() => {handleInsertion("```\n\n```", 4)}} ></img>
+              <img className="inputElementIcon" src={`${STATICS.LINK_LIST}spacer.png`} onClick={() => { handleInsertion('---\n') }}/>
+              <img className="inputElementIcon" src={`${STATICS.LINK_LIST}ignore.png`} onClick={() => { handleInsertion('!x!') }}/>
+              <img className="inputElementIcon" src={`${STATICS.LINK_LIST}media.png`} 
               onClick={() => { ReactDOM.createRoot(document.getElementById("mediaContentManager"))
               .render(<MediaContentManager contentType={["*/*"]} selectedImg={(e) => handleInsertion(`[](embedded-locale:${e.name}@${e.id})\n`)}/>)}}
               />
@@ -270,12 +297,9 @@ const ListEditor = (props) => {
             //If in edit mode, render textarea with content, (rendering must have finished first)
               <textarea
                 key={renderedContent} //Must stay, otherwise react dosnt rerender
-                id="list_content"
-                className="mainBody bg-cat-bg2 text-cat-light focus:outline focus:outline-1 focus:outline-cat-border focus:text-cat-main"
+                id="listContent"
+                className="mainBody bg-cat-bg2 text-cat-light font-mono focus:outline focus:outline-1 focus:outline-cat-border focus:text-cat-main"
                 defaultValue={renderedContent}
-                onKeyDown={(e) => {
-                  monitorKeyPressTextarea(e);
-                }}
               ></textarea>
             ) : (
             // If in view mode, render div with content (rendering must have finished first)
@@ -304,11 +328,11 @@ const ListEditor = (props) => {
               
               {viewMode == 'edit' ? (
                 //If in edit mode, render a button to save
-                <img className="inputElementIcon" src='static/media/save.png' onClick={() => { saveHandler() }}/>
+                <img className="inputElementIcon" src={`${STATICS.OTHER}save.png`} onClick={() => { saveHandler() }}/>
               ) : (
                 //If in view mode, render a button to open all links
                 <img className="inputElementIcon" 
-                src='static/media/open.png'
+                src={`${STATICS.OTHER}open.png`}
                 onClick={() => {
                   allLinks(content, listId).forEach(link => {
                     window.open((link.startsWith('http')
@@ -330,7 +354,7 @@ const ListEditor = (props) => {
             {topBar()}
     
             {editButtons()}
-    
+
             {contentArea()}
     
             {fotter()}

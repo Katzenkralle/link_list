@@ -2,7 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views import View
 
+from link_list_api.views import Lists, ListContent
 from .ascii_color import AsciiInColor
+from link_list_api.models import List
 import os
 
 class imgToAscii(View):
@@ -18,8 +20,6 @@ class imgToAscii(View):
         only_use_blocks = request.GET.get('onlyUseBlocks', 'false') == "true"
         download = request.GET.get('download', 'false') == "true"
 
-
-
         if not img_name:
             return JsonResponse({'status': 'Error! No image name provided'})
 
@@ -30,6 +30,25 @@ class imgToAscii(View):
             img.convert_to_block(ignore_brightness, invert_brightness)
         else:                
             img.convert_to_ascii(ignore_brightness, invert_brightness, "f" in colorize_output or "b" in colorize_output)
+
+        if colorize_output == "saveInLl":
+            # Save the image in the user's default list
+            # Atributs manually set, for now 
+            list = Lists()
+            list.user = user
+            list.name = list.generate_unused_name()
+            list.color = "#000000"
+            list.tag = "Default"
+            list_id = list.create_list()
+
+            list_content = ListContent()
+            list_content.user = user
+            list_content.list = List.objects.get(id=list_id)
+            list_content.id = list_id
+            list_content.content = "```\n" + img.write_to_str() + "\n```"
+            list_content.change_content()
+            return HttpResponse(content=f"listSaved{list_id}")
+
 
         if download: 
             response = HttpResponse(img.write_to_str(colorize_output), content_type='text/plain')

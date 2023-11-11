@@ -58,6 +58,15 @@ function HomeAsciiColor() {
         })
         .then((data) => {
             if (download) {
+                if (data.slice(0, 9) == "listSaved") {
+                    const listId = parseInt(data.match(/\d+/),10)
+                    ReactDOM.createRoot(document.getElementById("tagContainer")).render(<ConfirmDialog
+                        onConfirmation={(e) => {e ? window.location.href = `/linkList#${listId}` : null}} 
+                        question="The Link List was saved!" 
+                        trueBtnText="Open List" 
+                        falseBtnText="Stay" />)
+                    return
+                }
                 setAllFiles([...allFiles, downloadBlob(data, imgName)])
                 return
             }
@@ -213,6 +222,13 @@ function HomeAsciiColor() {
                         </div>
                     </>) : null}
                     
+                        {!colorizeMode.f && !colorizeMode.b ? (
+                            <button className="link mr-3"
+                            onClick={() => transform("saveInLl", true)}>
+                                Save in new Link List
+                            </button>
+                        ) : null}
+
                         <button className="link" 
                         onClick={() => transform(`${colorizeMode.b ? "b" : " "}${colorizeMode.f ? "f" : " "}`, true)}
                         >Download</button>

@@ -51,7 +51,7 @@ class Lists(APIView):
 
         user_tags = from_json(LinkListProfile.objects.get(user=self.user).tags)
         
-        lists = List.objects.filter(user=self.user)
+        lists = List.objects.filter(user=self.user).order_by('position')
         serializedLists = ListSerializer(lists, many=True, exclude_fields=["content"]).data
         for json, db  in zip(serializedLists, lists):
             json['public_list_passwd'] = True if db.public_list_passwd else False
@@ -60,13 +60,18 @@ class Lists(APIView):
         return JsonResponse({"metaLists": serializedLists, "metaTags": user_tags, "setMetaUser": self.user.username }, safe=False)
     
     def post(self, request, *args, **kwargs):
-        self.user = request.user
+        self.user = request.user    
         self.id = request.POST.get('id', None)
         self.name = request.POST.get('name', '')
         self.color = request.POST.get('color', None)
         self.tag = request.POST.get('tag', None)
         self.public_read_only = request.POST.get('read_only', None)
         self.public_list_passwd = request.POST.get('passwd', None)
+        self.list_order = request.POST.get('list_order', None)
+
+        if self.list_order:
+            self.order_lists()
+            return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
         self.name = self.generate_unused_name() if self.name == "" else self.name
 
@@ -76,6 +81,13 @@ class Lists(APIView):
         else:
             self.create_list()
             return HttpResponse(status=status.HTTP_201_CREATED)
+
+    def order_lists(self):
+        for i, list_id in enumerate(self.list_order.split(',')):
+            list = List.objects.get(id=list_id)
+            list.position = i
+            list.save()
+        return
 
     def generate_unused_name(self):
         i, unamed_list_name = 1, "UnamedList"
@@ -125,7 +137,7 @@ class Lists(APIView):
         #Create new list
         list = List.objects.create(name=self.name, color=self.color, tag=self.tag, user=self.user)
         list.save()
-        return
+        return list.id
 
 class ListContent(APIView):
     def get(self, request):
