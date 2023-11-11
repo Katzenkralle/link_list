@@ -41,7 +41,7 @@ function LargeViewer() {
     return (
       //when password is not needed, show the list editor, otherwise show a password input
       //password needet until list backend returns a list
-        <div className='dark:text-white'>
+        <div className='text-cat-main'>
           {isAuthenticated ? (
             <ListEditor update_data={() => fetchData()}
             listId = {window.location.search.split('=')[1]}
@@ -50,7 +50,7 @@ function LargeViewer() {
             exit = {() => window.location.reload()}
             />
           ) : (
-            <div className='flex flex-col'>
+            <div className='flex flex-col text-cat-main'>
                 <h1 className='maxHl mx-auto mt-8'>Somnia Notas</h1>
                 <h3 className='mainHl mx-auto my-5'>Guest Viewer</h3>
                 <p className='mx-auto infoHl mx-auto mb-2'>Password needed!</p>

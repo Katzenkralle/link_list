@@ -3,6 +3,8 @@ import ListEditor from './ListEditor';
 import ReactDOM from 'react-dom/client';
 import { Draggable, Droppable } from 'react-drag-and-drop';
 
+import { STATIC_VARS } from '../Other/StaticPaths';
+
 function ListGrid(props) {
   const [lists, setLists] = useState(props.lists);
   const [draging, setDraging] = useState(false);
@@ -79,7 +81,6 @@ function ListGrid(props) {
     updateOrder(newList);
   }
 
-
   return (
     //show the lists in a grid, when clicked, show the list editor
     //for that create a new root and render the list editor in listEditor div (see HomePage)
@@ -101,6 +102,22 @@ function ListGrid(props) {
               }}>
               <h3 className='infoHl mb-2'>{list.name}</h3>
               <p className='font-bold justify-bottom'>{list.tag}</p>
+              <div className='flex flex-row !my-auto mainHl'>
+                <button className='mr-auto p-2 hover:text-cat-link'
+                onClick={(e) => {
+                    e.stopPropagation();
+                    moveList(list.id, lists[lists.findIndex((l) => l.id == list.id) - 1].id)
+                  }}
+                  hidden={list.id == lists[0].id}
+                  >{STATIC_VARS.LARGE_SCREEN ? "←" : "↑" }</button>
+                <button className='ml-auto p-2'
+                onClick={(e) => {
+                    e.stopPropagation();
+                    moveList(list.id, lists[lists.findIndex((l) => l.id == list.id) + 1].id)
+                  }}
+                  hidden={list.id == lists[lists.length - 1].id}
+                >{STATIC_VARS.LARGE_SCREEN ? "→" : "↓" }</button>
+              </div>
               <p className='mt-auto justify-bottom'>{list.owner}</p>
               <p>{list.creation_date}</p>
               {list.url ? <a

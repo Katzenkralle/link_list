@@ -5,3 +5,7 @@ export const STATICS = {
     OTHER: "static/media/other/",
     WEATHER: "static/media/weather/",
 };
+
+export const STATIC_VARS = {
+    LARGE_SCREEN: window.innerWidth < 768 ? false : true,
+};

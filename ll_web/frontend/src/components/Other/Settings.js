@@ -203,7 +203,7 @@ const listPublicationTable = () => {
     <div className='mx-auto mt-3'>
       <h3 className='infoHl mt-2'>Share a List</h3>
       <div className='overflow-x-auto'>
-        <table className='table-auto min-w-full bg-cat-surface border-2 border-cat-borderInactive mt-1 overflow-scroll'>
+        <table className='table-auto min-w-full bg-cat-surface border-2 border-cat-border mt-1 overflow-scroll'>
           {window.window.screen.width > 768 ? (
             <>
               <thead>
