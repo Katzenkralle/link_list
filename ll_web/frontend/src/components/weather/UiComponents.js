@@ -1,6 +1,7 @@
 import React from "react";
 import { getWeekdayFromDate, getSumOfDownfall, calculateForecastDate, ZipFindExtremeValues, colorByTemp, dateToString } from "./FindDatapoints";
 import "../../../static/animations.css"
+import { STATICS } from "../Other/StaticPaths";
 
 export const formatTime = (time) => {
     time = time.toString();
@@ -48,11 +49,11 @@ export const DisplaySelectedDay = (props) => {
                     {weather_info.main.hasOwnProperty("temp") ? (
                     <div>
                         <div className="infoRow">
-                            <img src="../../../static/media/temp.png" className="symbole"></img>
+                            <img src={`${STATICS.WEATHER}temp.png`} className="symbole"></img>
                             <p>Feels like: {weather_info.main.feels_like}°C</p>
                         </div>
                         <div className="infoRow">
-                            <img src="../../../static/media/abs_temp.png" className="symbole"></img>
+                            <img src={`${STATICS.WEATHER}abs_temp.png`} className="symbole"></img>
                             <p>Absolute: {weather_info.main.temp}°C</p>
                         </div>
 
@@ -60,11 +61,11 @@ export const DisplaySelectedDay = (props) => {
                         {weather_info.main.temp_min !== weather_info.main.temp_max ? (
                             <div>
                                 <div className="infoRow">
-                                    <img src="../../../static/media/max_temp.png" className="symbole"></img>
+                                    <img src={`${STATICS.WEATHER}max_temp.png`} className="symbole"></img>
                                     <p>Max: {weather_info.main.temp_max}°C</p>
                                 </div>
                                 <div className="infoRow">
-                                    <img src="../../../static/media/min_temp.png" className="symbole"></img>
+                                    <img src={`${STATICS.WEATHER}min_temp.png`} className="symbole"></img>
                                     <p>Min: {weather_info.main.temp_min}°C</p>
                                 </div>
                             </div>
@@ -77,11 +78,11 @@ export const DisplaySelectedDay = (props) => {
                 <div className="infoBox">
                     <h3 className="infoHl">Climates</h3>
                     <div className="infoRow">
-                        <img src="../../../static/media/humidity.png" className="symbole"></img>
+                        <img src={`${STATICS.WEATHER}humidity.png`} className="symbole"></img>
                         <p>Humidity: {weather_info.main.humidity}%</p>
                     </div>
                     <div className="infoRow">
-                        <img src="../../../static/media/pressure.png" className="symbole"></img>
+                        <img src={`${STATICS.WEATHER}pressure.png`} className="symbole"></img>
                         <p>Pressure: {weather_info.main.pressure ? weather_info.main.pressure : weather_info.main.sea_level}pHa</p>
                     </div>
                 </div>) : null}
@@ -90,16 +91,16 @@ export const DisplaySelectedDay = (props) => {
                 <div className="infoBox">
                     <h3 className="infoHl">Wind</h3>
                     <div className="infoRow">
-                        <img src="../../../static/media/wind_speed.png" className="symbole"></img>
+                        <img src={`${STATICS.WEATHER}wind_speed.png`} className="symbole"></img>
                         <p>Wind Speed: {weather_info.wind.speed}m/s</p>
                     </div>
                     <div className="infoRow">
-                        <img src="../../../static/media/wind_dir.png" className="symbole"></img>
+                        <img src={`${STATICS.WEATHER}wind_dir.png`} className="symbole"></img>
                         <p>Wind Direction: {weather_info.wind.deg}°</p>
                     </div>
                     {weather_info.hasOwnProperty("wind_gust") ? (
                     <div className="infoRow">
-                        <img src="../../../static/media/wind_gust.png" className="symbole"></img>
+                        <img src={`${STATICS.WEATHER}wind_gust.png`} className="symbole"></img>
                         <p>Gust: {weather_info.wind.gust}m/s</p>
                     </div>) : null}
                 </div>) : null}
@@ -109,7 +110,7 @@ export const DisplaySelectedDay = (props) => {
                         <h3 className="infoHl">Precipitation</h3>
                         {weather_info.hasOwnProperty("rain") && weather_info.rain !== null  ? (
                             <div className="infoRow">
-                                <img src="../../../static/media/rain.png" className="symbole"></img>
+                                <img src={`${STATICS.WEATHER}rain.png`} className="symbole"></img>
                                 <p>Rain: {weather_info.rain.hasOwnProperty("1h") ? `${weather_info.rain["1h"]}mm (1h)` :
                                  weather_info.rain.hasOwnProperty("3h") ? `${weather_info.rain["3h"]}mm (3h)` :
                                  `${weather_info.rain["sum"]}mm (sum)`}</p>
@@ -117,7 +118,7 @@ export const DisplaySelectedDay = (props) => {
                         ) : null}
                         {weather_info.hasOwnProperty("snow") && weather_info.snow !== null ? (
                             <div className="infoRow">
-                                <img src="../../../static/media/snow.png" className="symbole"></img>
+                                <img src={`${STATICS.WEATHER}snow.png`} className="symbole"></img>
                                 <p>Snow: {weather_info.snow.hasOwnProperty("1h") ? `${weather_info.snow["1h"]}mm (1h)` :
                                  weather_info.snow.hasOwnProperty("3h")? `${weather_info.snow["3h"]}mm (3h)}`:
                                  `${weather_info.snow["sum"]}mm (sum)`}</p>
@@ -125,7 +126,7 @@ export const DisplaySelectedDay = (props) => {
                         ) : null}
                         {weather_info.pop >= 0 && weather_info.pop != null ? (
                             <div className="infoRow">
-                                <img src="../../../static/media/chance_of_rain.png" className="symbole"></img>
+                                <img src={`${STATICS.WEATHER}chance_of_rain.png`} className="symbole"></img>
                                 <p>Rain probability: {(weather_info.pop * 100).toFixed(2)}%</p>
                             </div>
                         ) : undefined}
@@ -137,17 +138,17 @@ export const DisplaySelectedDay = (props) => {
                 <div className="infoBox">
                     <h3 className="infoHl">General</h3>
                     <div className="infoRow">
-                        <img src="../../../static/media/sunrise.png" className="symbole"></img>
+                        <img src={`${STATICS.WEATHER}sunrise.png`} className="symbole"></img>
                         <p>Sunrise: {formatTime(weather_info.sys.sunrise)}</p>
                     </div>
                     <div className="infoRow">
-                        <img src="../../../static/media/sunset.png" className="symbole"></img>
+                        <img src={`${STATICS.WEATHER}sunset.png`} className="symbole"></img>
                         <p>Sunset: {formatTime(weather_info.sys.sunset)}</p>
                     </div>
                     {weather_info.weather.map((weather, index) => (
                         weather.description != null ?
                         <div className="infoRow" key={index}>
-                            <img src="../../../static/media/weather.png" className="symbole"></img>
+                            <img src={`${STATICS.WEATHER}weather.png`} className="symbole"></img>
                             <p key={index}>→ {weather.description}</p>
                         </div> : null
                     ))}
@@ -181,18 +182,18 @@ export const DisplayForecast = (props) => {
             <div className="lg:basis-1/5 bg-cat-surface shrink-0 m-1 p-2 rounded-lg">
                 <h3 className="infoHl">{props.currentWeather.date == dateToString(new Date()) ? "Today" : "Center Date"}</h3>
                 <div className="infoRow">
-                    <img src="../../../static/media/max_temp.png" className="symbole"></img>
+                    <img src={`${STATICS.WEATHER}max_temp.png`} className="symbole"></img>
                     <p>Max {ZipFindExtremeValues(combindedWeather, combindedWeatherUnpacked, "main.temp_max",
                         props.currentWeather.date)[0]}°C</p>
                 </div>
                 <div className="infoRow">
-                    <img src="../../../static/media/min_temp.png" className="symbole"></img>
+                    <img src={`${STATICS.WEATHER}min_temp.png`} className="symbole"></img>
                 <p>Min {ZipFindExtremeValues(combindedWeather, combindedWeatherUnpacked, "main.temp_min",
                     props.currentWeather.date)[1]}°C</p>
                 </div>
                 
                 <div className="infoRow">
-                    <img src="../../../static/media/wind_speed.png" className="symbole"></img>
+                    <img src={`${STATICS.WEATHER}wind_speed.png`} className="symbole"></img>
                     <p>Wind {(ZipFindExtremeValues(combindedWeather, combindedWeatherUnpacked, "wind.speed",
                         props.currentWeather.date)[0])}m/s</p> 
                 </div>
@@ -205,18 +206,18 @@ export const DisplayForecast = (props) => {
                     <div key={i} className="lg:basis-1/5 bg-cat-surface shrink-0 m-1 p-2 rounded-lg">
                         <h3 className="infoHl">{formatDay(date)}</h3>
                         <div className="infoRow">
-                            <img src="../../../static/media/max_temp.png" className="symbole"></img>
+                            <img src={`${STATICS.WEATHER}max_temp.png`} className="symbole"></img>
                             <p>Max {ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "main.temp",
                             date)[0]}°C</p>
                         </div>
                         <div className="infoRow">
-                            <img src="../../../static/media/min_temp.png" className="symbole"></img>
+                            <img src={`${STATICS.WEATHER}min_temp.png`} className="symbole"></img>
                             <p>Min {ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "main.temp",
                                 date)[1]}°C</p>
                         </div>
                         {!unpackedForecast.every(element => element.pop == null) ?
                         <div className="infoRow">
-                            <img src="../../../static/media/chance_of_rain.png" className="symbole"></img>
+                            <img src={`${STATICS.WEATHER}chance_of_rain.png`} className="symbole"></img>
                             <p>Average {(ZipFindExtremeValues(props.forecastWeather, unpackedForecast, "pop",
                                 date)[2]*100).toFixed(2)} % Rain probability</p>
                         </div> : null}
@@ -254,7 +255,7 @@ export const Bubbles = (props) => {
                                         }}>
                                     <p className="text-base relative z-10 m-auto text-cat-input">{formatTime(day.time)}</p>
                                     {deepCpDay.forecast_weather.pop > 0.5  || getSumOfDownfall(deepCpDay.forecast_weather) > 0 ?
-                                     <img key={i+"a"} className="imgAsOverly !opacity-100 rounded-full px-2 py-1" src="../../../static/media/raindrop.png"></img>
+                                     <img key={i+"a"} className="imgAsOverly !opacity-100 rounded-full px-2 py-1" src={`${STATICS.WEATHER}raindrop.png`}></img>
                                     : null}
                                     
                                     </div>

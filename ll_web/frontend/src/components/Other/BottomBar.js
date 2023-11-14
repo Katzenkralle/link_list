@@ -43,6 +43,7 @@ function BottomBar(){
                     <a className='link' href='/'>Home</a>
                     <a className='link' href='/linkList'>Somnia Notas</a>
                     <a className='link' href='/weather'>Weather</a>
+                    <a className='link' href='/asciiColor'>Img-to-Ascii</a>   
                     <a className='link' href='https://github.com/Katzenkralle/link_list'>GitHub</a>
                     <a className='link' href='/settings'>Settings</a>
                 </div>

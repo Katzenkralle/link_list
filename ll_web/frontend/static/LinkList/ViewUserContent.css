@@ -39,7 +39,7 @@ li * {
 }
 
 .viewUserContentLi, .viewUserContentEmbededDisciption {
-    @apply !text-cat-link hover:!text-cat-linkHover !break-words !whitespace-pre-wrap !truncate 
+    @apply !text-cat-link hover:!text-cat-linkHover !break-words !whitespace-pre-wrap !truncate w-fit
 }
 .viewUserContentEmbededDisciption{
     @apply lg:w-1/2 h-fit mt-2 ml-2
@@ -54,7 +54,13 @@ li * {
     @apply max-w-full max-h-[75vh] object-contain my-2 hover:cursor-pointer ml-0
 }
 
+.viewUserContentMultiline{
+    @apply flex flex-col font-mono bg-cat-bg2 rounded-lg p-2 w-fit max-w-[-moz-available] max-w-[-webkit-fill-available]
+}
 
+.viewUserContentMultiline code {
+    @apply overflow-x-scroll
+}
 
 h1.viewUserContentH {
     @apply text-3xl font-bold text-cat-main
@@ -92,3 +98,10 @@ h6.viewUserContentH  {
     @apply line-through decoration-cat-main decoration-solid decoration-2
 }
 
+.viewUserContentU {
+    @apply underline
+}
+
+.viewUserContentC {
+    @apply font-mono bg-cat-bg2 rounded-lg p-1 overflow-x-scroll rounded-lg
+}

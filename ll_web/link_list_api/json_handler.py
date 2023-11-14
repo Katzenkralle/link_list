@@ -6,6 +6,7 @@ class ListTransformer:
     def __init__(self, data: str):
         self.data = data
         self.line = ''
+        self.multi_line_element = "" 
 
     def __check_link_sequence(self) -> (str, str):
         #Check for Link in line (Md Syntax: [text](path)
@@ -62,7 +63,22 @@ class ListTransformer:
             else:
                 return [self.line, None]
 
-        
+    def check_multi_line_element(self) -> bool:
+        striped_line = self.line.replace("\r", '')
+        if self.multi_line_element:
+            #Check for Termination
+            line = ['', self.multi_line_element]
+            if striped_line[-3:]== self.multi_line_element:
+                self.multi_line_element = ""
+                self.line = striped_line[:-3]
+            line[0] = self.line
+            return line
+        else:
+            #Check for Start
+            if striped_line[:3] == '```':
+                self.multi_line_element = striped_line[:3]
+                return striped_line[3:], self.multi_line_element
+        return False, None
 
 
     def content_for_db(self) -> List[Dict]:
@@ -81,7 +97,15 @@ class ListTransformer:
                                 'text': self.line[3:],
                                 'style': [['ig']]})
                 continue
-
+            
+            #Check for multi line elements
+            multiline, ml_type = self.check_multi_line_element()
+            if multiline != False:
+                #If line is a multi line element
+                db_data.append({'type': 'ml',
+                                'text': multiline,
+                                'style': [[ ml_type]]})
+                continue
             #Check for Lists
             self.line, list_type = self.__check_lists()
             #Check for Checkboxes

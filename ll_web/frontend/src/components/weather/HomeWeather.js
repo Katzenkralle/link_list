@@ -12,6 +12,8 @@ import BottomBar from '../Other/BottomBar';
 import ConfirmDialog from '../Other/ConfirmDialog';
 import LoadingAnimation from '../Other/LoadingAnimation';
 
+import { STATICS } from '../Other/StaticPaths';
+
 function HomeWeather() {
     const [currentWeather, setCurrentWeather] = useState({});
     const [forecastWeather, setForecastWeather] = useState([]);
@@ -181,7 +183,7 @@ function HomeWeather() {
                                 onClick={() => { getWeather(true) }}
                             >{new Date().getDate().toString().padStart(2, '0')}</button>
 
-                            <img src='../../../static/media/calender_empty.png' 
+                            <img src={`${STATICS.WEATHER}calender_empty.png`}
                             className='imgAsOverly !opacity-100 translate-y-[-4px]'
                             style={ date != "" && dateToString(new Date()) == dateToString(date) ?
                                     {filter: (

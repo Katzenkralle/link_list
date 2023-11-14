@@ -203,7 +203,7 @@ const listPublicationTable = () => {
     <div className='mx-auto mt-3'>
       <h3 className='infoHl mt-2'>Share a List</h3>
       <div className='overflow-x-auto'>
-        <table className='table-auto min-w-full bg-cat-surface border-2 border-cat-borderInactive mt-1 overflow-scroll'>
+        <table className='table-auto min-w-full bg-cat-surface border-2 border-cat-border mt-1 overflow-scroll'>
           {window.window.screen.width > 768 ? (
             <>
               <thead>
@@ -384,7 +384,7 @@ const addLocation = () => {
                   document.getElementById('newLocationName').value,
                   document.getElementById('newLocationLat').value, document.getElementById('newLocationLon').value)
               }}>Add</button>
-              <a href="https://www.latlong.net/" className='text-blue-600 ml-4 mt-auto'>Find coordinates →</a>
+              <a href="https://www.latlong.net/" className='link ml-4 mt-auto'>Find coordinates →</a>
           </div>
   )
 }
@@ -399,7 +399,7 @@ const AddWeatherApiKey = () => {
         <button className='inputElement'
           onClick={() => { weatherProfileSetLocations('set_api_key', undefined, undefined, undefined, document.getElementById('weatherApiKey').value) }}
         >Set</button>
-        <a href="https://home.openweathermap.org/api_keys" className='text-blue-600 ml-4 mt-auto'>Get an API Key →</a>
+        <a href="https://home.openweathermap.org/api_keys" className='link ml-4 mt-auto'>Get an API Key →</a>
       </div>
     
   )

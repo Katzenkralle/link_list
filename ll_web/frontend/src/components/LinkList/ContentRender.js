@@ -65,7 +65,10 @@ function formatParagraph(line, mode){
         const font_styled_line = line['text']
         .replace(/\*\*(.*?)\*\*/g, '<a class="viewUserContentB">$1</a>')
         .replace(/~~(.*?)~~/g, '<a class="viewUserContentSt">$1</a>')
-        .replace(/\*(.*?)\*/g, '<a class="viewUserContentI">$1</a>');
+        .replace(/\*(.*?)\*/g, '<a class="viewUserContentI">$1</a>')
+        .replace(/__(.*?)__/g, '<a class="viewUserContentU">$1</a>')
+        .replace(/\`(.*?)\`/g, '<a class="viewUserContentC">$1</a>')
+
         var htmlElement = `<p class='viewUserContentP'>${font_styled_line}</p>`
         return htmlElement
     }
@@ -137,6 +140,35 @@ function formatLink(line, mode, list_id){
     }
 }
 
+function formatMultiline(line, mode, previousLine, nextLine){
+    // Takes line (which is a multiline) might contain text and path, mode=view/edit
+    if (mode == 'view'){
+        var htmlElement = ""
+        line.text = line.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        if (previousLine == undefined || previousLine.type != "ml" || previousLine.style[0][0] != line.style[0][0]){
+            htmlElement += `<pre class="viewUserContentMultiline"><code>`
+        }
+        htmlElement += `${line['text']}${line['text'] == "" || line['text'].slice(-1).includes("\n\r") ? "" : "\n"}`
+        if (nextLine == undefined || nextLine.type != "ml" || nextLine.style[0][0] != line.style[0][0]){
+            htmlElement += `</code></pre>`
+        }
+        return htmlElement
+    }
+    else {
+        //Set text to > text
+        var lineText = ''
+        if (previousLine == undefined || previousLine.type != "ml" || previousLine.style[0][0] != line.style[0][0]){
+            lineText += line.style[0][0]
+        }
+        lineText += line['text']
+        if (nextLine == undefined || nextLine.type != "ml" || nextLine.style[0][0] != line.style[0][0]){
+            lineText += line.style[0][0]
+        }
+        lineText += "\n"
+        return lineText
+    }
+}
+
 export function allLinks(raw_content, list_id){
     //Takes all lines from list, returns all links in an array
     var links = []
@@ -178,6 +210,9 @@ function renderByLine(raw_content, mode, list_id){
             case 'li':
                 //console.log('li', mode)
                 formatedLine = formatLink(element, mode, list_id);
+                break;
+            case 'ml':
+                formatedLine = formatMultiline(element, mode, content[(index-1)], content[(index+1)]);
                 break;
             case "br":
                 formatedLine = formatBreakeRow(mode);
