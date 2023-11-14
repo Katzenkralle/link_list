@@ -271,7 +271,7 @@ function ListEditor (props){
           viewMode == 'edit' ? (
             //If in edit mode, show all edit buttons
             <div className='editButtons'>
-              <img className="inputElementIcon" src={`${STATICS.LINK_LIST}headline.png`} onClick={() => { handleInsertion('# ') }}/>
+              <img className="inputElementIcon" src={`${STATICS.LINK_LIST}headline.png`} onClick={() => { handleInsertion('#') }}/>
               <img className="inputElementIcon" src={`${STATICS.LINK_LIST}link.png`} onClick={() => { handleInsertion('[]()') }}/>
               <img className="inputElementIcon" src={`${STATICS.LINK_LIST}list.png`} onClick={() => { handleInsertion('->. ') }}/>
               <img className="inputElementIcon" src={`${STATICS.LINK_LIST}list_orderd.png`} onClick={() => { handleInsertion('-x. ') }}/>

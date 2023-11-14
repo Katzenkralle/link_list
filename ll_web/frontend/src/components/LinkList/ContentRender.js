@@ -65,7 +65,10 @@ function formatParagraph(line, mode){
         const font_styled_line = line['text']
         .replace(/\*\*(.*?)\*\*/g, '<a class="viewUserContentB">$1</a>')
         .replace(/~~(.*?)~~/g, '<a class="viewUserContentSt">$1</a>')
-        .replace(/\*(.*?)\*/g, '<a class="viewUserContentI">$1</a>');
+        .replace(/\*(.*?)\*/g, '<a class="viewUserContentI">$1</a>')
+        .replace(/__(.*?)__/g, '<a class="viewUserContentU">$1</a>')
+        .replace(/\`(.*?)\`/g, '<a class="viewUserContentC">$1</a>')
+
         var htmlElement = `<p class='viewUserContentP'>${font_styled_line}</p>`
         return htmlElement
     }

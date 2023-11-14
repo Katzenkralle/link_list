@@ -94,3 +94,10 @@ h6.viewUserContentH  {
     @apply line-through decoration-cat-main decoration-solid decoration-2
 }
 
+.viewUserContentU {
+    @apply underline
+}
+
+.viewUserContentC {
+    @apply font-mono bg-cat-bg2 rounded-lg p-1 overflow-x-scroll rounded-lg
+}
