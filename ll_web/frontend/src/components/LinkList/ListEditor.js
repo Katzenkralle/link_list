@@ -45,24 +45,26 @@ function ListEditor (props){
 
     const saveList = (del) => {
         return new Promise((resolve, reject) => {
-            const formData = new FormData();
-            formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value);
-            formData.append("id", listId);
-            formData.append("name", document.getElementById('listName').value);
-            formData.append("color", del ? 'del' : document.getElementById('listColor').value);
-            formData.append("tag", document.getElementById('listTag').value);
-            fetch(`linkListApi/lists/`, {
-                method: 'POST',
-                body: formData,
-            }).then((response) => {
-                if (!response.ok){
-                    throw Error(response.statusText);
-                }
-                resolve();
-            }).catch(error => {
-                console.log(error);
-                reject(error);
-            });
+          const htmlColor = document.getElementById('listColor');
+          const htmlTag = document.getElementById('listTag');
+          const formData = new FormData();
+          formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]').value);
+          formData.append("id", listId);
+          formData.append("name", document.getElementById('listName').value);
+          formData.append("color", del ? 'del' : htmlColor ? htmlColor.value : color);
+          formData.append("tag", htmlTag ? htmlTag.value : tag);
+          fetch(`linkListApi/lists/`, {
+              method: 'POST',
+              body: formData,
+          }).then((response) => {
+              if (!response.ok){
+                  throw Error(response.statusText);
+              }
+              resolve();
+          }).catch(error => {
+              console.log(error);
+              reject(error);
+          });
         });
     };
 

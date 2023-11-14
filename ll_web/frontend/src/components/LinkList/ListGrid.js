@@ -110,7 +110,7 @@ function ListGrid(props) {
                   }}
                   hidden={list.id == lists[0].id}
                   >{STATIC_VARS.LARGE_SCREEN ? "←" : "↑" }</button>
-                <button className='ml-auto p-2'
+                <button className='ml-auto p-2 hover:text-cat-link'
                 onClick={(e) => {
                     e.stopPropagation();
                     moveList(list.id, lists[lists.findIndex((l) => l.id == list.id) + 1].id)
