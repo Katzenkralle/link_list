@@ -120,7 +120,7 @@ export const DisplaySelectedDay = (props) => {
                             <div className="infoRow">
                                 <img src={`${STATICS.WEATHER}snow.png`} className="symbole"></img>
                                 <p>Snow: {weather_info.snow.hasOwnProperty("1h") ? `${weather_info.snow["1h"]}mm (1h)` :
-                                 weather_info.snow.hasOwnProperty("3h")? `${weather_info.snow["3h"]}mm (3h)}`:
+                                 weather_info.snow.hasOwnProperty("3h")? `${weather_info.snow["3h"]}mm (3h)`:
                                  `${weather_info.snow["sum"]}mm (sum)`}</p>
                             </div>
                         ) : null}

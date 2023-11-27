@@ -68,6 +68,10 @@ function formatParagraph(line, mode){
         .replace(/\*(.*?)\*/g, '<a class="viewUserContentI">$1</a>')
         .replace(/__(.*?)__/g, '<a class="viewUserContentU">$1</a>')
         .replace(/\`(.*?)\`/g, '<a class="viewUserContentC">$1</a>')
+        
+        .replaceAll("-->", "→")
+        .replaceAll("<--", "←")
+        .replaceAll("<->", "↔")
 
         var htmlElement = `<p class='viewUserContentP'>${font_styled_line}</p>`
         return htmlElement
@@ -204,11 +208,9 @@ function renderByLine(raw_content, mode, list_id){
         var formatedLine
         switch (element['type']){
             case 'p':
-                //console.log('p', mode)
                 formatedLine = formatParagraph(element, mode);
                 break;
             case 'li':
-                //console.log('li', mode)
                 formatedLine = formatLink(element, mode, list_id);
                 break;
             case 'ml':

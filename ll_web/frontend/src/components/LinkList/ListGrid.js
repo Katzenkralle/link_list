@@ -8,6 +8,7 @@ import { STATIC_VARS } from '../Other/StaticPaths';
 function ListGrid(props) {
   const [lists, setLists] = useState(props.lists);
   const [draging, setDraging] = useState(false);
+  const [hash, setHash] = useState(window.location.hash.replace('#', ''));
 
   let [listEditorRoot, setListEditorRoot] = useState(null);
 
@@ -28,28 +29,10 @@ function ListGrid(props) {
       })
   }
 
-  
-  useEffect(() => {
-    setListEditorRoot(ReactDOM.createRoot(document.getElementById('listEditor')));
-  }, []);
-
-  useEffect(() => {
-    //update the lists when the props change
-    setLists(props.lists);
-  }, [props.lists]);
-
-  useEffect(() => {
-
-    if (props.lists.length === 0) {
-      return;
-    }
-
-    const stripedHash = window.location.hash.replace('#', '');
-    const matchingList = props.lists.find((list) => list.id == stripedHash);
-
-    if (!matchingList) {
-      window.location.hash = '';
-    } else {
+  //check if the hash is a valid list id and render the list editor if valid
+  const checkHashAndRender = () => {
+    const matchingList = lists.find((list) => list.id == hash);
+    if (matchingList) {
       listEditorRoot.render(
         <ListEditor
           listId={matchingList.id}
@@ -59,8 +42,37 @@ function ListGrid(props) {
         />
       );
     }
+    return
   }
-    , [props.lists]);
+
+  //Initialize the list editor root add an event listener to check if the hash changes
+  useEffect(() => {
+    setListEditorRoot(ReactDOM.createRoot(document.getElementById('listEditor')))
+
+    const setHashEvent = () => {
+      const stripedHash = window.location.hash.replace('#', '');
+      setHash(stripedHash);
+    }
+  
+    addEventListener('hashchange', setHashEvent); 
+    return () => {
+      setListEditorRoot(null);
+      removeEventListener('hashchange', setHashEvent)
+    }
+  }, []);
+
+  //update the lists when the props change
+  useEffect(() => {
+    setLists(props.lists);
+  }, [props.lists]);
+
+  //if the hash changes, try to render the list editor
+  useEffect(() => {
+    if (hash === '') {
+      return;
+    }
+    checkHashAndRender();
+  }, [hash, lists]);
 
   const getBgColor = (color, link) => {
     let rgb = color.match(/\w\w/g).map((hex) => parseInt(hex, 16));
@@ -91,14 +103,7 @@ function ListGrid(props) {
             <div className={`interactiveContainer ${draging ? 'outline outline-cat-borderInactive outline-5' : ''}`}
               style={{ backgroundColor: list.color, color: getBgColor(list.color) }}
               onClick={(e) => {
-                listEditorRoot.render(
-                  <ListEditor
-                    listId={list.id}
-                    parent={'default'}
-                    isEditable={true}
-                    exit={() => {props.update_data();listEditorRoot.render();}}
-                  />
-                )
+                window.location.hash = list.id
               }}>
               <h3 className='infoHl mb-2'>{list.name}</h3>
               <p className='font-bold justify-bottom'>{list.tag}</p>
