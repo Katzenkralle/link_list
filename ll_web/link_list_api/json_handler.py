@@ -75,7 +75,7 @@ class ListTransformer:
             return line
         else:
             #Check for Start
-            if striped_line[:3] == '```':
+            if striped_line[:3] == '```' or striped_line[:3] == '!x!':
                 self.multi_line_element = striped_line[:3]
                 return striped_line[3:], self.multi_line_element
         return False, None
@@ -90,13 +90,6 @@ class ListTransformer:
 
         for self.line in lines:
             if self.line == '': continue
-            #Check for !x! at line start
-            if self.line[:3] == '!x!':
-                #If line starts with !x! ignore all styles and formats
-                db_data.append({'type': 'p',
-                                'text': self.line[3:],
-                                'style': [['ig']]})
-                continue
             
             #Check for multi line elements
             multiline, ml_type = self.check_multi_line_element()
@@ -118,10 +111,19 @@ class ListTransformer:
             #What type?
             if link_path:
                 #If line contains a link
+                try:
+                    #Check for embeded locals
+                    if link_path.startswith('embedded'):
+                        embeded_locals = link_path.split('@')[1]
+                    else:
+                        raise Exception(IndexError)
+                except IndexError:
+                    embeded_locals = ''
+
                 db_data.append({'type': 'li',
                                 'text': link_text,
                                 'path': link_path,
-                                'embeded_locals': link_path.split('@')[1] if link_path.startswith('embedded') else ''})
+                                'embeded_locals': embeded_locals})
             elif self.line == '\r':
                 #If line is empty
                 db_data.append({'type':'br',

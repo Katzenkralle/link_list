@@ -16,6 +16,7 @@ export const downloadBlob = (blob, fileName) => {
 
 function MediaContentManager(props){
     const contentType = props.contentType
+    const allowForeign = props.allowForeign
     const [content, setContent] = useState([])
     const [allContentTypes, setAllContentTypes] = useState([])
     const [nextDatasetToFetch, setNextDatasetToFetch] = useState(0)
@@ -148,15 +149,34 @@ function MediaContentManager(props){
         let filterOptions = []
         return(
             <div className="flex flex-row justify-between my-1 max-w-full">
-                <select className="inputElement w-2/5" id="typeFilter">
+                <input className="inputElement w-2/5" id="search" type="text" placeholder="Search"></input>
+                <select className="inputElement w-2/5 mx-1" id="typeFilter">
                     <option value="all">All</option>
                         {allContentTypes.map((type) => {
                             filterOptions.push(type);
                             return <option key={type} value={type}>{type}</option>;
                         })}
                 </select>
-                <input className="inputElement w-2/5 mx-1" id="search" type="text" placeholder="Search"></input>
                 <button className="inputElement w-1/5" onClick={() => getContent(document.getElementById('typeFilter').value, document.getElementById('search').value)}>Filter</button>
+            </div>
+        )
+    }
+
+    const importForeign = () => {
+        return(
+            <div className="flex flex-row justify-between my-1 max-w-full">
+                <input className="inputElement w-2/5" id="foreignUrl" type="text" placeholder="Import Foreign Media by URL"></input>
+                <select className="inputElement w-2/5 mx-1" id="foreignType">
+                    <option value="image/*">Image</option>
+                    <option value="video/*">Video</option>
+                    <option value="audio/*">Audio</option>
+                    <option value="application/*">Other</option>
+                </select>
+                <button className="inputElement w-1/5"
+                onClick={() => {props.selectedImg({"name": document.getElementById('foreignUrl').value,
+                               "type": document.getElementById('foreignType').value});
+                                selfDestruct()}}
+                >Import</button>
             </div>
         )
     }
@@ -168,10 +188,10 @@ function MediaContentManager(props){
                     className="inputElement ml-auto"
                     onClick={() => selfDestruct()}>Close</button>
                 {filterContent()}
+                {allowForeign ? (importForeign()) : null}
             </div>
         )
     }
-
 
     const displayMedia = () => {
         if (content == undefined || content.length == 0) {

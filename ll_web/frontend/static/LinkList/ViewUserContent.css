@@ -54,12 +54,20 @@ li * {
     @apply max-w-full max-h-[75vh] object-contain my-2 hover:cursor-pointer ml-0
 }
 
-.viewUserContentMultiline{
-    @apply flex flex-col font-mono bg-cat-bg2 rounded-lg p-2 w-fit max-w-[-moz-available] max-w-[-webkit-fill-available]
+.viewUserContentMlCode, .viewUserContentIgnore{
+    @apply flex flex-col p-2 w-fit max-w-[-moz-available] max-w-[-webkit-fill-available]
 }
 
-.viewUserContentMultiline code {
-    @apply overflow-x-scroll
+.viewUserContentMlCode code, .viewUserContentIgnore div{
+    @apply !overflow-x-scroll
+}
+
+.viewUserContentMlCode {
+    @apply font-mono bg-cat-bg2 rounded-lg
+}
+
+.viewUserContentIgnore div{
+    @apply [all:unset]
 }
 
 h1.viewUserContentH {

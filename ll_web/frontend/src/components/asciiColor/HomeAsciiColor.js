@@ -157,7 +157,7 @@ function HomeAsciiColor() {
                     className="inputElement"
                     onClick={() => {
                         ReactDOM.createRoot(document.getElementById("mediaContentManager"))
-                        .render(<MediaContentManager contentType={["image/*"]} selectedImg={(e) => setSelectedImg(e)}/>)
+                        .render(<MediaContentManager contentType={["image/*"]} allowForeign={false} selectedImg={(e) => setSelectedImg(e)}/>)
                     }}
                 > Select</button>
                 <button 

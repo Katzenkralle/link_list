@@ -201,6 +201,18 @@ function ListEditor(props) {
     setInteractiveElements(interElem);
   }, [content, viewMode]);
 
+  const toHtmlType = (type) => {
+    if (type.startsWith('image')) {
+      return 'img';
+    } else if (type.startsWith('video')) {
+      return 'video';
+    } else if (type.startsWith('audio')) {
+      return 'audio';
+    } else {
+      return 'file';
+    }
+  }
+
   const topBar = () => {
     return (
       viewMode == 'edit' ? (
@@ -285,13 +297,17 @@ function ListEditor(props) {
           <img className="inputElementIcon" src={`${STATICS.LINK_LIST}list.png`} onClick={() => { handleInsertion('->. ') }} />
           <img className="inputElementIcon" src={`${STATICS.LINK_LIST}list_orderd.png`} onClick={() => { handleInsertion('-x. ') }} />
           <img className="inputElementIcon" src={`${STATICS.LINK_LIST}checkbox.png`} onClick={() => { handleInsertion('[ ] ') }} />
-          <img className='inputElementIcon' src={`${STATICS.LINK_LIST}codeblock.png`} onClick={() => { handleInsertion("```\n\n```", 4) }} ></img>
           <img className="inputElementIcon" src={`${STATICS.LINK_LIST}spacer.png`} onClick={() => { handleInsertion('---\n') }} />
-          <img className="inputElementIcon" src={`${STATICS.LINK_LIST}ignore.png`} onClick={() => { handleInsertion('!x!') }} />
+          <img className='inputElementIcon' src={`${STATICS.LINK_LIST}codeblock.png`} onClick={() => { handleInsertion("```\n\n```", 4) }} ></img>
+          <img className="inputElementIcon" src={`${STATICS.LINK_LIST}ignore.png`} onClick={() => { handleInsertion("!x!\n\n!x!", 4) }} />
           <img className="inputElementIcon" src={`${STATICS.LINK_LIST}media.png`}
             onClick={() => {
               ReactDOM.createRoot(document.getElementById("mediaContentManager"))
-              .render(<MediaContentManager contentType={["*/*"]} selectedImg={(e) => handleInsertion(`[](embedded-locale:${e.name}@${e.id})\n`)} />)
+              .render(<MediaContentManager 
+                contentType={["*/*"]} 
+                allowForeign={true}
+                selectedImg={(e) => 
+                  handleInsertion(`[](embedded-${toHtmlType(e.type)}:${e.name}${e.id ? "@" + e.id : ""})\n`)}/>)
             }}
           />
         </div>
