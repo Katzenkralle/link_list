@@ -116,7 +116,7 @@ class ListTransformer:
                     if link_path.startswith('embedded'):
                         embeded_locals = link_path.split('@')[1]
                     else:
-                        raise Exception(IndexError)
+                        raise IndexError
                 except IndexError:
                     embeded_locals = ''
 
